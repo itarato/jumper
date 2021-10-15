@@ -13,8 +13,20 @@ void App::init() {
 
 void App::loop() {
   while (!WindowShouldClose()) {
+    auto stage = stages[current_stage];
+
+    stage->update();
+
     BeginDrawing();
     ClearBackground(RAYWHITE);
+
+    stage->draw();
+
+    auto next_stage = stage->next_stage();
+    if (next_stage.has_value()) {
+      current_stage = next_stage.value();
+    }
+
     EndDrawing();
   }
 }

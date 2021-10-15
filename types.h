@@ -7,6 +7,7 @@ typedef enum {
 } StageT;
 
 struct IStage {
+  virtual void update() = 0;
   virtual void draw() = 0;
   virtual std::optional<StageT> next_stage() = 0;
   virtual ~IStage(){};
