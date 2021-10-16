@@ -8,7 +8,7 @@
 #define WINDOW_HEIGH 512
 
 void App::init() {
-  current_stage = STAGE_MENU;
+  current_stage = STAGE_GAME;
 
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
