@@ -20,12 +20,3 @@ void Jumper::draw() {
   // LOG_INFO("Jumper x:%.4f y:%.4f vx:%.4f vy:%.4f", pos.x, pos.y, v.x, v.y);
   DrawRectangle(pos.x, pos.y - bounds.y, bounds.x, bounds.y, MAGENTA);
 }
-
-Vector2 Jumper::get_pos() const { return pos; };
-
-Vector2 Jumper::get_v() const { return v; };
-
-void Jumper::move(Vector2 delta) {
-  pos.x += delta.x;
-  pos.y += delta.y;
-};
