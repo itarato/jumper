@@ -1,5 +1,4 @@
 #include "stage_game.h"
-#include "coordinator.h"
 #include "util.h"
 #include <algorithm>
 #include <cmath>
