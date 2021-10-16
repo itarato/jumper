@@ -22,13 +22,18 @@ void StageGame::update() {
       jumper.v.x = 0.0f;
     }
 
-    // FIXME - Maybe moves could be together x/y.
     if (jumper.v.x < 0.0f) {
       float left_wall_x = 0.0f;
       jumper.pos.x = std::max(jumper.pos.x + jumper.v.x, left_wall_x);
     } else if (jumper.v.x > 0.0f) {
       float right_wall_x = (float)GetScreenWidth() - jumper.bounds.x;
       jumper.pos.x = std::min(jumper.pos.x + jumper.v.x, right_wall_x);
+    }
+  }
+
+  { // Vertical movement.
+    if (IsKeyPressed(KEY_SPACE)) {
+      jumper.v.y -= JUMP_FORCE;
     }
   }
 
@@ -63,12 +68,6 @@ void StageGame::update() {
         jumper.v.y *= GRAVITY_ACC;
 
         jumper.pos.y = std::min(jumper.pos.y + jumper.v.y, (float)floor_y);
-      }
-    }
-
-    { // Jump.
-      if (IsKeyPressed(KEY_SPACE)) {
-        jumper.v.y -= JUMP_FORCE;
       }
     }
   }
