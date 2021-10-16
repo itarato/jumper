@@ -4,9 +4,6 @@
 #include "stage_menu.h"
 #include "util.h"
 
-#define WINDOW_WITDH 1024
-#define WINDOW_HEIGH 512
-
 void App::init() {
   current_stage = STAGE_GAME;
 

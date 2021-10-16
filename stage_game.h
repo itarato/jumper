@@ -2,6 +2,7 @@
 
 #include "game_config.h"
 #include "jumper.h"
+#include "map.h"
 #include "types.h"
 
 struct StageGame : public IStage {
@@ -14,6 +15,7 @@ struct StageGame : public IStage {
 
   GameConfig *game_config;
   Jumper jumper;
+  Map map;
 
   StageGame(GameConfig *game_config) : game_config(game_config){};
   ~StageGame(){};

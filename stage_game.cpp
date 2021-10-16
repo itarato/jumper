@@ -12,10 +12,8 @@
 void StageGame::update() {
   { // Horizontal movement.
     if (IsKeyDown(KEY_LEFT)) {
-      // Coordinator::move(&jumper, Vector2{-JUMPER_HMOVE_V, 0});
       jumper.v.x = -JUMPER_HMOVE_V;
     } else if (IsKeyDown(KEY_RIGHT)) {
-      // Coordinator::move(&jumper, Vector2{JUMPER_HMOVE_V, 0});
       jumper.v.x = JUMPER_HMOVE_V;
     } else {
       jumper.v.x = 0.0f;
@@ -72,7 +70,10 @@ void StageGame::update() {
   }
 }
 
-void StageGame::draw() { jumper.draw(); }
+void StageGame::draw() {
+  jumper.draw();
+  map.draw();
+}
 
 void StageGame::init() { is_over = false; }
 
