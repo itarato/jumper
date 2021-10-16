@@ -4,13 +4,16 @@
 #include "stage_menu.h"
 #include "util.h"
 
+#define WINDOW_WITDH 1024
+#define WINDOW_HEIGH 512
+
 void App::init() {
   current_stage = STAGE_MENU;
 
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
 
-  InitWindow(800, 800, "Jumper");
+  InitWindow(WINDOW_WITDH, WINDOW_HEIGH, "Jumper");
   SetTargetFPS(60);
 }
 

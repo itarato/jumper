@@ -2,7 +2,7 @@
 
 void StageGame::update() {}
 
-void StageGame::draw() {}
+void StageGame::draw() { jumper.draw(); }
 
 void StageGame::init() { is_over = false; }
 
