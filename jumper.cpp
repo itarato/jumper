@@ -17,7 +17,7 @@ Jumper::Jumper() {
 }
 
 void Jumper::draw() {
-  LOG_INFO("Jumper x:%.4f y:%.4f vx:%.4f vy:%.4f", pos.x, pos.y, v.x, v.y);
+  // LOG_INFO("Jumper x:%.4f y:%.4f vx:%.4f vy:%.4f", pos.x, pos.y, v.x, v.y);
   DrawRectangle(pos.x, pos.y - bounds.y, bounds.x, bounds.y, MAGENTA);
 }
 

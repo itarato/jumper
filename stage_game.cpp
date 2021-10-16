@@ -13,18 +13,30 @@
 void StageGame::update() {
   { // Horizontal movement.
     if (IsKeyDown(KEY_LEFT)) {
-      Coordinator::move(&jumper, Vector2{-JUMPER_HMOVE_V, 0});
+      // Coordinator::move(&jumper, Vector2{-JUMPER_HMOVE_V, 0});
+      jumper.v.x = -JUMPER_HMOVE_V;
+    } else if (IsKeyDown(KEY_RIGHT)) {
+      // Coordinator::move(&jumper, Vector2{JUMPER_HMOVE_V, 0});
+      jumper.v.x = JUMPER_HMOVE_V;
+    } else {
+      jumper.v.x = 0.0f;
     }
-    if (IsKeyDown(KEY_RIGHT)) {
-      Coordinator::move(&jumper, Vector2{JUMPER_HMOVE_V, 0});
+
+    // FIXME - Maybe moves could be together x/y.
+    if (jumper.v.x < 0.0f) {
+      float left_wall_x = 0.0f;
+      jumper.pos.x = std::max(jumper.pos.x + jumper.v.x, left_wall_x);
+    } else if (jumper.v.x > 0.0f) {
+      float right_wall_x = (float)GetScreenWidth() - jumper.bounds.x;
+      jumper.pos.x = std::min(jumper.pos.x + jumper.v.x, right_wall_x);
     }
   }
 
   {                          // Vertical movement.
     if (jumper.v.y < 0.0f) { // Going up.
-      LOG_INFO("up");
-      float ceiling_y = -jumper.bounds.y;
-      if (abs(jumper.pos.y - ceiling_y) < FLOOR_TRESHOLD) { // Hit ceiling.
+      // LOG_INFO("up");
+      float ceiling_y = jumper.bounds.y;
+      if (jumper.pos.y + jumper.v.y <= ceiling_y) { // Hit ceiling.
         jumper.v.y = 0.0f;
         jumper.pos.y = ceiling_y;
       } else if (abs(jumper.v.y) < VELOCITY_ZERO_THRESHOLD) {
@@ -34,7 +46,7 @@ void StageGame::update() {
         jumper.pos.y = std::max(jumper.pos.y + jumper.v.y, ceiling_y);
       }
     } else { // Going down.
-      LOG_INFO("down");
+      // LOG_INFO("down");
       // Extract next floor for player:
       // This should check [player.y - threshold .. screen_height] for the next
       // floor.
