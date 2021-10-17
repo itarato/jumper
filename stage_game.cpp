@@ -10,13 +10,6 @@
 
 #define WINDOW_SCROLL_PADDING 256
 
-struct DoubleJump {
-  Map *map;
-  Jumper *jumper;
-
-  bool can_jump() {}
-};
-
 void StageGame::update() {
   { // Horizontal movement.
     if (IsKeyDown(KEY_LEFT)) {
@@ -33,15 +26,7 @@ void StageGame::update() {
     } else if (jumper.v.x > 0.0f) { // Going right.
       float right_wall_x =
           map.next_right(jumper.frame).value_or(map.width) - jumper.frame.width;
-      LOG_INFO("Jumperx: %.1f Right: %.2f", jumper.frame.x + jumper.frame.width,
-               right_wall_x);
       jumper.frame.x = std::min(jumper.frame.x + jumper.v.x, right_wall_x);
-    }
-  }
-
-  { // Vertical movement.
-    if (IsKeyPressed(KEY_SPACE)) {
-      jumper.v.y -= JUMP_FORCE;
     }
   }
 
@@ -60,12 +45,13 @@ void StageGame::update() {
 
     case MAP_OBJECT_STATE_TYPE_JUMP:
       jumper.v.y *= 1.0f / GRAVITY_ACC;
-      jumper.frame.y = jumper.frame.y + jumper.v.y;
+      jumper.frame.y += jumper.v.y;
       break;
 
     case MAP_OBJECT_STATE_TYPE_ON_FLOOR:
       jumper.v.y = 0.0f;
       jumper.frame.y = jumper.map_state.floor;
+      double_jump.reset();
       break;
 
     case MAP_OBJECT_STATE_TYPE_FALLING:
@@ -73,9 +59,14 @@ void StageGame::update() {
         jumper.v.y = VELOCITY_ZERO_THRESHOLD;
       }
       jumper.v.y *= GRAVITY_ACC;
-
-      jumper.frame.y = jumper.frame.y + jumper.v.y;
+      jumper.frame.y += jumper.v.y;
       break;
+    }
+  }
+
+  { // Vertical movement.
+    if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump()) {
+      jumper.v.y -= JUMP_FORCE;
     }
   }
 
