@@ -6,9 +6,9 @@
 #include "util.h"
 
 #define JUMPER_HMOVE_V 5.0f
-#define GRAVITY_ACC 1.07f
+#define GRAVITY_ACC 1.1f
 #define VELOCITY_ZERO_THRESHOLD 1.0f
-#define JUMP_FORCE 10.0f
+#define JUMP_FORCE 16.0f
 
 #define WINDOW_SCROLL_PADDING 256
 
