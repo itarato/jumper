@@ -9,11 +9,10 @@
  */
 
 Jumper::Jumper() {
-  pos.x = 32;
-  pos.y = 32;
-
-  bounds.x = JUMPER_WIDTH;
-  bounds.y = JUMPER_HEIGHT;
+  frame.x = 32;
+  frame.y = 32;
+  frame.width = JUMPER_WIDTH;
+  frame.height = JUMPER_HEIGHT;
 }
 
 void Jumper::draw() {

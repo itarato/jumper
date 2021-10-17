@@ -4,12 +4,10 @@
 #include "types.h"
 
 struct Jumper {
-  Vector2 pos;
+  Rectangle frame;
   Vector2 v;
-  Vector2 bounds;
 
   void draw();
-  Rectangle frame();
 
   Jumper();
 };
