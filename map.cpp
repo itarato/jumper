@@ -178,6 +178,8 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
     if (obj->get_frame().y + obj->get_v().y + PROXIMITY_TRESHOLD >=
         floor) { // On floor.
       mos.type = MAP_OBJECT_STATE_TYPE_ON_FLOOR;
+    } else if (abs(obj->get_v().y) < VELOCITY_ZERO_THRESHOLD) { // Reaching top.
+      mos.type = MAP_OBJECT_STATE_TYPE_REACHING_TOP;
     } else { // Falling down.
       mos.type = MAP_OBJECT_STATE_TYPE_FALLING;
     }

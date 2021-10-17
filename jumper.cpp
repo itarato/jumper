@@ -2,8 +2,8 @@
 
 #include "util.h"
 
-#define JUMPER_WIDTH 20
-#define JUMPER_HEIGHT 48
+#define JUMPER_WIDTH 28
+#define JUMPER_HEIGHT 20
 
 /**
  * - Jumper pos represents bottom left corner of its bounding rect.

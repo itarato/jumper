@@ -5,9 +5,6 @@
 
 #include "util.h"
 
-#define JUMPER_HMOVE_V 5.0f
-#define JUMP_FORCE 16.0f
-
 #define WINDOW_SCROLL_PADDING 256
 
 void StageGame::update() {
@@ -40,7 +37,7 @@ void StageGame::update() {
       break;
 
     case MAP_OBJECT_STATE_TYPE_REACHING_TOP:
-      jumper.v.y = 0.0f;
+      jumper.v.y = VELOCITY_ZERO_THRESHOLD;
       break;
 
     case MAP_OBJECT_STATE_TYPE_JUMP:
@@ -55,9 +52,6 @@ void StageGame::update() {
       break;
 
     case MAP_OBJECT_STATE_TYPE_FALLING:
-      if (abs(jumper.v.y) < VELOCITY_ZERO_THRESHOLD) {
-        jumper.v.y = VELOCITY_ZERO_THRESHOLD;
-      }
       jumper.v.y *= GRAVITY_ACC;
       jumper.frame.y += jumper.v.y;
       break;
