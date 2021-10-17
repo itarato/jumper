@@ -8,6 +8,7 @@ struct Jumper {
   Vector2 v;
 
   void draw(int scroll_offset);
+  void init();
 
   Jumper();
 };

@@ -12,7 +12,7 @@
  */
 
 Map::Map() {
-  for (int i = 0; i < WINDOW_BLOCK_WIDTH * 2; i++) {
+  for (int i = 0; i < MAP_BLOCK_WIDTH; i++) {
     map[i] = 0b10000000000100000000;
   }
   map[10] = 0b00010000000000000000;
@@ -24,11 +24,11 @@ Map::Map() {
   map[61] = 0b00010000000000000000;
   map[62] = 0b00010000000000000000;
 
-  width = WINDOW_BLOCK_WIDTH * 2 * BLOCK_SIZE;
+  width = MAP_BLOCK_WIDTH * BLOCK_SIZE;
 }
 
 void Map::draw(int scroll_offset) {
-  for (int h = 0; h < WINDOW_BLOCK_WIDTH * 2; h++) {
+  for (int h = 0; h < MAP_BLOCK_WIDTH; h++) {
     uint32_t column = map[h];
     for (int v = 0; v < WINDOW_BLOCK_HEIGHT; v++) {
       if ((column & 1) == 1) {
@@ -42,7 +42,7 @@ void Map::draw(int scroll_offset) {
 
 std::optional<int> Map::next_floor(Rectangle p) {
   int curr_col_lhs = p.x / BLOCK_SIZE;
-  int curr_col_rhs = (p.x + p.width) / BLOCK_SIZE;
+  int curr_col_rhs = (p.x + p.width - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
 
   int curr_row = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
 
@@ -71,7 +71,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
 
 std::optional<int> Map::next_ceiling(Rectangle p) {
   int curr_col_lhs = p.x / BLOCK_SIZE;
-  int curr_col_rhs = (p.x + p.width) / BLOCK_SIZE;
+  int curr_col_rhs = (p.x + p.width - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
 
   int curr_row = p.y / BLOCK_SIZE;
 
@@ -98,6 +98,66 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
   return ceiling;
 }
 
-std::optional<int> Map::next_left(Rectangle p) {}
+std::optional<int> Map::next_left(Rectangle p) {
+  int curr_row_top = p.y / BLOCK_SIZE;
+  int curr_row_bottom = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
 
-std::optional<int> Map::next_right(Rectangle p) {}
+  int curr_col = p.x / BLOCK_SIZE;
+
+  std::optional<int> left;
+
+  // LOG_INFO("TOP: %d BOTTOM: %d", curr_row_top, curr_row_bottom);
+
+  // FIXME - This has a bug - doesn't check if jumper is too on the right (out
+  // of bounds).
+  for (int i = curr_col - 1; i >= 0; i--) {
+    if (is_bit_on(map[i], curr_row_top)) {
+      left = std::optional<int>{(i + 1) * BLOCK_SIZE};
+      break;
+    }
+  }
+
+  if (curr_row_top != curr_row_bottom) {
+    for (int i = curr_col - 1; i >= 0; i--) {
+      if (is_bit_on(map[i], curr_row_bottom)) {
+        int bottom_left = (i + 1) * BLOCK_SIZE;
+        left = std::optional<int>{
+            std::max(bottom_left, left.value_or(bottom_left))};
+        break;
+      }
+    }
+  }
+
+  return left;
+}
+
+std::optional<int> Map::next_right(Rectangle p) {
+  int curr_row_top = p.y / BLOCK_SIZE;
+  int curr_row_bottom = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+
+  int curr_col = (p.x + p.width - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+
+  std::optional<int> right;
+
+  // FIXME - This has a bug - doesn't check if jumper is too on the left (out
+  // of bounds).
+  for (int i = curr_col + 1; i < MAP_BLOCK_WIDTH; i++) {
+    if (is_bit_on(map[i], curr_row_top)) {
+      right = std::optional<int>{i * BLOCK_SIZE};
+      break;
+    }
+  }
+
+  if (curr_row_top != curr_row_bottom) {
+    for (int i = curr_col + 1; i < MAP_BLOCK_WIDTH; i++) {
+      if (is_bit_on(map[i], curr_row_bottom)) {
+        int bottom_right = i * BLOCK_SIZE;
+        right = std::optional<int>{
+            std::min(bottom_right, right.value_or(bottom_right))};
+        break;
+      }
+    }
+  }
+
+  return right;
+}

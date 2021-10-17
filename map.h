@@ -6,8 +6,10 @@
 #include "raylib.h"
 #include "util.h"
 
+#define MAP_BLOCK_WIDTH (WINDOW_BLOCK_WIDTH * 2)
+
 struct Map {
-  uint32_t map[WINDOW_BLOCK_WIDTH * 2];
+  uint32_t map[MAP_BLOCK_WIDTH];
   int width;
 
   void draw(int scroll_offset);
