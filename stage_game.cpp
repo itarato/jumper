@@ -14,7 +14,10 @@ void StageGame::update() {
     } else if (IsKeyDown(KEY_RIGHT)) {
       jumper.v.x = JUMPER_HMOVE_V;
     } else {
-      jumper.v.x = 0.0f;
+      jumper.v.x *= FRICTION;
+      if (abs(jumper.v.x) < VELOCITY_ZERO_THRESHOLD) {
+        jumper.v.x = 0.0f;
+      }
     }
 
     if (jumper.v.x < 0.0f) { // Going left.
