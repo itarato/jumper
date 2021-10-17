@@ -4,7 +4,6 @@
 #include <cmath>
 
 #define JUMPER_HMOVE_V 5.0f
-#define FLOOR_TRESHOLD 2.0f
 #define GRAVITY_ACC 1.07f
 #define VELOCITY_ZERO_THRESHOLD 1.0f
 #define JUMP_FORCE 10.0f
@@ -37,7 +36,13 @@ void StageGame::update() {
   {                          // Vertical movement.
     if (jumper.v.y < 0.0f) { // Going up.
       // LOG_INFO("up");
-      float ceiling_y = jumper.bounds.y;
+      float ceiling_y =
+          map.next_ceiling(jumper.frame()).value_or(-GetScreenHeight()) +
+          jumper.bounds.y;
+
+      // Debug:
+      // DrawLine(0, ceiling_y, GetScreenWidth(), ceiling_y, GREEN);
+
       if (jumper.pos.y + jumper.v.y <= ceiling_y) { // Hit ceiling.
         jumper.v.y = 0.0f;
         jumper.pos.y = ceiling_y;
@@ -52,10 +57,13 @@ void StageGame::update() {
       // Extract next floor for player:
       // This should check [player.y - threshold .. screen_height] for the next
       // floor.
-      int floor_y = GetScreenHeight();
+      int floor_y =
+          map.next_floor(jumper.frame()).value_or(2 * GetScreenHeight());
+
+      // LOG_INFO("Floor: %d Jumper: %.2f", floor_y, jumper.pos.y);
 
       // Check if player is on floor:
-      if (abs(jumper.pos.y - floor_y) < FLOOR_TRESHOLD) { // On floor.
+      if (abs(jumper.pos.y - floor_y) < PROXIMITY_TRESHOLD) { // On floor.
         jumper.v.y = 0.0f;
         jumper.pos.y = floor_y;
       } else { // In air.
@@ -66,6 +74,12 @@ void StageGame::update() {
 
         jumper.pos.y = std::min(jumper.pos.y + jumper.v.y, (float)floor_y);
       }
+    }
+  }
+
+  { // Death checks.
+    if (jumper.pos.y > GetScreenHeight()) {
+      is_over = true;
     }
   }
 }

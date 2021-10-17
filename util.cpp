@@ -27,3 +27,17 @@ void log(LogLevelT level, std::string msg, ...) {
   vprintf(msg.c_str(), argptr);
   printf("\n");
 }
+
+bool is_bit_on(unsigned int number, int index) {
+  return ((number >> index) & 1) == 1;
+}
+
+Vector2 offset_x(Vector2 v, float offset) {
+  v.x += offset;
+  return v;
+}
+
+Vector2 offset_y(Vector2 v, float offset) {
+  v.y += offset;
+  return v;
+}

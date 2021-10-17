@@ -9,6 +9,7 @@ struct Jumper {
   Vector2 bounds;
 
   void draw();
+  Rectangle frame();
 
   Jumper();
 };

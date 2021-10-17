@@ -1,5 +1,6 @@
 #pragma once
 
+#include "raylib.h"
 #include <cstdio>
 #include <stdarg.h>
 #include <string>
@@ -7,6 +8,8 @@
 #define BLOCK_SIZE 32
 #define WINDOW_BLOCK_WIDTH 40
 #define WINDOW_BLOCK_HEIGHT 20
+
+#define PROXIMITY_TRESHOLD 2.0f
 
 #define WINDOW_WITDH (WINDOW_BLOCK_WIDTH * BLOCK_SIZE)
 #define WINDOW_HEIGH (WINDOW_BLOCK_HEIGHT * BLOCK_SIZE)
@@ -22,3 +25,9 @@ typedef enum {
 } LogLevelT;
 
 void log(LogLevelT level, std::string msg, ...);
+
+bool is_bit_on(unsigned int number, int index);
+
+Vector2 offset_x(Vector2 v, float offset);
+Vector2 offset_y(Vector2 v, float offset);
+// int to_range(int number, int min, int max);
