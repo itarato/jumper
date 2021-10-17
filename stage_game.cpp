@@ -7,7 +7,7 @@
 
 /**
  * ← / → : move
- * SPACE : jump
+ * SPACE : jump / double jump
  * ALT   : parachute
  * CTRL  : turbo
  */
