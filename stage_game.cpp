@@ -74,8 +74,7 @@ void StageGame::update() {
       }
       jumper.v.y *= GRAVITY_ACC;
 
-      jumper.frame.y =
-          std::min(jumper.frame.y + jumper.v.y, (float)jumper.map_state.floor);
+      jumper.frame.y = jumper.frame.y + jumper.v.y;
       break;
     }
   }
