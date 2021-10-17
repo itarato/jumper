@@ -110,7 +110,7 @@ std::optional<int> Map::next_left(Rectangle p) {
 
   // FIXME - This has a bug - doesn't check if jumper is too on the right (out
   // of bounds).
-  for (int i = curr_col - 1; i >= 0; i--) {
+  for (int i = std::min(curr_col - 1, MAP_BLOCK_WIDTH - 1); i >= 0; i--) {
     if (is_bit_on(map[i], curr_row_top)) {
       left = std::optional<int>{(i + 1) * BLOCK_SIZE};
       break;
@@ -118,7 +118,7 @@ std::optional<int> Map::next_left(Rectangle p) {
   }
 
   if (curr_row_top != curr_row_bottom) {
-    for (int i = curr_col - 1; i >= 0; i--) {
+    for (int i = std::min(curr_col - 1, MAP_BLOCK_WIDTH - 1); i >= 0; i--) {
       if (is_bit_on(map[i], curr_row_bottom)) {
         int bottom_left = (i + 1) * BLOCK_SIZE;
         left = std::optional<int>{
@@ -139,9 +139,7 @@ std::optional<int> Map::next_right(Rectangle p) {
 
   std::optional<int> right;
 
-  // FIXME - This has a bug - doesn't check if jumper is too on the left (out
-  // of bounds).
-  for (int i = curr_col + 1; i < MAP_BLOCK_WIDTH; i++) {
+  for (int i = std::max(0, curr_col + 1); i < MAP_BLOCK_WIDTH; i++) {
     if (is_bit_on(map[i], curr_row_top)) {
       right = std::optional<int>{i * BLOCK_SIZE};
       break;
@@ -149,7 +147,7 @@ std::optional<int> Map::next_right(Rectangle p) {
   }
 
   if (curr_row_top != curr_row_bottom) {
-    for (int i = curr_col + 1; i < MAP_BLOCK_WIDTH; i++) {
+    for (int i = std::max(0, curr_col + 1); i < MAP_BLOCK_WIDTH; i++) {
       if (is_bit_on(map[i], curr_row_bottom)) {
         int bottom_right = i * BLOCK_SIZE;
         right = std::optional<int>{
