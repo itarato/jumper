@@ -1,4 +1,5 @@
 #include "map.h"
+
 #include "raylib.h"
 #include "util.h"
 
@@ -36,7 +37,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
   int curr_col_lhs = p.x / BLOCK_SIZE;
   int curr_col_rhs = (p.x + p.width) / BLOCK_SIZE;
 
-  int curr_row = (p.y - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+  int curr_row = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
 
   std::optional<int> floor;
 
@@ -65,7 +66,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
   int curr_col_lhs = p.x / BLOCK_SIZE;
   int curr_col_rhs = (p.x + p.width) / BLOCK_SIZE;
 
-  int curr_row = (p.y - p.height) / BLOCK_SIZE;
+  int curr_row = p.y / BLOCK_SIZE;
 
   std::optional<int> ceiling;
 

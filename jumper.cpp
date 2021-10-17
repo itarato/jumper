@@ -1,4 +1,5 @@
 #include "jumper.h"
+
 #include "util.h"
 
 #define JUMPER_WIDTH 32
@@ -15,11 +16,4 @@ Jumper::Jumper() {
   frame.height = JUMPER_HEIGHT;
 }
 
-void Jumper::draw() {
-  // LOG_INFO("Jumper x:%.4f y:%.4f vx:%.4f vy:%.4f", pos.x, pos.y, v.x, v.y);
-  DrawRectangle(pos.x, pos.y - bounds.y, bounds.x, bounds.y, MAGENTA);
-}
-
-Rectangle Jumper::frame() {
-  return Rectangle{pos.x, pos.y, bounds.x, bounds.y};
-}
+void Jumper::draw() { DrawRectangleRec(frame, MAGENTA); }
