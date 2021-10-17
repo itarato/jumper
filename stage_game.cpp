@@ -5,6 +5,13 @@
 
 #include "util.h"
 
+/**
+ * ← / → : move
+ * SPACE : jump
+ * ALT   : parachute
+ * CTRL  : turbo
+ */
+
 #define WINDOW_SCROLL_PADDING 256
 
 void StageGame::update() {
