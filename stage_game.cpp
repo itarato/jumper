@@ -48,36 +48,35 @@ void StageGame::update() {
   { // Vertical movement.
     map.evaluate_map_object_state(&jumper);
 
-    if (jumper.v.y < 0.0f) { // Going up.
-      float ceiling_y =
-          map.next_ceiling(jumper.frame).value_or(-GetScreenHeight());
+    switch (jumper.map_state.type) {
+    case MAP_OBJECT_STATE_TYPE_HIT_CEILING:
+      jumper.v.y = 0.0f;
+      jumper.frame.y = jumper.map_state.ceiling;
+      break;
 
-      if (jumper.frame.y + jumper.v.y <= ceiling_y) { // Hit ceiling.
-        jumper.v.y = 0.0f;
-        jumper.frame.y = ceiling_y;
-      } else if (abs(jumper.v.y) < VELOCITY_ZERO_THRESHOLD) { // Reaching top.
-        jumper.v.y = 0.0f;
-      } else { // Jump.
-        jumper.v.y *= 1.0f / GRAVITY_ACC;
-        jumper.frame.y = jumper.frame.y + jumper.v.y;
+    case MAP_OBJECT_STATE_TYPE_REACHING_TOP:
+      jumper.v.y = 0.0f;
+      break;
+
+    case MAP_OBJECT_STATE_TYPE_JUMP:
+      jumper.v.y *= 1.0f / GRAVITY_ACC;
+      jumper.frame.y = jumper.frame.y + jumper.v.y;
+      break;
+
+    case MAP_OBJECT_STATE_TYPE_ON_FLOOR:
+      jumper.v.y = 0.0f;
+      jumper.frame.y = jumper.map_state.floor;
+      break;
+
+    case MAP_OBJECT_STATE_TYPE_FALLING:
+      if (abs(jumper.v.y) < VELOCITY_ZERO_THRESHOLD) {
+        jumper.v.y = VELOCITY_ZERO_THRESHOLD;
       }
-    } else { // Going down.
-      int floor_y =
-          map.next_floor(jumper.frame).value_or(2 * GetScreenHeight()) -
-          jumper.frame.height;
+      jumper.v.y *= GRAVITY_ACC;
 
-      // Check if player is on floor:
-      if (abs(jumper.frame.y - floor_y) < PROXIMITY_TRESHOLD) { // On floor.
-        jumper.v.y = 0.0f;
-        jumper.frame.y = floor_y;
-      } else { // Falling down.
-        if (abs(jumper.v.y) < VELOCITY_ZERO_THRESHOLD) {
-          jumper.v.y = VELOCITY_ZERO_THRESHOLD;
-        }
-        jumper.v.y *= GRAVITY_ACC;
-
-        jumper.frame.y = std::min(jumper.frame.y + jumper.v.y, (float)floor_y);
-      }
+      jumper.frame.y =
+          std::min(jumper.frame.y + jumper.v.y, (float)jumper.map_state.floor);
+      break;
     }
   }
 
