@@ -10,7 +10,7 @@
 #define VELOCITY_ZERO_THRESHOLD 1.0f
 #define JUMP_FORCE 10.0f
 
-#define WINDOW_SCROLL_PADDING 100
+#define WINDOW_SCROLL_PADDING 256
 
 void StageGame::update() {
   {  // Horizontal movement.
@@ -22,7 +22,7 @@ void StageGame::update() {
       jumper.v.x = 0.0f;
     }
 
-    LOG_INFO("Jumper vx:%2f", jumper.v.x);
+    // LOG_INFO("Jumper vx:%2f", jumper.v.x);
 
     if (jumper.v.x < 0.0f) {
       float left_wall_x = 0.0f;
