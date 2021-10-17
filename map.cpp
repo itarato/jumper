@@ -1,7 +1,7 @@
 #include "map.h"
-
 #include "raylib.h"
 #include "util.h"
+#include <utility>
 
 /**
  * Map: 32 bit uint representing map - 20 bit used for blocks.
@@ -106,10 +106,6 @@ std::optional<int> Map::next_left(Rectangle p) {
 
   std::optional<int> left;
 
-  // LOG_INFO("TOP: %d BOTTOM: %d", curr_row_top, curr_row_bottom);
-
-  // FIXME - This has a bug - doesn't check if jumper is too on the right (out
-  // of bounds).
   for (int i = std::min(curr_col - 1, MAP_BLOCK_WIDTH - 1); i >= 0; i--) {
     if (is_bit_on(map[i], curr_row_top)) {
       left = std::optional<int>{(i + 1) * BLOCK_SIZE};
@@ -158,4 +154,33 @@ std::optional<int> Map::next_right(Rectangle p) {
   }
 
   return right;
+}
+
+void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
+  MapObjectState mos;
+
+  if (obj->get_v().y < 0.0f) { // Going up.
+    int ceiling = next_ceiling(obj->get_frame()).value_or(-GetScreenHeight());
+    mos.ceiling = ceiling;
+
+    if (obj->get_frame().y + obj->get_v().y <= ceiling) { // Hit ceiling.
+      mos.type = MAP_OBJECT_STATE_TYPE_HIT_CEILING;
+    } else if (abs(obj->get_v().y) < VELOCITY_ZERO_THRESHOLD) { // Reaching top.
+      mos.type = MAP_OBJECT_STATE_TYPE_REACHING_TOP;
+    } else { // Jump.
+      mos.type = MAP_OBJECT_STATE_TYPE_JUMP;
+    }
+  } else { // Going down.
+    int floor = next_floor(obj->get_frame()).value_or(2 * GetScreenHeight()) -
+                obj->get_frame().height;
+    mos.floor = floor;
+
+    if (abs(obj->get_frame().y - floor) < PROXIMITY_TRESHOLD) { // On floor.
+      mos.type = MAP_OBJECT_STATE_TYPE_ON_FLOOR;
+    } else { // Falling down.
+      mos.type = MAP_OBJECT_STATE_TYPE_FALLING;
+    }
+  }
+
+  obj->set_map_state(std::move(mos));
 }

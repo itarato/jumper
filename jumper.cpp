@@ -26,3 +26,7 @@ void Jumper::init() {
   v.x = 0;
   v.y = 0;
 }
+
+Rectangle Jumper::get_frame() const { return frame; }
+Vector2 Jumper::get_v() const { return v; }
+void Jumper::set_map_state(MapObjectState &&mos) { map_state = mos; }
