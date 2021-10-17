@@ -14,7 +14,7 @@ struct DoubleJump {
       : map(map), jumper(jumper), air_jumps(0) {}
 
   bool can_jump() {
-    if (jumper->map_state.type == MAP_OBJECT_STATE_TYPE_ON_FLOOR) {
+    if (jumper->map_state.type == MAP_OBJECT_VERTICAL_STATE_ON_FLOOR) {
       air_jumps = 0;
       return true;
     }

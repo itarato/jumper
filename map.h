@@ -9,19 +9,19 @@
 #define MAP_BLOCK_WIDTH (WINDOW_BLOCK_WIDTH * 2)
 
 typedef enum {
-  MAP_OBJECT_STATE_TYPE_HIT_CEILING = 0,
-  MAP_OBJECT_STATE_TYPE_REACHING_TOP = 1,
-  MAP_OBJECT_STATE_TYPE_JUMP = 2,
-  MAP_OBJECT_STATE_TYPE_ON_FLOOR = 3,
-  MAP_OBJECT_STATE_TYPE_FALLING = 4,
-} MapObjectStateType;
+  MAP_OBJECT_VERTICAL_STATE_HIT_CEILING = 0,
+  MAP_OBJECT_VERTICAL_STATE_REACHING_TOP = 1,
+  MAP_OBJECT_VERTICAL_STATE_JUMP = 2,
+  MAP_OBJECT_VERTICAL_STATE_ON_FLOOR = 3,
+  MAP_OBJECT_VERTICAL_STATE_FALLING = 4,
+} MapObjectVerticalState;
 
 struct MapObjectState {
   union {
     int floor;
     int ceiling;
   };
-  MapObjectStateType type;
+  MapObjectVerticalState type;
 };
 
 struct IMapStateUpdatable {

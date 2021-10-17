@@ -11,6 +11,7 @@
 
 #define PROXIMITY_TRESHOLD 2.0f
 #define GRAVITY_ACC 1.15f
+#define PARACHUTE_V 1.4f
 #define VELOCITY_ZERO_THRESHOLD 1.0f
 #define JUMPER_HMOVE_V 5.0f
 #define JUMP_FORCE 22.0f

@@ -164,11 +164,11 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
     mos.ceiling = ceiling;
 
     if (obj->get_frame().y + obj->get_v().y <= ceiling) { // Hit ceiling.
-      mos.type = MAP_OBJECT_STATE_TYPE_HIT_CEILING;
+      mos.type = MAP_OBJECT_VERTICAL_STATE_HIT_CEILING;
     } else if (abs(obj->get_v().y) < VELOCITY_ZERO_THRESHOLD) { // Reaching top.
-      mos.type = MAP_OBJECT_STATE_TYPE_REACHING_TOP;
+      mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
     } else { // Jump.
-      mos.type = MAP_OBJECT_STATE_TYPE_JUMP;
+      mos.type = MAP_OBJECT_VERTICAL_STATE_JUMP;
     }
   } else { // Going down.
     int floor = next_floor(obj->get_frame()).value_or(2 * GetScreenHeight()) -
@@ -177,11 +177,11 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
 
     if (obj->get_frame().y + obj->get_v().y + PROXIMITY_TRESHOLD >=
         floor) { // On floor.
-      mos.type = MAP_OBJECT_STATE_TYPE_ON_FLOOR;
+      mos.type = MAP_OBJECT_VERTICAL_STATE_ON_FLOOR;
     } else if (abs(obj->get_v().y) < VELOCITY_ZERO_THRESHOLD) { // Reaching top.
-      mos.type = MAP_OBJECT_STATE_TYPE_REACHING_TOP;
+      mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
     } else { // Falling down.
-      mos.type = MAP_OBJECT_STATE_TYPE_FALLING;
+      mos.type = MAP_OBJECT_VERTICAL_STATE_FALLING;
     }
   }
 

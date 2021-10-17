@@ -42,28 +42,32 @@ void StageGame::update() {
     map.evaluate_map_object_state(&jumper);
 
     switch (jumper.map_state.type) {
-    case MAP_OBJECT_STATE_TYPE_HIT_CEILING:
+    case MAP_OBJECT_VERTICAL_STATE_HIT_CEILING:
       jumper.v.y = 0.0f;
       jumper.frame.y = jumper.map_state.ceiling;
       break;
 
-    case MAP_OBJECT_STATE_TYPE_REACHING_TOP:
+    case MAP_OBJECT_VERTICAL_STATE_REACHING_TOP:
       jumper.v.y = VELOCITY_ZERO_THRESHOLD;
       break;
 
-    case MAP_OBJECT_STATE_TYPE_JUMP:
+    case MAP_OBJECT_VERTICAL_STATE_JUMP:
       jumper.v.y *= 1.0f / GRAVITY_ACC;
       jumper.frame.y += jumper.v.y;
       break;
 
-    case MAP_OBJECT_STATE_TYPE_ON_FLOOR:
+    case MAP_OBJECT_VERTICAL_STATE_ON_FLOOR:
       jumper.v.y = 0.0f;
       jumper.frame.y = jumper.map_state.floor;
       double_jump.reset();
       break;
 
-    case MAP_OBJECT_STATE_TYPE_FALLING:
-      jumper.v.y *= GRAVITY_ACC;
+    case MAP_OBJECT_VERTICAL_STATE_FALLING:
+      if (IsKeyDown(KEY_LEFT_ALT)) {
+        jumper.v.y = PARACHUTE_V;
+      } else {
+        jumper.v.y *= GRAVITY_ACC;
+      }
       jumper.frame.y += jumper.v.y;
       break;
     }
