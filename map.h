@@ -13,6 +13,8 @@ struct Map {
   void draw(int scroll_offset);
   std::optional<int> next_floor(Rectangle p);
   std::optional<int> next_ceiling(Rectangle p);
+  std::optional<int> next_left(Rectangle p);
+  std::optional<int> next_right(Rectangle p);
 
   Map();
 };

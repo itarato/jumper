@@ -97,3 +97,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
 
   return ceiling;
 }
+
+std::optional<int> Map::next_left(Rectangle p) {}
+
+std::optional<int> Map::next_right(Rectangle p) {}
