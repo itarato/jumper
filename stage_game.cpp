@@ -10,9 +10,17 @@
 void StageGame::update() {
   { // Horizontal movement.
     if (IsKeyDown(KEY_LEFT)) {
-      jumper.v.x = -JUMPER_HMOVE_V;
+      jumper.v.x = std::min(-JUMPER_HMOVE_V, jumper.v.x * FRICTION);
+
+      if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+        jumper.v.x = -5 * JUMPER_HMOVE_V;
+      }
     } else if (IsKeyDown(KEY_RIGHT)) {
-      jumper.v.x = JUMPER_HMOVE_V;
+      jumper.v.x = std::max(JUMPER_HMOVE_V, jumper.v.x * FRICTION);
+
+      if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+        jumper.v.x = 5 * JUMPER_HMOVE_V;
+      }
     } else {
       jumper.v.x *= FRICTION;
       if (abs(jumper.v.x) < VELOCITY_ZERO_THRESHOLD) {
