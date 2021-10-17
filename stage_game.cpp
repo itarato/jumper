@@ -10,6 +10,8 @@
 #define VELOCITY_ZERO_THRESHOLD 1.0f
 #define JUMP_FORCE 10.0f
 
+#define WINDOW_SCROLL_PADDING 100
+
 void StageGame::update() {
   {  // Horizontal movement.
     if (IsKeyDown(KEY_LEFT)) {
@@ -20,11 +22,14 @@ void StageGame::update() {
       jumper.v.x = 0.0f;
     }
 
+    LOG_INFO("Jumper vx:%2f", jumper.v.x);
+
     if (jumper.v.x < 0.0f) {
       float left_wall_x = 0.0f;
       jumper.frame.x = std::max(jumper.frame.x + jumper.v.x, left_wall_x);
     } else if (jumper.v.x > 0.0f) {
-      float right_wall_x = (float)GetScreenWidth() - jumper.frame.width;
+      float right_wall_x = map.width - jumper.frame.width;
+      // LOG_INFO("Right wall: %.2f", right_wall_x);
       jumper.frame.x = std::min(jumper.frame.x + jumper.v.x, right_wall_x);
     }
   }
@@ -41,7 +46,7 @@ void StageGame::update() {
           map.next_ceiling(jumper.frame).value_or(-GetScreenHeight());
 
       // Debug:
-      DrawLine(0, ceiling_y, GetScreenWidth(), ceiling_y, GREEN);
+      // DrawLine(0, ceiling_y, GetScreenWidth(), ceiling_y, GREEN);
 
       if (jumper.frame.y + jumper.v.y <= ceiling_y) {  // Hit ceiling.
         jumper.v.y = 0.0f;
@@ -80,11 +85,23 @@ void StageGame::update() {
       is_over = true;
     }
   }
+
+  // LOG_INFO("Jumper x:%.2f", jumper.frame.x);
 }
 
 void StageGame::draw() {
-  jumper.draw();
-  map.draw();
+  // Calculate view window:
+  // Jumper is at: jumper.frame.x
+  // Map is map.width() wide
+
+  int scroll_offset = 0;
+  if (jumper.frame.x >= WINDOW_SCROLL_PADDING) {
+    scroll_offset = std::min(map.width - GetScreenWidth(),
+                             (int)jumper.frame.x - WINDOW_SCROLL_PADDING);
+  }
+
+  jumper.draw(scroll_offset);
+  map.draw(scroll_offset);
 }
 
 void StageGame::init() { is_over = false; }

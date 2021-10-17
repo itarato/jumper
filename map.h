@@ -1,14 +1,16 @@
 #pragma once
 
-#include "raylib.h"
-#include "util.h"
 #include <cstdint>
 #include <optional>
 
-struct Map {
-  uint32_t map[WINDOW_BLOCK_WIDTH];
+#include "raylib.h"
+#include "util.h"
 
-  void draw();
+struct Map {
+  uint32_t map[WINDOW_BLOCK_WIDTH * 2];
+  int width;
+
+  void draw(int scroll_offset);
   std::optional<int> next_floor(Rectangle p);
   std::optional<int> next_ceiling(Rectangle p);
 

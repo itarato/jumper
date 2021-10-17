@@ -16,4 +16,8 @@ Jumper::Jumper() {
   frame.height = JUMPER_HEIGHT;
 }
 
-void Jumper::draw() { DrawRectangleRec(frame, MAGENTA); }
+void Jumper::draw(int scroll_offset) {
+  Rectangle draw_frame(frame);
+  draw_frame.x -= scroll_offset;
+  DrawRectangleRec(draw_frame, MAGENTA);
+}

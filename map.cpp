@@ -12,21 +12,28 @@
  */
 
 Map::Map() {
-  for (int i = 0; i < WINDOW_BLOCK_WIDTH; i++) {
+  for (int i = 0; i < WINDOW_BLOCK_WIDTH * 2; i++) {
     map[i] = 0b10000000000100000000;
   }
   map[10] = 0b00010000000000000000;
   map[11] = 0b00010000000000000000;
   map[12] = 0b00010000000000000000;
+  map[38] = 0b01110000001000010000;
+  map[39] = 0b01110000001000010000;
+  map[60] = 0b00010000000000000000;
+  map[61] = 0b00010000000000000000;
+  map[62] = 0b00010000000000000000;
+
+  width = WINDOW_BLOCK_WIDTH * 2 * BLOCK_SIZE;
 }
 
-void Map::draw() {
-  for (int h = 0; h < WINDOW_BLOCK_WIDTH; h++) {
+void Map::draw(int scroll_offset) {
+  for (int h = 0; h < WINDOW_BLOCK_WIDTH * 2; h++) {
     uint32_t column = map[h];
     for (int v = 0; v < WINDOW_BLOCK_HEIGHT; v++) {
       if ((column & 1) == 1) {
-        DrawRectangle(h * BLOCK_SIZE, v * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE,
-                      ORANGE);
+        DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
+                      BLOCK_SIZE, BLOCK_SIZE, ORANGE);
       }
       column >>= 1;
     }

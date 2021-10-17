@@ -7,7 +7,7 @@ struct Jumper {
   Rectangle frame;
   Vector2 v;
 
-  void draw();
+  void draw(int scroll_offset);
 
   Jumper();
 };
