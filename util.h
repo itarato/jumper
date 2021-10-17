@@ -27,7 +27,3 @@ typedef enum {
 void log(LogLevelT level, std::string msg, ...);
 
 bool is_bit_on(unsigned int number, int index);
-
-Vector2 offset_x(Vector2 v, float offset);
-Vector2 offset_y(Vector2 v, float offset);
-// int to_range(int number, int min, int max);
