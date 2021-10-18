@@ -37,7 +37,7 @@ void StageGame::update() {
 
     if (jumper.v.x < 0.0f) {  // Going left.
       int left_wall_x = map.next_left(jumper.frame).value_or(0);
-      LOG_INFO("Left wall: %d", left_wall_x);
+      // LOG_INFO("Left wall: %d", left_wall_x);
       jumper.frame.x =
           std::max((int)(jumper.frame.x + jumper.v.x), left_wall_x);
     } else if (jumper.v.x > 0.0f) {  // Going right.
@@ -45,7 +45,7 @@ void StageGame::update() {
           map.next_right(jumper.frame).value_or(map.width * BLOCK_SIZE) -
           jumper.frame.width;
 
-      LOG_INFO("Right wall: %d", right_wall_x);
+      // LOG_INFO("Right wall: %d", right_wall_x);
       jumper.frame.x =
           std::min((int)(jumper.frame.x + jumper.v.x), right_wall_x);
     }
@@ -108,9 +108,11 @@ void StageGame::draw() {
    */
   int scroll_offset = 0;
   if (jumper.frame.x >= WINDOW_SCROLL_PADDING) {
-    scroll_offset = std::min(map.width - GetScreenWidth(),
+    scroll_offset = std::min((map.width * BLOCK_SIZE) - GetScreenWidth(),
                              (int)jumper.frame.x - WINDOW_SCROLL_PADDING);
   }
+
+  LOG_INFO("Scroll %d", scroll_offset);
 
   jumper.draw(scroll_offset);
   map.draw(scroll_offset);

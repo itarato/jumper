@@ -72,6 +72,13 @@ Map::Map(std::string map_file_path) {
 void Map::draw(int scroll_offset) {
   for (int v = 0; v < (int)map.size(); v++) {
     for (int h = 0; h < (int)map[v].size(); h++) {
+      int block_lhs_x = h * BLOCK_SIZE - scroll_offset;
+      int block_rhs_x = block_lhs_x + BLOCK_SIZE;
+      if (block_rhs_x <= 0 ||
+          block_lhs_x >= (width * BLOCK_SIZE)) {  // Out of window.
+        continue;
+      }
+
       switch (map[v][h]) {
         case TILE_GROUND:
           DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
@@ -172,7 +179,7 @@ std::optional<int> Map::next_left(Rectangle p) {
 }
 
 std::optional<int> Map::next_right(Rectangle p) {
-  LOG_INFO("JUMPER %.2f %.2f %.2f %.2f", p.x, p.y, p.width, p.height);
+  // LOG_INFO("JUMPER %.2f %.2f %.2f %.2f", p.x, p.y, p.width, p.height);
   int curr_row_top = p.y / BLOCK_SIZE;
   int curr_row_bottom = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
 
@@ -182,7 +189,6 @@ std::optional<int> Map::next_right(Rectangle p) {
 
   for (int i = std::max(0, curr_col + 1); i < width; i++) {
     if (is_tile_steppable(map[curr_row_top][i])) {
-      LOG_INFO("MAPRIGHT 1 %d", i * BLOCK_SIZE);
       right = std::optional<int>{i * BLOCK_SIZE};
       break;
     }
@@ -192,7 +198,6 @@ std::optional<int> Map::next_right(Rectangle p) {
     for (int i = std::max(0, curr_col + 1); i < width; i++) {
       if (is_tile_steppable(map[curr_row_bottom][i])) {
         int bottom_right = i * BLOCK_SIZE;
-        LOG_INFO("MAPRIGHT 2 %d", i * BLOCK_SIZE);
         right = std::optional<int>{
             std::min(bottom_right, right.value_or(bottom_right))};
         break;
