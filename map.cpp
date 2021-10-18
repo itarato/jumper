@@ -212,7 +212,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
   MapObjectState mos;
 
   if (obj->get_v().y < 0.0f) {  // Going up.
-    int ceiling = next_ceiling(obj->get_frame()).value_or(-GetScreenHeight());
+    int ceiling = next_ceiling(obj->get_frame()).value_or(0);
     mos.ceiling = ceiling;
 
     if (obj->get_frame().y + obj->get_v().y <= ceiling) {  // Hit ceiling.
