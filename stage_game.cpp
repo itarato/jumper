@@ -15,7 +15,7 @@
 #define WINDOW_SCROLL_PADDING 256
 
 void StageGame::update() {
-  { // Horizontal movement.
+  {  // Horizontal movement.
     if (IsKeyDown(KEY_LEFT)) {
       jumper.v.x = std::min(-JUMPER_HMOVE_V, jumper.v.x * FRICTION);
 
@@ -35,58 +35,64 @@ void StageGame::update() {
       }
     }
 
-    if (jumper.v.x < 0.0f) { // Going left.
-      float left_wall_x = map.next_left(jumper.frame).value_or(0);
-      jumper.frame.x = std::max(jumper.frame.x + jumper.v.x, left_wall_x);
-    } else if (jumper.v.x > 0.0f) { // Going right.
-      float right_wall_x =
-          map.next_right(jumper.frame).value_or(map.width) - jumper.frame.width;
-      jumper.frame.x = std::min(jumper.frame.x + jumper.v.x, right_wall_x);
+    if (jumper.v.x < 0.0f) {  // Going left.
+      int left_wall_x = map.next_left(jumper.frame).value_or(0);
+      LOG_INFO("Left wall: %d", left_wall_x);
+      jumper.frame.x =
+          std::max((int)(jumper.frame.x + jumper.v.x), left_wall_x);
+    } else if (jumper.v.x > 0.0f) {  // Going right.
+      int right_wall_x =
+          map.next_right(jumper.frame).value_or(map.width * BLOCK_SIZE) -
+          jumper.frame.width;
+
+      LOG_INFO("Right wall: %d", right_wall_x);
+      jumper.frame.x =
+          std::min((int)(jumper.frame.x + jumper.v.x), right_wall_x);
     }
   }
 
-  { // Vertical movement.
+  {  // Vertical movement.
     map.evaluate_map_object_state(&jumper);
 
     switch (jumper.map_state.type) {
-    case MAP_OBJECT_VERTICAL_STATE_HIT_CEILING:
-      jumper.v.y = 0.0f;
-      jumper.frame.y = jumper.map_state.ceiling;
-      break;
+      case MAP_OBJECT_VERTICAL_STATE_HIT_CEILING:
+        jumper.v.y = 0.0f;
+        jumper.frame.y = jumper.map_state.ceiling;
+        break;
 
-    case MAP_OBJECT_VERTICAL_STATE_REACHING_TOP:
-      jumper.v.y = VELOCITY_ZERO_THRESHOLD;
-      break;
+      case MAP_OBJECT_VERTICAL_STATE_REACHING_TOP:
+        jumper.v.y = VELOCITY_ZERO_THRESHOLD;
+        break;
 
-    case MAP_OBJECT_VERTICAL_STATE_JUMP:
-      jumper.v.y *= 1.0f / GRAVITY_ACC;
-      jumper.frame.y += jumper.v.y;
-      break;
+      case MAP_OBJECT_VERTICAL_STATE_JUMP:
+        jumper.v.y *= 1.0f / GRAVITY_ACC;
+        jumper.frame.y += jumper.v.y;
+        break;
 
-    case MAP_OBJECT_VERTICAL_STATE_ON_FLOOR:
-      jumper.v.y = 0.0f;
-      jumper.frame.y = jumper.map_state.floor;
-      double_jump.reset();
-      break;
+      case MAP_OBJECT_VERTICAL_STATE_ON_FLOOR:
+        jumper.v.y = 0.0f;
+        jumper.frame.y = jumper.map_state.floor;
+        double_jump.reset();
+        break;
 
-    case MAP_OBJECT_VERTICAL_STATE_FALLING:
-      if (IsKeyDown(KEY_LEFT_ALT)) {
-        jumper.v.y = PARACHUTE_V;
-      } else {
-        jumper.v.y *= GRAVITY_ACC;
-      }
-      jumper.frame.y += jumper.v.y;
-      break;
+      case MAP_OBJECT_VERTICAL_STATE_FALLING:
+        if (IsKeyDown(KEY_LEFT_ALT)) {
+          jumper.v.y = PARACHUTE_V;
+        } else {
+          jumper.v.y *= GRAVITY_ACC;
+        }
+        jumper.frame.y += jumper.v.y;
+        break;
     }
   }
 
-  { // Vertical movement.
+  {  // Vertical movement.
     if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump()) {
       jumper.v.y -= JUMP_FORCE;
     }
   }
 
-  { // Death checks.
+  {  // Death checks.
     if (jumper.frame.y > GetScreenHeight()) {
       is_over = true;
     }

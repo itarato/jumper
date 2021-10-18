@@ -45,6 +45,8 @@ struct StageGame : public IStage {
   DoubleJump double_jump;
 
   StageGame(GameConfig *game_config)
-      : game_config(game_config), double_jump(&map, &jumper){};
+      : game_config(game_config),
+        map("./maps/1.jm"),
+        double_jump(&map, &jumper){};
   ~StageGame(){};
 };

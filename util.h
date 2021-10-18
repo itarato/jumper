@@ -1,9 +1,11 @@
 #pragma once
 
-#include "raylib.h"
-#include <cstdio>
 #include <stdarg.h>
+
+#include <cstdio>
 #include <string>
+
+#include "raylib.h"
 
 #define BLOCK_SIZE 32
 #define WINDOW_BLOCK_WIDTH 40
@@ -31,5 +33,3 @@ typedef enum {
 } LogLevelT;
 
 void log(LogLevelT level, std::string msg, ...);
-
-bool is_bit_on(unsigned int number, int index);

@@ -2,11 +2,10 @@
 
 #include <cstdint>
 #include <optional>
+#include <vector>
 
 #include "raylib.h"
 #include "util.h"
-
-#define MAP_BLOCK_WIDTH (WINDOW_BLOCK_WIDTH * 2)
 
 typedef enum {
   MAP_OBJECT_VERTICAL_STATE_HIT_CEILING = 0,
@@ -30,8 +29,18 @@ struct IMapStateUpdatable {
   virtual void set_map_state(MapObjectState &&mos) = 0;
 };
 
+typedef enum {
+  TILE_AIR = '.',
+  TILE_GROUND = 'g',
+  TILE_START = 's',
+  TILE_END = 'e',
+} TileType;
+
+bool is_tile_steppable(TileType t);
+TileType char_to_tile_type(char ch);
+
 struct Map {
-  uint32_t map[MAP_BLOCK_WIDTH];
+  std::vector<std::vector<TileType>> map;
   int width;
 
   void draw(int scroll_offset);
@@ -43,5 +52,5 @@ struct Map {
 
   void evaluate_map_object_state(IMapStateUpdatable *obj);
 
-  Map();
+  Map(std::string map_file_path);
 };
