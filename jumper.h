@@ -10,7 +10,7 @@ struct Jumper : IMapStateUpdatable {
   MapObjectState map_state;
 
   void draw(int scroll_offset);
-  void init();
+  void init(Vector2 start_pos);
 
   Rectangle get_frame() const;
   Vector2 get_v() const;

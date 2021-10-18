@@ -39,34 +39,9 @@ TileType char_to_tile_type(char ch) {
   }
 }
 
-void read_map_file_to_vec(std::string file_path,
-                          std::vector<std::vector<TileType>> &v) {
-  std::ifstream file{file_path};
-  std::string line;
-
-  if (!file.is_open()) {
-    fprintf(stderr, "Failed opening map file %s", file_path.c_str());
-    exit(EXIT_FAILURE);
-  }
-
-  while (getline(file, line)) {
-    printf("Read map: %s\n", line.c_str());
-
-    std::vector<TileType> map_line;
-    for (auto &ch : line) {
-      map_line.push_back(char_to_tile_type(ch));
-    }
-
-    v.push_back(map_line);
-  }
-
-  file.close();
-}
-
 Map::Map(std::string map_file_path) {
-  read_map_file_to_vec(map_file_path, map);
-  width = map[0].size();
-  LOG_INFO("Width %d", width);
+  load_map(map_file_path);
+  // LOG_INFO("Width %d", width);
 }
 
 void Map::draw(int scroll_offset) {
@@ -75,7 +50,7 @@ void Map::draw(int scroll_offset) {
       int block_lhs_x = h * BLOCK_SIZE - scroll_offset;
       int block_rhs_x = block_lhs_x + BLOCK_SIZE;
       if (block_rhs_x <= 0 ||
-          block_lhs_x >= (width * BLOCK_SIZE)) {  // Out of window.
+          block_lhs_x >= (block_width * BLOCK_SIZE)) {  // Out of window.
         continue;
       }
 
@@ -84,6 +59,17 @@ void Map::draw(int scroll_offset) {
           DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
                         BLOCK_SIZE, BLOCK_SIZE, ORANGE);
           break;
+
+        case TILE_START:
+          DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
+                        BLOCK_SIZE, BLOCK_SIZE, GREEN);
+          break;
+
+        case TILE_END:
+          DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
+                        BLOCK_SIZE, BLOCK_SIZE, RED);
+          break;
+
         default:
           break;
       }
@@ -157,7 +143,7 @@ std::optional<int> Map::next_left(Rectangle p) {
 
   std::optional<int> left;
 
-  for (int i = std::min(curr_col - 1, width - 1); i >= 0; i--) {
+  for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
     if (is_tile_steppable(map[curr_row_top][i])) {
       left = std::optional<int>{(i + 1) * BLOCK_SIZE};
       break;
@@ -165,7 +151,7 @@ std::optional<int> Map::next_left(Rectangle p) {
   }
 
   if (curr_row_top != curr_row_bottom) {
-    for (int i = std::min(curr_col - 1, width - 1); i >= 0; i--) {
+    for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
       if (is_tile_steppable(map[curr_row_bottom][i])) {
         int bottom_left = (i + 1) * BLOCK_SIZE;
         left = std::optional<int>{
@@ -187,7 +173,7 @@ std::optional<int> Map::next_right(Rectangle p) {
 
   std::optional<int> right;
 
-  for (int i = std::max(0, curr_col + 1); i < width; i++) {
+  for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
     if (is_tile_steppable(map[curr_row_top][i])) {
       right = std::optional<int>{i * BLOCK_SIZE};
       break;
@@ -195,7 +181,7 @@ std::optional<int> Map::next_right(Rectangle p) {
   }
 
   if (curr_row_top != curr_row_bottom) {
-    for (int i = std::max(0, curr_col + 1); i < width; i++) {
+    for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
       if (is_tile_steppable(map[curr_row_bottom][i])) {
         int bottom_right = i * BLOCK_SIZE;
         right = std::optional<int>{
@@ -240,4 +226,39 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
   }
 
   obj->set_map_state(std::move(mos));
+}
+
+void Map::load_map(std::string file_path) {
+  std::ifstream file{file_path};
+  std::string line;
+
+  map.clear();
+
+  if (!file.is_open()) {
+    fprintf(stderr, "Failed opening map file %s", file_path.c_str());
+    exit(EXIT_FAILURE);
+  }
+
+  while (getline(file, line)) {
+    printf("Read map: %s\n", line.c_str());
+
+    std::vector<TileType> map_line;
+    for (auto &ch : line) {
+      if (ch == TILE_START) {
+        start_pos.x = map_line.size() * BLOCK_SIZE;
+        start_pos.y = map.size() * BLOCK_SIZE;
+      } else if (ch == TILE_END) {
+        end_pos.x = map_line.size() * BLOCK_SIZE;
+        end_pos.y = map.size() * BLOCK_SIZE;
+      }
+
+      map_line.push_back(char_to_tile_type(ch));
+    }
+
+    map.push_back(map_line);
+  }
+
+  file.close();
+
+  block_width = map[0].size();
 }

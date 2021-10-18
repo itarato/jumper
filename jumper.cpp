@@ -9,7 +9,7 @@
  * - Jumper pos represents bottom left corner of its bounding rect.
  */
 
-Jumper::Jumper() { init(); }
+Jumper::Jumper() {}
 
 void Jumper::draw(int scroll_offset) {
   Rectangle draw_frame(frame);
@@ -17,9 +17,10 @@ void Jumper::draw(int scroll_offset) {
   DrawRectangleRec(draw_frame, MAGENTA);
 }
 
-void Jumper::init() {
-  frame.x = 32;
-  frame.y = 32;
+void Jumper::init(Vector2 start_pos) {
+  LOG_INFO("Jumper start: %.2f %.2f", start_pos.x, start_pos.y);
+  frame.x = start_pos.x;
+  frame.y = start_pos.y;
   frame.width = JUMPER_WIDTH;
   frame.height = JUMPER_HEIGHT;
 

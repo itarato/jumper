@@ -41,7 +41,9 @@ TileType char_to_tile_type(char ch);
 
 struct Map {
   std::vector<std::vector<TileType>> map;
-  int width;
+  int block_width;
+  Vector2 start_pos;
+  Vector2 end_pos;
 
   void draw(int scroll_offset);
 
@@ -51,6 +53,7 @@ struct Map {
   std::optional<int> next_right(Rectangle p);
 
   void evaluate_map_object_state(IMapStateUpdatable *obj);
+  void load_map(std::string file_path);
 
   Map(std::string map_file_path);
 };

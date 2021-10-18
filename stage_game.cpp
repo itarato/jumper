@@ -42,7 +42,7 @@ void StageGame::update() {
           std::max((int)(jumper.frame.x + jumper.v.x), left_wall_x);
     } else if (jumper.v.x > 0.0f) {  // Going right.
       int right_wall_x =
-          map.next_right(jumper.frame).value_or(map.width * BLOCK_SIZE) -
+          map.next_right(jumper.frame).value_or(map.block_width * BLOCK_SIZE) -
           jumper.frame.width;
 
       // LOG_INFO("Right wall: %d", right_wall_x);
@@ -92,8 +92,13 @@ void StageGame::update() {
     }
   }
 
-  {  // Death checks.
+  {  // Completion checks.
     if (jumper.frame.y > GetScreenHeight()) {
+      is_over = true;
+    }
+
+    Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
+    if (CheckCollisionRecs(end_rec, jumper.frame)) {
       is_over = true;
     }
   }
@@ -108,19 +113,18 @@ void StageGame::draw() {
    */
   int scroll_offset = 0;
   if (jumper.frame.x >= WINDOW_SCROLL_PADDING) {
-    scroll_offset = std::min((map.width * BLOCK_SIZE) - GetScreenWidth(),
+    scroll_offset = std::min((map.block_width * BLOCK_SIZE) - GetScreenWidth(),
                              (int)jumper.frame.x - WINDOW_SCROLL_PADDING);
   }
+  // LOG_INFO("Scroll %d", scroll_offset);
 
-  LOG_INFO("Scroll %d", scroll_offset);
-
-  jumper.draw(scroll_offset);
   map.draw(scroll_offset);
+  jumper.draw(scroll_offset);
 }
 
 void StageGame::init() {
   is_over = false;
-  jumper.init();
+  jumper.init(map.start_pos);
 }
 
 std::optional<StageT> StageGame::next_stage() {

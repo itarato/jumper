@@ -1,4 +1,5 @@
 #include "app.h"
+
 #include "raylib.h"
 #include "stage_game.h"
 #include "stage_menu.h"
@@ -15,6 +16,8 @@ void App::init() {
 }
 
 void App::loop() {
+  stages[current_stage]->init();
+
   while (!WindowShouldClose()) {
     auto stage = stages[current_stage];
 
