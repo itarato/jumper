@@ -33,3 +33,4 @@ typedef enum {
 } LogLevelT;
 
 void log(LogLevelT level, std::string msg, ...);
+bool in_range(int number, int min, int max);

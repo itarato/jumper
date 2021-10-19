@@ -27,3 +27,7 @@ void log(LogLevelT level, std::string msg, ...) {
   vprintf(msg.c_str(), argptr);
   printf("\n");
 }
+
+bool in_range(int number, int min, int max) {
+  return number >= min && number <= max;
+}

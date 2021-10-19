@@ -143,20 +143,24 @@ std::optional<int> Map::next_left(Rectangle p) {
 
   std::optional<int> left;
 
-  for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
-    if (is_tile_steppable(map[curr_row_top][i])) {
-      left = std::optional<int>{(i + 1) * BLOCK_SIZE};
-      break;
+  if (in_range(curr_row_top, 0, map.size() - 1)) {
+    for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
+      if (is_tile_steppable(map[curr_row_top][i])) {
+        left = std::optional<int>{(i + 1) * BLOCK_SIZE};
+        break;
+      }
     }
   }
 
   if (curr_row_top != curr_row_bottom) {
-    for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
-      if (is_tile_steppable(map[curr_row_bottom][i])) {
-        int bottom_left = (i + 1) * BLOCK_SIZE;
-        left = std::optional<int>{
-            std::max(bottom_left, left.value_or(bottom_left))};
-        break;
+    if (in_range(curr_row_bottom, 0, map.size() - 1)) {
+      for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
+        if (is_tile_steppable(map[curr_row_bottom][i])) {
+          int bottom_left = (i + 1) * BLOCK_SIZE;
+          left = std::optional<int>{
+              std::max(bottom_left, left.value_or(bottom_left))};
+          break;
+        }
       }
     }
   }
@@ -173,20 +177,24 @@ std::optional<int> Map::next_right(Rectangle p) {
 
   std::optional<int> right;
 
-  for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
-    if (is_tile_steppable(map[curr_row_top][i])) {
-      right = std::optional<int>{i * BLOCK_SIZE};
-      break;
+  if (in_range(curr_row_top, 0, map.size() - 1)) {
+    for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
+      if (is_tile_steppable(map[curr_row_top][i])) {
+        right = std::optional<int>{i * BLOCK_SIZE};
+        break;
+      }
     }
   }
 
   if (curr_row_top != curr_row_bottom) {
-    for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
-      if (is_tile_steppable(map[curr_row_bottom][i])) {
-        int bottom_right = i * BLOCK_SIZE;
-        right = std::optional<int>{
-            std::min(bottom_right, right.value_or(bottom_right))};
-        break;
+    if (in_range(curr_row_bottom, 0, map.size() - 1)) {
+      for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
+        if (is_tile_steppable(map[curr_row_bottom][i])) {
+          int bottom_right = i * BLOCK_SIZE;
+          right = std::optional<int>{
+              std::min(bottom_right, right.value_or(bottom_right))};
+          break;
+        }
       }
     }
   }

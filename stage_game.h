@@ -5,6 +5,14 @@
 #include "map.h"
 #include "types.h"
 
+#define WAIT_TO_COMPLETE_FRAMES 160
+
+typedef enum {
+  GAME_STATE_PLAY = 0,
+  GAME_STATE_WAIT_TO_COMPLETE = 1,
+  GAME_STATE_COMPLETE = 2,
+} GameStateT;
+
 struct DoubleJump {
   Map *map;
   Jumper *jumper;
@@ -31,7 +39,9 @@ struct DoubleJump {
 };
 
 struct StageGame : public IStage {
-  bool is_over;
+  GameStateT state;
+  int wait_to_complete_timeout;
+  bool is_victory;
 
   void update();
   void draw();
