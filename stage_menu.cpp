@@ -26,6 +26,6 @@ std::optional<StageT> StageMenu::next_stage() {
 }
 
 void StageMenu::init() {
-  start_text.init()->with_aligned_center()->with_hover();
+  start_text.with_aligned_center()->with_hover()->with_color(DARKBLUE);
   is_start = false;
 }

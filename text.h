@@ -11,7 +11,6 @@ struct Text {
   const char* text;
   Color color;
   int font_size;
-  int width;
   Vector2 pos;
   bool is_hover_effect;
 
@@ -24,7 +23,6 @@ struct Text {
 
   Text* with_font_size(int new_font_size) {
     font_size = new_font_size;
-    update_width();
     return this;
   }
 
@@ -34,7 +32,7 @@ struct Text {
   }
 
   Text* with_aligned_center() {
-    pos.x = (float)(GetScreenWidth() - width) / 2.0f;
+    pos.x = (float)(GetScreenWidth() - width()) / 2.0f;
     pos.y = (float)(GetScreenHeight() - font_size) / 2.0f;
     return this;
   }
@@ -48,14 +46,9 @@ struct Text {
     return Rectangle{
         pos.x,
         pos.y,
-        (float)width,
+        (float)width(),
         (float)font_size,
     };
-  }
-
-  Text* init() {
-    update_width();
-    return this;
   }
 
   void draw() {
@@ -70,6 +63,5 @@ struct Text {
     DrawText(text, pos.x, pos.y, font_size, draw_color);
   }
 
- private:
-  void update_width() { width = MeasureText(text, font_size); }
+  int width() { return MeasureText(text, font_size); }
 };

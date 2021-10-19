@@ -134,10 +134,12 @@ void StageGame::draw() {
   jumper.draw(scroll_offset);
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE) {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
+                  Fade(RAYWHITE, 0.6));
     if (is_victory) {
-      draw_text_align_center("[v] VICTORY [v]", 128, DARKGRAY);
+      victory_text.draw();
     } else {
-      draw_text_align_center("[x] GAME OVER [x]", 128, DARKGRAY);
+      game_over_text.draw();
     }
   }
 }
@@ -146,8 +148,9 @@ void StageGame::init() {
   state = GAME_STATE_PLAY;
   jumper.init(map.start_pos);
   wait_to_complete_timeout = 0;
-  victory_text.init()->with_aligned_center();
-  game_over_text.init()->with_aligned_center();
+
+  victory_text.with_font_size(64)->with_aligned_center();
+  game_over_text.with_font_size(64)->with_aligned_center();
 }
 
 std::optional<StageT> StageGame::next_stage() {
