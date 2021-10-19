@@ -3,9 +3,10 @@
 #include "game_config.h"
 #include "jumper.h"
 #include "map.h"
+#include "text.h"
 #include "types.h"
 
-#define WAIT_TO_COMPLETE_FRAMES 160
+#define WAIT_TO_COMPLETE_FRAMES 180
 
 typedef enum {
   GAME_STATE_PLAY = 0,
@@ -54,9 +55,14 @@ struct StageGame : public IStage {
 
   DoubleJump double_jump;
 
+  Text victory_text;
+  Text game_over_text;
+
   StageGame(GameConfig *game_config)
       : game_config(game_config),
         map("./maps/1.jm"),
-        double_jump(&map, &jumper){};
+        double_jump(&map, &jumper),
+        victory_text("Victory"),
+        game_over_text("Game over"){};
   ~StageGame(){};
 };

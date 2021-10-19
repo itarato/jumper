@@ -135,9 +135,9 @@ void StageGame::draw() {
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE) {
     if (is_victory) {
-      DrawText("[v] VICTORY [v]", 100, 100, 32, DARKGRAY);
+      draw_text_align_center("[v] VICTORY [v]", 128, DARKGRAY);
     } else {
-      DrawText("[x] GAME OVER [x]", 100, 100, 32, DARKGRAY);
+      draw_text_align_center("[x] GAME OVER [x]", 128, DARKGRAY);
     }
   }
 }
@@ -146,6 +146,8 @@ void StageGame::init() {
   state = GAME_STATE_PLAY;
   jumper.init(map.start_pos);
   wait_to_complete_timeout = 0;
+  victory_text.init()->with_aligned_center();
+  game_over_text.init()->with_aligned_center();
 }
 
 std::optional<StageT> StageGame::next_stage() {

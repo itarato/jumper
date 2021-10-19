@@ -34,3 +34,6 @@ typedef enum {
 
 void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
+
+void draw_text_align_center(const char* text, int size, Color color);
+Rectangle text_frame(const char* text, int size, int x, int y);

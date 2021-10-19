@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game_config.h"
+#include "text.h"
 #include "types.h"
 
 struct StageMenu : public IStage {
@@ -13,6 +14,9 @@ struct StageMenu : public IStage {
   void init();
   std::optional<StageT> next_stage();
 
-  StageMenu(GameConfig *game_config) : game_config(game_config){};
+  Text start_text;
+
+  StageMenu(GameConfig *game_config)
+      : game_config(game_config), start_text("Start"){};
   ~StageMenu(){};
 };
