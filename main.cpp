@@ -19,11 +19,16 @@
  * - flying enemy
  */
 
+#include <stdlib.h>
+#include <time.h>
+
 #include "app.h"
 #include "util.h"
 
 int main() {
   LOG_INFO("Start main");
+
+  srand(time(NULL));
 
   App app{};
   app.init();
