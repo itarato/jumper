@@ -9,7 +9,7 @@
  * ← / → : move
  * SPACE : jump / double jump
  * ALT   : parachute
- * CTRL  : turbo
+ * CTRL  : dash
  */
 
 #define WINDOW_SCROLL_PADDING 256

@@ -1,5 +1,25 @@
+/**
+ * Jumper
+ *
+ * Features:
+ * - different map tiles (earth/obstacle/decoration)
+ * - custom size tile type
+ * - coin map type + score system
+ * - enemy map type + healh
+ * - map progressing system
+ * - sprites
+ * - limit dashes
+ * - score save (to file)
+ * - graphics
+ * - xbox controller
+ *
+ * Optional features:
+ * - teleport
+ * - destroyable map type
+ * - flying enemy
+ */
+
 #include "app.h"
-#include "raylib.h"
 #include "util.h"
 
 int main() {
