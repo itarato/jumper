@@ -17,6 +17,9 @@
  * - teleport
  * - destroyable map type
  * - flying enemy
+ *
+ * Bug:
+ * - sometimes fall through the floor when jumping
  */
 
 #include <stdlib.h>

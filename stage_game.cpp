@@ -92,6 +92,10 @@ void StageGame::update() {
         jumper.v.y -= JUMP_FORCE;
       }
     }
+
+    {  // Enemy movement.
+      enemy.update();
+    }
   }
 
   {  // Completion checks.
@@ -132,6 +136,7 @@ void StageGame::draw() {
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
+  enemy.draw(scroll_offset);
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
@@ -151,6 +156,8 @@ void StageGame::init() {
 
   victory_text.with_font_size(64)->with_aligned_center();
   game_over_text.with_font_size(64)->with_aligned_center();
+
+  enemy.init();
 }
 
 std::optional<StageT> StageGame::next_stage() {

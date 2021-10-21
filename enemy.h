@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 
-#define ENEMY_STEP_COUNT 8
+#define ENEMY_STEP_COUNT 32
 
 struct Enemy {
   Rectangle frame;
@@ -10,9 +10,11 @@ struct Enemy {
   Vector2 target;
   int step;
 
+  void init();
   bool is_target_reached();
   void update();
   void set_next_target();
+  void draw(int scroll_offset);
 
   Enemy() {}
 };

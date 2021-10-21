@@ -34,4 +34,4 @@ bool in_range(int number, int min, int max) {
   return number >= min && number <= max;
 }
 
-int rand_range(int min, int max) { return (rand() % (max - min)) + min; }
+int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }

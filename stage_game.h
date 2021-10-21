@@ -1,5 +1,6 @@
 #pragma once
 
+#include "enemy.h"
 #include "game_config.h"
 #include "jumper.h"
 #include "map.h"
@@ -52,6 +53,7 @@ struct StageGame : public IStage {
   GameConfig *game_config;
   Jumper jumper;
   Map map;
+  Enemy enemy;
 
   DoubleJump double_jump;
 
