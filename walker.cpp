@@ -2,7 +2,7 @@
 
 #include "util.h"
 
-void RandomWalker::init(Rectangle &frame) {
+void TargetWalker::init(Rectangle &frame) {
   frame = Rectangle{
       (float)BLOCK_SIZE * 13.0f,
       (float)BLOCK_SIZE * 9.0f,
@@ -13,7 +13,7 @@ void RandomWalker::init(Rectangle &frame) {
   target = Vector2{(float)BLOCK_SIZE * 13.0f, (float)BLOCK_SIZE * 8.0f};
 }
 
-void RandomWalker::update(Rectangle &frame) {
+void TargetWalker::update(Rectangle &frame) {
   if (step >= RANDOM_WALKER_STEP_COUNT) {
     set_next_target();
   }

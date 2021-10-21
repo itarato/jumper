@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 
-#define RANDOM_WALKER_STEP_COUNT 32
+#define RANDOM_WALKER_STEP_COUNT 4
 
 struct IWalker {
   virtual void init(Rectangle &frame) = 0;
@@ -10,7 +10,7 @@ struct IWalker {
   virtual ~IWalker(){};
 };
 
-struct RandomWalker : IWalker {
+struct TargetWalker : IWalker {
   Vector2 origin;
   Vector2 target;
   int step;
@@ -18,6 +18,10 @@ struct RandomWalker : IWalker {
   void init(Rectangle &frame);
   void update(Rectangle &frame);
 
+  virtual void set_next_target() {}
+};
+
+struct RandomWalker : TargetWalker {
   void set_next_target();
 };
 
