@@ -1,7 +1,8 @@
 #pragma once
 
-#include "raylib.h"
 #include <optional>
+
+#include "raylib.h"
 
 typedef enum {
   STAGE_MENU = 0,
