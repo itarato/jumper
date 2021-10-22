@@ -92,21 +92,30 @@ void StrictPathChaseWalker::set_next_target(Rectangle &frame) {
     for (int i = 0; i < 4; i++) {
       const IntVector2D neighbour_p{node.p.x + dirs[i].x, node.p.y + dirs[i].y};
 
+      if (neighbour_p == end) {
+        LOG_INFO("FOUND TARGET");
+        return;
+      }
+
+      // Out of map.
       if (neighbour_p.x < 0 || neighbour_p.y < 0 ||
           neighbour_p.y >= WINDOW_BLOCK_HEIGHT ||
           neighbour_p.x >= map->block_width) {
         continue;
       }
-      // auto existing_node_it =
-      //     std::find(visited.begin(), visited.end(),
-      //               [&](IntVector2D const &lhs) { return lhs == neighbour_p;
-      //               });
 
-      // AStarNode neighbor_node{
-      //     neighbour_p,
-      //     node.pre_cost + 1,
-      //     neighbour_p.dist(end),
-      // };
+      auto existing_node_it =
+          std::find(visited.begin(), visited.end(), neighbour_p);
+
+      // Already visited.
+      if (existing_node_it != visited.end()) continue;
+
+      AStarNode neighbour_node{
+          neighbour_p,
+          node.pre_cost + 1,
+          neighbour_p.dist(end),
+      };
+      inspected.push_back(neighbour_node);
     }
   }
 }

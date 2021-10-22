@@ -22,7 +22,8 @@ struct IntVector2D {
     return lhs.x == rhs.x ? (lhs.y < rhs.y) : (lhs.x < rhs.x);
   }
 
-  friend bool operator==(IntVector2D const& lhs, IntVector2D const& rhs) {
+  friend constexpr bool operator==(const IntVector2D& lhs,
+                                   const IntVector2D& rhs) {
     return lhs.x == rhs.x && lhs.y == rhs.y;
   }
 };
