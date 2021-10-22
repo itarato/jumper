@@ -13,6 +13,6 @@ struct Enemy {
   void set_next_target();
   void draw(int scroll_offset);
 
-  Enemy();
+  Enemy(Map *map);
   ~Enemy();
 };

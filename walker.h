@@ -1,5 +1,6 @@
 #pragma once
 
+#include "map.h"
 #include "raylib.h"
 
 #define RANDOM_WALKER_STEP_COUNT 4
@@ -14,24 +15,24 @@ struct TargetWalker : IWalker {
   Vector2 origin;
   Vector2 target;
   int step;
+  Map *map;
 
   void init(Rectangle &frame);
   void update(Rectangle &frame);
 
-  virtual void set_next_target() {}
+  virtual void set_next_target(Rectangle &frame) {}
+
+  TargetWalker(Map *map) : map(map) {}
 };
 
 struct RandomWalker : TargetWalker {
-  void set_next_target();
+  void set_next_target(Rectangle &frame);
+
+  RandomWalker(Map *map) : TargetWalker(map) {}
 };
 
-struct StrictPathChaseWalker : IWalker {
-  Vector2 origin;
-  Vector2 target;
-  int step;
+struct StrictPathChaseWalker : TargetWalker {
+  void set_next_target(Rectangle &frame);
 
-  void init(Rectangle &frame);
-  void update(Rectangle &frame);
-
-  void set_next_target();
+  StrictPathChaseWalker(Map *map) : TargetWalker(map) {}
 };
