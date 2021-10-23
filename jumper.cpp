@@ -18,7 +18,6 @@ void Jumper::draw(int scroll_offset) {
 }
 
 void Jumper::init(Vector2 start_pos) {
-  LOG_INFO("Jumper start: %.2f %.2f", start_pos.x, start_pos.y);
   frame.x = start_pos.x;
   frame.y = start_pos.y;
   frame.width = JUMPER_WIDTH;

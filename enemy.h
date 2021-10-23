@@ -1,19 +1,19 @@
 #pragma once
 
+#include <memory>
+
 #include "raylib.h"
 #include "walker.h"
 
 struct Enemy {
   Rectangle frame;
-
-  IWalker *walker;
+  std::unique_ptr<IWalker> walker;
 
   void init();
   void update(const Rectangle &player);
-  void draw(int scroll_offset);
+  void draw(int scroll_offset) const;
 
-  Enemy(Map *map);
-  ~Enemy();
+  Enemy(Rectangle frame, std::unique_ptr<IWalker> walker);
 
  private:
   void set_next_target();

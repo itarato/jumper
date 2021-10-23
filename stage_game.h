@@ -53,7 +53,7 @@ struct StageGame : public IStage {
   GameConfig *game_config;
   Jumper jumper;
   Map map;
-  Enemy enemy;
+  std::vector<Enemy> enemies;
 
   DoubleJump double_jump;
 
@@ -63,7 +63,6 @@ struct StageGame : public IStage {
   StageGame(GameConfig *game_config)
       : game_config(game_config),
         map("./maps/1.jm"),
-        enemy(&map),
         double_jump(&map, &jumper),
         victory_text("Victory"),
         game_over_text("Game over"){};

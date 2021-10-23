@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "raylib.h"
+#include "types.h"
 #include "util.h"
 
 typedef enum {
@@ -34,6 +35,8 @@ typedef enum {
   TILE_GROUND = 'g',
   TILE_START = 's',
   TILE_END = 'e',
+  TILE_ENEMY_RANDOM = 'r',
+  TILE_ENEMY_CHASER = 'c',
 } TileType;
 
 bool is_tile_steppable(TileType t);
@@ -56,5 +59,8 @@ struct Map {
   void load_map(std::string file_path);
   bool is_steppable(int y, int x) const;
 
+  std::vector<IntVector2D> coords_of_tile_type(TileType type);
+
   Map(std::string map_file_path);
+  ~Map() { LOG_INFO("Map dtor"); }
 };

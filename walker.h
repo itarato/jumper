@@ -2,6 +2,7 @@
 
 #include "map.h"
 #include "raylib.h"
+#include "util.h"
 
 #define RANDOM_WALKER_STEP_COUNT 16
 
@@ -24,12 +25,14 @@ struct TargetWalker : IWalker {
                                const Rectangle &player_frame) {}
 
   TargetWalker(Map *map) : map(map) {}
+  ~TargetWalker() {}
 };
 
 struct RandomWalker : TargetWalker {
   void set_next_target(Rectangle &self_frame, const Rectangle &player_frame);
 
   RandomWalker(Map *map) : TargetWalker(map) {}
+  ~RandomWalker() { LOG_INFO("RandomWalker dtor"); }
 };
 
 struct StrictPathChaseWalker : TargetWalker {

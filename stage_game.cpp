@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <memory>
 
 #include "util.h"
 
@@ -94,7 +95,9 @@ void StageGame::update() {
     }
 
     {  // Enemy movement.
-      enemy.update(jumper.frame);
+      for (Enemy& enemy : enemies) {
+        enemy.update(jumper.frame);
+      }
     }
   }
 
@@ -136,7 +139,9 @@ void StageGame::draw() {
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
-  enemy.draw(scroll_offset);
+  for (Enemy const& enemy : enemies) {
+    enemy.draw(scroll_offset);
+  }
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
@@ -150,6 +155,7 @@ void StageGame::draw() {
 }
 
 void StageGame::init() {
+  LOG_INFO("GAME STAGE INIT");
   state = GAME_STATE_PLAY;
   jumper.init(map.start_pos);
   wait_to_complete_timeout = 0;
@@ -157,7 +163,28 @@ void StageGame::init() {
   victory_text.with_font_size(64)->with_aligned_center();
   game_over_text.with_font_size(64)->with_aligned_center();
 
-  enemy.init();
+  enemies.clear();
+
+  auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
+  LOG_INFO("Found enemies: %d", random_enemies.size());
+  for (auto enemy_block_coord : random_enemies) {
+    enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
+                                   (float)(enemy_block_coord.y * BLOCK_SIZE),
+                                   (float)BLOCK_SIZE, (float)BLOCK_SIZE},
+                         std::make_unique<RandomWalker>(&map));
+  }
+
+  auto chaser_enemies = map.coords_of_tile_type(TILE_ENEMY_CHASER);
+  for (auto enemy_block_coord : chaser_enemies) {
+    enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
+                                   (float)(enemy_block_coord.y * BLOCK_SIZE),
+                                   (float)BLOCK_SIZE, (float)BLOCK_SIZE},
+                         std::make_unique<StrictPathChaseWalker>(&map));
+  }
+
+  for (Enemy& enemy : enemies) enemy.init();
+
+  LOG_INFO("Enemy count: %d", enemies.size());
 }
 
 std::optional<StageT> StageGame::next_stage() {

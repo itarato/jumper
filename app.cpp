@@ -6,10 +6,10 @@
 #include "util.h"
 
 void App::init() {
-  current_stage = STAGE_GAME;
-
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
+
+  current_stage = STAGE_GAME;
 
   InitWindow(WINDOW_WITDH, WINDOW_HEIGH, "Jumper");
   SetTargetFPS(60);

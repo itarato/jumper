@@ -9,14 +9,9 @@
 #include "util.h"
 
 void TargetWalker::init(Rectangle &self_frame) {
-  self_frame = Rectangle{
-      (float)BLOCK_SIZE * 13.0f,
-      (float)BLOCK_SIZE * 9.0f,
-      (float)BLOCK_SIZE,
-      (float)BLOCK_SIZE,
-  };
-  origin = Vector2{(float)BLOCK_SIZE * 13.0f, (float)BLOCK_SIZE * 9.0f};
-  target = Vector2{(float)BLOCK_SIZE * 13.0f, (float)BLOCK_SIZE * 8.0f};
+  step = RANDOM_WALKER_STEP_COUNT;
+  origin = Vector2{self_frame.x, self_frame.y};
+  target = Vector2{self_frame.x, self_frame.y};
 }
 
 void TargetWalker::update(Rectangle &self_frame,

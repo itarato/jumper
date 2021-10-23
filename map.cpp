@@ -33,6 +33,10 @@ TileType char_to_tile_type(char ch) {
       return TILE_START;
     case 'e':
       return TILE_END;
+    case 'r':
+      return TILE_ENEMY_RANDOM;
+    case 'c':
+      return TILE_ENEMY_CHASER;
     default:
       fprintf(stderr, "Invalid char on map: %c\n", ch);
       exit(EXIT_FAILURE);
@@ -274,4 +278,18 @@ void Map::load_map(std::string file_path) {
 // FIXME: Not out-of-bounds safe.
 bool Map::is_steppable(int y, int x) const {
   return is_tile_steppable(map[y][x]);
+}
+
+std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
+  std::vector<IntVector2D> out;
+
+  for (std::size_t y = 0; y < map.size(); y++) {
+    for (std::size_t x = 0; x < map[0].size(); x++) {
+      if (map[y][x] == type) {
+        out.emplace_back(x, y);
+      }
+    }
+  }
+
+  return out;
 }
