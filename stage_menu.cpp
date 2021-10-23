@@ -7,11 +7,10 @@
 #define BUTTON_TEXT_SIZE 64
 
 void StageMenu::update() {
-  if (IsMouseButtonPressed(0) || IsKeyPressed(KEY_SPACE)) {
-    Vector2 mouse_pos = GetMousePosition();
-    if (CheckCollisionPointRec(mouse_pos, start_text.frame())) {
-      is_start = true;
-    }
+  if ((IsMouseButtonPressed(0) &&
+       CheckCollisionPointRec(GetMousePosition(), start_text.frame())) ||
+      IsKeyPressed(KEY_ENTER)) {
+    is_start = true;
   }
 }
 

@@ -143,7 +143,8 @@ void StageGame::update() {
         state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
       wait_to_state_timeout++;
 
-      if (wait_to_state_timeout >= WAIT_TO_COMPLETE_FRAMES) {
+      if (wait_to_state_timeout >= WAIT_TO_COMPLETE_FRAMES ||
+          IsKeyPressed(KEY_ENTER)) {
         if (state == GAME_STATE_WAIT_TO_COMPLETE) {
           state = GAME_STATE_COMPLETE;
         } else if (state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
@@ -169,6 +170,12 @@ void StageGame::draw() {
     scroll_offset = std::min((map.block_width * BLOCK_SIZE) - GetScreenWidth(),
                              (int)jumper.frame.x - WINDOW_SCROLL_PADDING);
   }
+
+  DrawTextureTiled(
+      asset_manager.textures[IMG_BACKGROUND],
+      Rectangle{0.0f, 0.0f, 1.0f, (float)GetScreenHeight()},
+      Rectangle{0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight()},
+      Vector2{0.0f, 0.0f}, 0.0f, 1.1f, WHITE);
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);

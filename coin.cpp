@@ -1,5 +1,6 @@
 #include "coin.h"
 
+#include "asset_manager.h"
 #include "util.h"
 
 Coin::Coin(Vector2 pos)
@@ -7,6 +8,6 @@ Coin::Coin(Vector2 pos)
       is_collected(false) {}
 
 void Coin::draw(int screen_offset) {
-  DrawRectangle(frame.x - screen_offset, frame.y, frame.width, frame.height,
-                YELLOW);
+  DrawTexture(asset_manager.textures[IMG_COIN], frame.x - screen_offset,
+              frame.y, WHITE);
 }

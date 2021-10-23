@@ -27,6 +27,10 @@
 #define LOG_ERR(...) log(LOG_LEVEL_ERROR, __VA_ARGS__)
 
 #define IMG_GROUND "assets/images/ground.png"
+#define IMG_BACKGROUND "assets/images/background.png"
+#define IMG_ENEMY "assets/images/enemy.png"
+#define IMG_COIN "assets/images/coin.png"
+#define IMG_LADYBUG "assets/images/ladybug.png"
 
 typedef enum {
   LOG_LEVEL_INFO = 0,

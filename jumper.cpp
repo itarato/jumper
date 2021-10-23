@@ -1,5 +1,6 @@
 #include "jumper.h"
 
+#include "asset_manager.h"
 #include "util.h"
 
 #define JUMPER_WIDTH 28
@@ -12,9 +13,8 @@
 Jumper::Jumper() {}
 
 void Jumper::draw(int scroll_offset) {
-  Rectangle draw_frame(frame);
-  draw_frame.x -= scroll_offset;
-  DrawRectangleRec(draw_frame, MAGENTA);
+  DrawTexture(asset_manager.textures[IMG_LADYBUG], frame.x - scroll_offset,
+              frame.y, WHITE);
 }
 
 void Jumper::init(Vector2 start_pos) {

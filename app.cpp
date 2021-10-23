@@ -14,9 +14,11 @@ void App::init() {
   InitWindow(WINDOW_WITDH, WINDOW_HEIGH, "Jumper");
   SetTargetFPS(60);
 
-  asset_manager.textures.insert({IMG_GROUND, LoadTexture(IMG_GROUND)});
-  LOG_INFO("Init ground: %d", asset_manager.textures[IMG_GROUND].width);
-  LOG_INFO("Textures %d", asset_manager.textures.size());
+  std::vector<std::string> images{IMG_GROUND, IMG_BACKGROUND, IMG_ENEMY,
+                                  IMG_COIN, IMG_LADYBUG};
+  for (auto& image : images) {
+    asset_manager.textures.insert({image, LoadTexture(image.c_str())});
+  }
 }
 
 void App::loop() {
