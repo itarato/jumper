@@ -30,7 +30,11 @@
 #define IMG_BACKGROUND "assets/images/background.png"
 #define IMG_ENEMY "assets/images/enemy.png"
 #define IMG_COIN "assets/images/coin.png"
-#define IMG_LADYBUG "assets/images/ladybug.png"
+#define IMG_LADYBUG_STAND "assets/images/ladybug_stand.png"
+#define IMG_LADYBUG_MOVE_0 "assets/images/ladybug_move_0.png"
+#define IMG_LADYBUG_MOVE_1 "assets/images/ladybug_move_1.png"
+#define IMG_LADYBUG_MOVE_2 "assets/images/ladybug_move_2.png"
+#define IMG_LADYBUG_MOVE_3 "assets/images/ladybug_move_3.png"
 
 typedef enum {
   LOG_LEVEL_INFO = 0,
