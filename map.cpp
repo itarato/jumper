@@ -270,3 +270,8 @@ void Map::load_map(std::string file_path) {
 
   block_width = map[0].size();
 }
+
+// FIXME: Not out-of-bounds safe.
+bool Map::is_steppable(int y, int x) const {
+  return is_tile_steppable(map[y][x]);
+}

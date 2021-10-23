@@ -54,6 +54,7 @@ struct Map {
 
   void evaluate_map_object_state(IMapStateUpdatable *obj);
   void load_map(std::string file_path);
+  bool is_steppable(int y, int x) const;
 
   Map(std::string map_file_path);
 };

@@ -62,9 +62,6 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
                       (int)(player_frame.y / BLOCK_SIZE)};
   IntVector2D end_p{(int)(target.x / BLOCK_SIZE), (int)(target.y / BLOCK_SIZE)};
 
-  LOG_INFO("Start x:%d y:%d End x:%d y:%d", start_p.x, start_p.y, end_p.x,
-           end_p.y);
-
   AStarNode start{
       start_p,
       0,
@@ -106,8 +103,6 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
         target.x += BLOCK_SIZE * -dirs[i].x;
         target.y += BLOCK_SIZE * -dirs[i].y;
 
-        LOG_INFO("Origin x:%.2f y:%.2f -> Target x:%.2f y:%.2f", origin.x,
-                 origin.y, target.x, target.y);
         return;
       }
 
@@ -115,6 +110,11 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
       if (neighbour_p.x < 0 || neighbour_p.y < 0 ||
           neighbour_p.y >= WINDOW_BLOCK_HEIGHT ||
           neighbour_p.x >= map->block_width) {
+        continue;
+      }
+
+      // Steppable map tile.
+      if (map->is_steppable(neighbour_p.y, neighbour_p.x)) {
         continue;
       }
 
