@@ -102,15 +102,24 @@ void StageGame::update() {
   }
 
   {  // Completion checks.
-    if (jumper.frame.y > GetScreenHeight()) {
-      state = GAME_STATE_WAIT_TO_COMPLETE;
-      is_victory = false;
-    }
+    if (state == GAME_STATE_PLAY) {
+      if (jumper.frame.y > GetScreenHeight()) {
+        state = GAME_STATE_WAIT_TO_COMPLETE;
+        is_victory = false;
+      }
 
-    Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
-    if (CheckCollisionRecs(end_rec, jumper.frame)) {
-      state = GAME_STATE_WAIT_TO_COMPLETE;
-      is_victory = true;
+      Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
+      if (CheckCollisionRecs(end_rec, jumper.frame)) {
+        state = GAME_STATE_WAIT_TO_COMPLETE;
+        is_victory = true;
+      }
+
+      for (Enemy& enemy : enemies) {
+        if (CheckCollisionRecs(jumper.frame, enemy.frame)) {
+          state = GAME_STATE_WAIT_TO_COMPLETE;
+          is_victory = false;
+        }
+      }
     }
 
     if (state == GAME_STATE_WAIT_TO_COMPLETE) {
