@@ -5,7 +5,6 @@
  * - different map tiles (earth/obstacle/decoration)
  * - custom size tile type
  * - coin map type + score system
- * - map progressing system
  * - sprites
  * - graphics
  * - xbox controller

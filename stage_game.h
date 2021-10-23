@@ -1,5 +1,6 @@
 #pragma once
 
+#include "coin.h"
 #include "enemy.h"
 #include "game_config.h"
 #include "jumper.h"
@@ -56,6 +57,7 @@ struct StageGame : public IStage {
   Jumper jumper;
   Map map;
   std::vector<Enemy> enemies;
+  std::vector<Coin> coins;
 
   DoubleJump double_jump;
 

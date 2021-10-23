@@ -37,6 +37,8 @@ TileType char_to_tile_type(char ch) {
       return TILE_ENEMY_RANDOM;
     case 'c':
       return TILE_ENEMY_CHASER;
+    case '*':
+      return TILE_COIN;
     default:
       fprintf(stderr, "Invalid char on map: %c\n", ch);
       exit(EXIT_FAILURE);

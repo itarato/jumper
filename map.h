@@ -37,6 +37,7 @@ typedef enum {
   TILE_END = 'e',
   TILE_ENEMY_RANDOM = 'r',
   TILE_ENEMY_CHASER = 'c',
+  TILE_COIN = '*',
 } TileType;
 
 bool is_tile_steppable(TileType t);

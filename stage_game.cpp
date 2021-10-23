@@ -101,6 +101,18 @@ void StageGame::update() {
     }
   }
 
+  {  // Coin collection.
+    for (auto& coin : coins) {
+      if (CheckCollisionRecs(coin.frame, jumper.frame)) {
+        coin.is_collected = true;
+      }
+    }
+
+    coins.erase(std::remove_if(coins.begin(), coins.end(),
+                               [](const auto& e) { return e.is_collected; }),
+                coins.end());
+  }
+
   {  // Completion checks.
     if (state == GAME_STATE_PLAY) {
       if (jumper.frame.y > GetScreenHeight()) {
@@ -164,6 +176,10 @@ void StageGame::draw() {
     enemy.draw(scroll_offset);
   }
 
+  for (auto coin : coins) {
+    coin.draw(scroll_offset);
+  }
+
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||
       state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
@@ -213,6 +229,12 @@ void StageGame::init_level() {
   }
 
   for (Enemy& enemy : enemies) enemy.init();
+
+  auto coin_coords = map.coords_of_tile_type(TILE_COIN);
+  for (auto coin_coord : coin_coords) {
+    coins.emplace_back(Vector2{(float)(coin_coord.x * BLOCK_SIZE),
+                               (float)(coin_coord.y * BLOCK_SIZE)});
+  }
 }
 
 std::optional<StageT> StageGame::next_stage() {
