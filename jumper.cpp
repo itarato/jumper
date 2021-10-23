@@ -14,21 +14,18 @@
  * - Jumper pos represents bottom left corner of its bounding rect.
  */
 
-Jumper::Jumper() {}
+Jumper::Jumper()
+    : move_sprite({IMG_LADYBUG_MOVE_0, IMG_LADYBUG_MOVE_1, IMG_LADYBUG_MOVE_2,
+                   IMG_LADYBUG_MOVE_3},
+                  JUMPER_STEP_SLOWNESS) {}
 
 void Jumper::draw(int scroll_offset) {
   std::string image_name;
   if (v.x == 0.0) {
     image_name = IMG_LADYBUG_STAND;
   } else {
-    std::vector<std::string> move_images{IMG_LADYBUG_MOVE_0, IMG_LADYBUG_MOVE_1,
-                                         IMG_LADYBUG_MOVE_2,
-                                         IMG_LADYBUG_MOVE_3};
-
-    image_name = move_images[(move_sprite_counter %
-                              (move_images.size() * JUMPER_STEP_SLOWNESS)) /
-                             JUMPER_STEP_SLOWNESS];
-    move_sprite_counter++;
+    image_name = move_sprite.current_img();
+    move_sprite.progress();
   }
 
   if (v.x < 0.0f) {

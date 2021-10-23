@@ -2,14 +2,15 @@
 
 #include "map.h"
 #include "raylib.h"
+#include "sprite.h"
 #include "types.h"
 
 struct Jumper : IMapStateUpdatable {
   Rectangle frame;
   Vector2 v;
   MapObjectState map_state;
-  int move_sprite_counter;
   bool is_facing_right;
+  Sprite move_sprite;
 
   void draw(int scroll_offset);
   void init(Vector2 start_pos);
