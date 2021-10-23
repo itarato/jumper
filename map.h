@@ -49,6 +49,7 @@ struct Map {
   Vector2 start_pos;
   Vector2 end_pos;
 
+  void build(std::string map_file_path);
   void draw(int scroll_offset);
 
   std::optional<int> next_floor(Rectangle p);
@@ -61,7 +62,4 @@ struct Map {
   bool is_steppable(int y, int x) const;
 
   std::vector<IntVector2D> coords_of_tile_type(TileType type);
-
-  Map(std::string map_file_path);
-  ~Map() { LOG_INFO("Map dtor"); }
 };

@@ -110,7 +110,11 @@ void StageGame::update() {
 
       Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
       if (CheckCollisionRecs(end_rec, jumper.frame)) {
-        state = GAME_STATE_WAIT_TO_COMPLETE;
+        if (current_map_number < (int)map_file_paths.size() - 1) {
+          state = GAME_STATE_WAIT_TO_NEXT_LEVEL;
+        } else {
+          state = GAME_STATE_WAIT_TO_COMPLETE;
+        }
         is_victory = true;
       }
 
@@ -122,11 +126,19 @@ void StageGame::update() {
       }
     }
 
-    if (state == GAME_STATE_WAIT_TO_COMPLETE) {
-      wait_to_complete_timeout++;
+    if (state == GAME_STATE_WAIT_TO_COMPLETE ||
+        state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
+      wait_to_state_timeout++;
 
-      if (wait_to_complete_timeout >= WAIT_TO_COMPLETE_FRAMES) {
-        state = GAME_STATE_COMPLETE;
+      if (wait_to_state_timeout >= WAIT_TO_COMPLETE_FRAMES) {
+        if (state == GAME_STATE_WAIT_TO_COMPLETE) {
+          state = GAME_STATE_COMPLETE;
+        } else if (state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
+          // FIXME - encapsulate state changes with logic.
+          state = GAME_STATE_PLAY;
+          current_map_number++;
+          init_level();
+        }
       }
     }
   }
@@ -152,7 +164,8 @@ void StageGame::draw() {
     enemy.draw(scroll_offset);
   }
 
-  if (state == GAME_STATE_WAIT_TO_COMPLETE) {
+  if (state == GAME_STATE_WAIT_TO_COMPLETE ||
+      state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
                   Fade(RAYWHITE, 0.6));
     if (is_victory) {
@@ -165,17 +178,25 @@ void StageGame::draw() {
 
 void StageGame::init() {
   LOG_INFO("GAME STAGE INIT");
-  state = GAME_STATE_PLAY;
-  jumper.init(map.start_pos);
-  wait_to_complete_timeout = 0;
+
+  current_map_number = 0;
 
   victory_text.with_font_size(64)->with_aligned_center();
   game_over_text.with_font_size(64)->with_aligned_center();
 
+  init_level();
+}
+
+void StageGame::init_level() {
+  map.build(map_file_paths[current_map_number]);
+
+  state = GAME_STATE_PLAY;
+  jumper.init(map.start_pos);
+  wait_to_state_timeout = 0;
+
   enemies.clear();
 
   auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
-  LOG_INFO("Found enemies: %d", random_enemies.size());
   for (auto enemy_block_coord : random_enemies) {
     enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
                                    (float)(enemy_block_coord.y * BLOCK_SIZE),
@@ -192,8 +213,6 @@ void StageGame::init() {
   }
 
   for (Enemy& enemy : enemies) enemy.init();
-
-  LOG_INFO("Enemy count: %d", enemies.size());
 }
 
 std::optional<StageT> StageGame::next_stage() {

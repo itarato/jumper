@@ -12,7 +12,8 @@
 typedef enum {
   GAME_STATE_PLAY = 0,
   GAME_STATE_WAIT_TO_COMPLETE = 1,
-  GAME_STATE_COMPLETE = 2,
+  GAME_STATE_WAIT_TO_NEXT_LEVEL = 2,
+  GAME_STATE_COMPLETE = 3,
 } GameStateT;
 
 struct DoubleJump {
@@ -42,12 +43,13 @@ struct DoubleJump {
 
 struct StageGame : public IStage {
   GameStateT state;
-  int wait_to_complete_timeout;
+  int wait_to_state_timeout;
   bool is_victory;
 
   void update();
   void draw();
   void init();
+  void init_level();
   std::optional<StageT> next_stage();
 
   GameConfig *game_config;
@@ -60,11 +62,14 @@ struct StageGame : public IStage {
   Text victory_text;
   Text game_over_text;
 
+  int current_map_number;
+  std::vector<std::string> map_file_paths;
+
   StageGame(GameConfig *game_config)
       : game_config(game_config),
-        map("./maps/1.jm"),
         double_jump(&map, &jumper),
         victory_text("Victory"),
-        game_over_text("Game over"){};
+        game_over_text("Game over"),
+        map_file_paths({"./maps/1.jm", "./maps/2.jm"}){};
   ~StageGame(){};
 };

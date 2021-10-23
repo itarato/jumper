@@ -43,10 +43,7 @@ TileType char_to_tile_type(char ch) {
   }
 }
 
-Map::Map(std::string map_file_path) {
-  load_map(map_file_path);
-  // LOG_INFO("Width %d", width);
-}
+void Map::build(std::string map_file_path) { load_map(map_file_path); }
 
 void Map::draw(int scroll_offset) {
   for (int v = 0; v < (int)map.size(); v++) {

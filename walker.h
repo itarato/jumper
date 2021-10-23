@@ -32,7 +32,6 @@ struct RandomWalker : TargetWalker {
   void set_next_target(Rectangle &self_frame, const Rectangle &player_frame);
 
   RandomWalker(Map *map) : TargetWalker(map) {}
-  ~RandomWalker() { LOG_INFO("RandomWalker dtor"); }
 };
 
 struct StrictPathChaseWalker : TargetWalker {
