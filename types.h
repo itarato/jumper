@@ -15,7 +15,9 @@ struct IntVector2D {
   int y;
 
   int dist(const IntVector2D other) const {
-    return abs(x - other.x) + abs(y - other.y);
+    return abs(x - other.x) + abs(y - other.y) /*+
+           abs(abs(x - other.x) - abs(y - other.y))*/
+        ;
   }
 
   friend bool operator<(IntVector2D const& lhs, IntVector2D const& rhs) {

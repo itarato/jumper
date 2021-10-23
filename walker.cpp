@@ -8,8 +8,8 @@
 #include "types.h"
 #include "util.h"
 
-void TargetWalker::init(Rectangle &frame) {
-  frame = Rectangle{
+void TargetWalker::init(Rectangle &self_frame) {
+  self_frame = Rectangle{
       (float)BLOCK_SIZE * 13.0f,
       (float)BLOCK_SIZE * 9.0f,
       (float)BLOCK_SIZE,
@@ -19,22 +19,27 @@ void TargetWalker::init(Rectangle &frame) {
   target = Vector2{(float)BLOCK_SIZE * 13.0f, (float)BLOCK_SIZE * 8.0f};
 }
 
-void TargetWalker::update(Rectangle &frame) {
+void TargetWalker::update(Rectangle &self_frame,
+                          const Rectangle &player_frame) {
   if (step >= RANDOM_WALKER_STEP_COUNT) {
-    set_next_target(frame);
+    self_frame.x = target.x;
+    self_frame.y = target.y;
+
+    step = 0;
+    origin = target;
+
+    set_next_target(self_frame, player_frame);
   }
 
   step++;
 
   float fragment_multiplier = (float)step / (float)RANDOM_WALKER_STEP_COUNT;
-  frame.x = origin.x + ((target.x - origin.x) * fragment_multiplier);
-  frame.y = origin.y + ((target.y - origin.y) * fragment_multiplier);
+  self_frame.x = origin.x + ((target.x - origin.x) * fragment_multiplier);
+  self_frame.y = origin.y + ((target.y - origin.y) * fragment_multiplier);
 }
 
-void RandomWalker::set_next_target(Rectangle &frame) {
-  step = 0;
-  origin = target;
-
+void RandomWalker::set_next_target(Rectangle &self_frame,
+                                   const Rectangle &player_frame) {
   switch (rand_range(0, 3)) {
     case 0:
       target.x += BLOCK_SIZE;
@@ -51,14 +56,19 @@ void RandomWalker::set_next_target(Rectangle &frame) {
   }
 }
 
-void StrictPathChaseWalker::set_next_target(Rectangle &frame) {
-  origin = target;
+void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
+                                            const Rectangle &player_frame) {
+  IntVector2D start_p{(int)(player_frame.x / BLOCK_SIZE),
+                      (int)(player_frame.y / BLOCK_SIZE)};
+  IntVector2D end_p{(int)(target.x / BLOCK_SIZE), (int)(target.y / BLOCK_SIZE)};
 
-  IntVector2D end{(int)(frame.x / BLOCK_SIZE), (int)(frame.y / BLOCK_SIZE)};
+  LOG_INFO("Start x:%d y:%d End x:%d y:%d", start_p.x, start_p.y, end_p.x,
+           end_p.y);
+
   AStarNode start{
-      {(int)(target.x / BLOCK_SIZE), (int)(target.y / BLOCK_SIZE)},
+      start_p,
       0,
-      start.p.dist(end),
+      start_p.dist(end_p),
   };
 
   std::vector<AStarNode> inspected;
@@ -92,8 +102,12 @@ void StrictPathChaseWalker::set_next_target(Rectangle &frame) {
     for (int i = 0; i < 4; i++) {
       const IntVector2D neighbour_p{node.p.x + dirs[i].x, node.p.y + dirs[i].y};
 
-      if (neighbour_p == end) {
-        LOG_INFO("FOUND TARGET");
+      if (neighbour_p == end_p) {
+        target.x += BLOCK_SIZE * -dirs[i].x;
+        target.y += BLOCK_SIZE * -dirs[i].y;
+
+        LOG_INFO("Origin x:%.2f y:%.2f -> Target x:%.2f y:%.2f", origin.x,
+                 origin.y, target.x, target.y);
         return;
       }
 
@@ -109,11 +123,12 @@ void StrictPathChaseWalker::set_next_target(Rectangle &frame) {
 
       // Already visited.
       if (existing_node_it != visited.end()) continue;
+      visited.insert(neighbour_p);
 
       AStarNode neighbour_node{
           neighbour_p,
           node.pre_cost + 1,
-          neighbour_p.dist(end),
+          neighbour_p.dist(end_p),
       };
       inspected.push_back(neighbour_node);
     }

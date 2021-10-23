@@ -9,10 +9,12 @@ struct Enemy {
   IWalker *walker;
 
   void init();
-  void update();
-  void set_next_target();
+  void update(const Rectangle &player);
   void draw(int scroll_offset);
 
   Enemy(Map *map);
   ~Enemy();
+
+ private:
+  void set_next_target();
 };

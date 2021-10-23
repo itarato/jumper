@@ -94,7 +94,7 @@ void StageGame::update() {
     }
 
     {  // Enemy movement.
-      enemy.update();
+      enemy.update(jumper.frame);
     }
   }
 

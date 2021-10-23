@@ -3,11 +3,11 @@
 #include "map.h"
 #include "raylib.h"
 
-#define RANDOM_WALKER_STEP_COUNT 4
+#define RANDOM_WALKER_STEP_COUNT 32
 
 struct IWalker {
-  virtual void init(Rectangle &frame) = 0;
-  virtual void update(Rectangle &frame) = 0;
+  virtual void init(Rectangle &self_frame) = 0;
+  virtual void update(Rectangle &self_frame, const Rectangle &player_frame) = 0;
   virtual ~IWalker(){};
 };
 
@@ -17,22 +17,23 @@ struct TargetWalker : IWalker {
   int step;
   Map *map;
 
-  void init(Rectangle &frame);
-  void update(Rectangle &frame);
+  void init(Rectangle &self_frame);
+  void update(Rectangle &self_frame, const Rectangle &player_frame);
 
-  virtual void set_next_target(Rectangle &frame) {}
+  virtual void set_next_target(Rectangle &self_frame,
+                               const Rectangle &player_frame) {}
 
   TargetWalker(Map *map) : map(map) {}
 };
 
 struct RandomWalker : TargetWalker {
-  void set_next_target(Rectangle &frame);
+  void set_next_target(Rectangle &self_frame, const Rectangle &player_frame);
 
   RandomWalker(Map *map) : TargetWalker(map) {}
 };
 
 struct StrictPathChaseWalker : TargetWalker {
-  void set_next_target(Rectangle &frame);
+  void set_next_target(Rectangle &self_frame, const Rectangle &player_frame);
 
   StrictPathChaseWalker(Map *map) : TargetWalker(map) {}
 };
