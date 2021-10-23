@@ -1,5 +1,8 @@
 #pragma once
 
+#include <memory>
+
+#include "asset_manager.h"
 #include "coin.h"
 #include "enemy.h"
 #include "game_config.h"

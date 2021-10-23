@@ -169,7 +169,6 @@ void StageGame::draw() {
     scroll_offset = std::min((map.block_width * BLOCK_SIZE) - GetScreenWidth(),
                              (int)jumper.frame.x - WINDOW_SCROLL_PADDING);
   }
-  // LOG_INFO("Scroll %d", scroll_offset);
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);

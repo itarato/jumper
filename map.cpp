@@ -3,6 +3,7 @@
 #include <fstream>
 #include <utility>
 
+#include "asset_manager.h"
 #include "raylib.h"
 #include "util.h"
 
@@ -59,8 +60,13 @@ void Map::draw(int scroll_offset) {
 
       switch (map[v][h]) {
         case TILE_GROUND:
-          DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
-                        BLOCK_SIZE, BLOCK_SIZE, ORANGE);
+          // DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
+          //               BLOCK_SIZE, BLOCK_SIZE, ORANGE);
+          DrawTexture(asset_manager.textures[IMG_GROUND],
+                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, WHITE);
+          // LOG_INFO("Drew ground: %d",
+          // asset_manager.textures[IMG_GROUND].width); LOG_INFO("Textures %d",
+          // asset_manager.textures.size());
           break;
 
         case TILE_START:
