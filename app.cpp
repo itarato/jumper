@@ -27,6 +27,7 @@ void App::loop() {
     ClearBackground(RAYWHITE);
 
     stage->draw();
+    DrawFPS(GetScreenWidth() - 64, 12);
 
     auto next_stage = stage->next_stage();
     if (next_stage.has_value()) {

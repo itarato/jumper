@@ -105,6 +105,7 @@ void StageGame::update() {
     for (auto& coin : coins) {
       if (CheckCollisionRecs(coin.frame, jumper.frame)) {
         coin.is_collected = true;
+        score++;
       }
     }
 
@@ -190,6 +191,8 @@ void StageGame::draw() {
       game_over_text.draw();
     }
   }
+
+  DrawText(TextFormat("Score: %d", score), 12, 12, 20, DARKGRAY);
 }
 
 void StageGame::init() {
@@ -204,6 +207,8 @@ void StageGame::init() {
 }
 
 void StageGame::init_level() {
+  score = 0;
+
   map.build(map_file_paths[current_map_number]);
 
   state = GAME_STATE_PLAY;

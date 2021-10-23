@@ -58,6 +58,7 @@ struct StageGame : public IStage {
   Map map;
   std::vector<Enemy> enemies;
   std::vector<Coin> coins;
+  int score;
 
   DoubleJump double_jump;
 
