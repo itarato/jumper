@@ -3,7 +3,7 @@
 #include "map.h"
 #include "raylib.h"
 
-#define RANDOM_WALKER_STEP_COUNT 8
+#define RANDOM_WALKER_STEP_COUNT 16
 
 struct IWalker {
   virtual void init(Rectangle &self_frame) = 0;
