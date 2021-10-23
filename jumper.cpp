@@ -9,6 +9,7 @@
 #define JUMPER_WIDTH 28
 #define JUMPER_HEIGHT 20
 #define JUMPER_STEP_SLOWNESS 3
+#define JUMPER_STAND_SLOWNESS 6
 
 /**
  * - Jumper pos represents bottom left corner of its bounding rect.
@@ -17,12 +18,16 @@
 Jumper::Jumper()
     : move_sprite({IMG_LADYBUG_MOVE_0, IMG_LADYBUG_MOVE_1, IMG_LADYBUG_MOVE_2,
                    IMG_LADYBUG_MOVE_3},
-                  JUMPER_STEP_SLOWNESS) {}
+                  JUMPER_STEP_SLOWNESS),
+      stand_sprite({IMG_LADYBUG_STAND_0, IMG_LADYBUG_STAND_1,
+                    IMG_LADYBUG_STAND_2, IMG_LADYBUG_STAND_3},
+                   JUMPER_STAND_SLOWNESS) {}
 
 void Jumper::draw(int scroll_offset) {
   std::string image_name;
   if (v.x == 0.0) {
-    image_name = IMG_LADYBUG_STAND;
+    image_name = stand_sprite.current_img();
+    stand_sprite.progress();
   } else {
     image_name = move_sprite.current_img();
     move_sprite.progress();
@@ -52,8 +57,8 @@ void Jumper::init(Vector2 start_pos) {
 
   is_facing_right = true;
 
-  v.x = 0;
-  v.y = 0;
+  v.x = 0.0f;
+  v.y = 0.0f;
 }
 
 Rectangle Jumper::get_frame() const { return frame; }

@@ -11,6 +11,7 @@ struct Jumper : IMapStateUpdatable {
   MapObjectState map_state;
   bool is_facing_right;
   Sprite move_sprite;
+  Sprite stand_sprite;
 
   void draw(int scroll_offset);
   void init(Vector2 start_pos);
