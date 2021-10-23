@@ -45,6 +45,7 @@ TileType char_to_tile_type(char ch);
 struct Map {
   std::vector<std::vector<TileType>> map;
   int block_width;
+  // FIXME -> we could generally memoize these
   Vector2 start_pos;
   Vector2 end_pos;
 

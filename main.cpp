@@ -5,15 +5,15 @@
  * - different map tiles (earth/obstacle/decoration)
  * - custom size tile type
  * - coin map type + score system
- * - enemy map type + healh
  * - map progressing system
  * - sprites
- * - limit dashes
- * - score save (to file)
  * - graphics
  * - xbox controller
  *
  * Optional features:
+ * - score save (to file)
+ * - limit dashes
+ * - health
  * - teleport
  * - destroyable map type
  * - flying enemy
