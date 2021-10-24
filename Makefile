@@ -16,8 +16,6 @@ debug: executable
 fs: CXXFLAGS += -DFULLSCREEN
 fs: executable
 
-executable: $(OBJ)
-	$(CXX) -o $(BIN) $^ $(CXXFLAGS) $(LIBS)
 
 %.o:%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
@@ -25,3 +23,14 @@ executable: $(OBJ)
 clean:
 	rm -f ./*.o
 	rm -f ./$(BIN)
+
+# Level editor:
+
+LE_BIN = level_editor
+LE_SRC := $(filter-out main.cpp, $(SRC))
+LE_OBJ=$(addsuffix .o,$(basename $(LE_SRC)))
+
+le_executable: $(LE_OBJ)
+	$(CXX) -o $(LE_BIN) $^ $(CXXFLAGS) $(LIBS)
+
+le: le_executable
