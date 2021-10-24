@@ -98,7 +98,7 @@ void StageGame::draw() {
 
   DrawTextureTiled(
       asset_manager.textures[IMG_BACKGROUND],
-      Rectangle{0.0f, 0.0f, 1.0f, (float)GetScreenHeight()},
+      Rectangle{0.0f, 0.0f, 32.0f, (float)GetScreenHeight()},
       Rectangle{0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight()},
       Vector2{0.0f, 0.0f}, 0.0f, 1.1f, WHITE);
 
@@ -148,6 +148,7 @@ void StageGame::init_level() {
   wait_to_state_timeout = 0;
 
   enemies.clear();
+  coins.clear();
 
   auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
   for (auto enemy_block_coord : random_enemies) {
