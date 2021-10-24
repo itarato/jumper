@@ -20,31 +20,6 @@ typedef enum {
   GAME_STATE_COMPLETE = 3,
 } GameStateT;
 
-struct DoubleJump {
-  Map *map;
-  Jumper *jumper;
-  int air_jumps;
-
-  DoubleJump(Map *map, Jumper *jumper)
-      : map(map), jumper(jumper), air_jumps(0) {}
-
-  bool can_jump() {
-    if (jumper->map_state.type == MAP_OBJECT_VERTICAL_STATE_ON_FLOOR) {
-      air_jumps = 0;
-      return true;
-    }
-
-    if (air_jumps >= 1) {
-      return false;
-    }
-
-    air_jumps++;
-    return true;
-  }
-
-  void reset() { air_jumps = 0; }
-};
-
 struct StageGame : public IStage {
   GameStateT state;
   int wait_to_state_timeout;
@@ -63,8 +38,6 @@ struct StageGame : public IStage {
   std::vector<Coin> coins;
   int score;
 
-  DoubleJump double_jump;
-
   Text victory_text;
   Text game_over_text;
 
@@ -73,7 +46,6 @@ struct StageGame : public IStage {
 
   StageGame(GameConfig *game_config)
       : game_config(game_config),
-        double_jump(&map, &jumper),
         victory_text("Victory"),
         game_over_text("Game over"),
         map_file_paths({"./maps/1.jm", "./maps/2.jm"}){};

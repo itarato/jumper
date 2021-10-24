@@ -23,6 +23,83 @@ Jumper::Jumper()
                     IMG_LADYBUG_STAND_2, IMG_LADYBUG_STAND_3},
                    JUMPER_STAND_SLOWNESS) {}
 
+void Jumper::update(Map *map) {
+  {  // Horizontal movement.
+    if (IsKeyDown(KEY_LEFT)) {
+      v.x = std::min(-JUMPER_HMOVE_V, v.x * FRICTION);
+
+      if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+        v.x = -5 * JUMPER_HMOVE_V;
+      }
+    } else if (IsKeyDown(KEY_RIGHT)) {
+      v.x = std::max(JUMPER_HMOVE_V, v.x * FRICTION);
+
+      if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+        v.x = 5 * JUMPER_HMOVE_V;
+      }
+    } else {
+      v.x *= FRICTION;
+      if (abs(v.x) < VELOCITY_ZERO_THRESHOLD) {
+        v.x = 0.0f;
+      }
+    }
+
+    if (v.x < 0.0f) {  // Going left.
+      int left_wall_x = map->next_left(frame).value_or(0);
+      // LOG_INFO("Left wall: %d", left_wall_x);
+      frame.x = std::max((int)(frame.x + v.x), left_wall_x);
+    } else if (v.x > 0.0f) {  // Going right.
+      int right_wall_x =
+          map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
+          frame.width;
+
+      // LOG_INFO("Right wall: %d", right_wall_x);
+      frame.x = std::min((int)(frame.x + v.x), right_wall_x);
+    }
+  }
+
+  {  // Vertical movement.
+    map->evaluate_map_object_state(this);
+
+    switch (map_state.type) {
+      case MAP_OBJECT_VERTICAL_STATE_HIT_CEILING:
+        v.y = 0.0f;
+        frame.y = map_state.ceiling;
+        break;
+
+      case MAP_OBJECT_VERTICAL_STATE_REACHING_TOP:
+        v.y = VELOCITY_ZERO_THRESHOLD;
+        break;
+
+      case MAP_OBJECT_VERTICAL_STATE_JUMP:
+        v.y *= 1.0f / GRAVITY_ACC;
+        frame.y += v.y;
+        break;
+
+      case MAP_OBJECT_VERTICAL_STATE_ON_FLOOR:
+        v.y = 0.0f;
+        frame.y = map_state.floor;
+        double_jump.reset();
+        break;
+
+      case MAP_OBJECT_VERTICAL_STATE_FALLING:
+        if (IsKeyDown(KEY_LEFT_ALT)) {
+          v.y = PARACHUTE_V;
+        } else {
+          v.y *= GRAVITY_ACC;
+        }
+        frame.y += v.y;
+        break;
+    }
+  }
+
+  {  // Vertical movement.
+    if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
+      v.y -= JUMP_FORCE;
+    }
+  }
+}
+
 void Jumper::draw(int scroll_offset) {
   std::string image_name;
   if (v.x == 0.0) {
