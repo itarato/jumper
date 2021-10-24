@@ -42,8 +42,9 @@ struct Input {
   string value;
   Rectangle frame;
   bool is_active;
+  string label;
 
-  Input() : frame({0.0f, 0.0f, 128, 18}) {}
+  Input(string label) : frame({0.0f, 0.0f, 128, 18}), label(label) {}
 
   void set_pos(Vector2 pos) {
     frame.x = pos.x;
@@ -73,14 +74,15 @@ struct Input {
     DrawRectangleRec(frame, WHITE);
     if (is_active) DrawRectangleLinesEx(frame, 2, BLUE);
     DrawText(value.c_str(), frame.x + 4, frame.y + 4, 10, BLACK);
+    DrawText(label.c_str(), frame.x + 4, frame.y + 22, 8, WHITE);
   }
 };
 
 struct App {
   Tile map[MAP_MAX_HEIGHT][MAP_MAX_WIDTH];
 
-  int offsx = 0;
-  int offsy = 0;
+  int offsx = -BLOCK_SIZE;
+  int offsy = -BLOCK_SIZE;
 
   int prev_offsx;
   int prev_offsy;
@@ -92,11 +94,11 @@ struct App {
 
   Input input_window_width;
 
-  App() {
+  App() : input_window_width("Width") {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
-    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 256),
+    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 132),
                                        (float)(GetScreenHeight() - 90)});
   }
 
