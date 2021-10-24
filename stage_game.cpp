@@ -96,12 +96,6 @@ void StageGame::draw() {
                              (int)jumper.frame.x - WINDOW_SCROLL_PADDING);
   }
 
-  DrawTextureTiled(
-      asset_manager.textures[IMG_BACKGROUND],
-      Rectangle{0.0f, 0.0f, 32.0f, (float)GetScreenHeight()},
-      Rectangle{0.0f, 0.0f, (float)GetScreenWidth(), (float)GetScreenHeight()},
-      Vector2{0.0f, 0.0f}, 0.0f, 1.1f, WHITE);
-
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
 

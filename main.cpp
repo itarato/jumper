@@ -4,8 +4,6 @@
  * Features:
  * - different map tiles (earth/obstacle/decoration)
  * - custom size tile type
- * - sprites
- * - graphics
  * - xbox controller
  *
  * Optional features:

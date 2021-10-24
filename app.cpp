@@ -41,7 +41,7 @@ void App::loop() {
     stage->update();
 
     BeginDrawing();
-    ClearBackground(RAYWHITE);
+    ClearBackground(Color{50, 80, 120, 255});
 
     stage->draw();
     DrawFPS(GetScreenWidth() - 96, 12);
