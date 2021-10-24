@@ -104,6 +104,7 @@ void StageGame::draw() {
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
+
   for (Enemy const& enemy : enemies) {
     enemy.draw(scroll_offset);
   }

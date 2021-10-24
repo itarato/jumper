@@ -58,15 +58,16 @@ void Map::draw(int scroll_offset) {
         continue;
       }
 
+      std::string ground_img;
       switch (map[v][h]) {
         case TILE_GROUND:
-          // DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
-          //               BLOCK_SIZE, BLOCK_SIZE, ORANGE);
-          DrawTexture(asset_manager.textures[IMG_GROUND],
+          if (v > 0 && map[v - 1][h] != TILE_GROUND) {
+            ground_img = IMG_GROUND_TOP;
+          } else {
+            ground_img = IMG_GROUND;
+          }
+          DrawTexture(asset_manager.textures[ground_img],
                       h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, WHITE);
-          // LOG_INFO("Drew ground: %d",
-          // asset_manager.textures[IMG_GROUND].width); LOG_INFO("Textures %d",
-          // asset_manager.textures.size());
           break;
 
         case TILE_START:
