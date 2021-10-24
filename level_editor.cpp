@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <utility>
 
 #include "raylib.h"
@@ -17,23 +18,62 @@ using namespace std;
 
 enum TileType {
   TILE_TYPE_NOTHING = 0,
-  TILE_TYPE_GROUND = 1,
-  TILE_TYPE_START = 2,
-  TILE_TYPE_END = 3,
-  TILE_TYPE_COIN = 4,
+  TILE_TYPE_AIR = 1,
+  TILE_TYPE_GROUND = 2,
+  TILE_TYPE_START = 3,
+  TILE_TYPE_END = 4,
+  TILE_TYPE_COIN = 5,
 };
 
 static const TileType tile_types[] = {
-    TILE_TYPE_NOTHING, TILE_TYPE_GROUND, TILE_TYPE_START,
-    TILE_TYPE_END,     TILE_TYPE_COIN,
+    TILE_TYPE_NOTHING, TILE_TYPE_AIR, TILE_TYPE_GROUND,
+    TILE_TYPE_START,   TILE_TYPE_END, TILE_TYPE_COIN,
 };
 
 static const char* tile_type_names[] = {
-    "Nothing", "Ground", "Start", "End", "Coin",
+    "Nothing", "Air", "Ground", "Start", "End", "Coin",
 };
 
 struct Tile {
   TileType type = TILE_TYPE_NOTHING;
+};
+
+struct Input {
+  string value;
+  Rectangle frame;
+  bool is_active;
+
+  Input() : frame({0.0f, 0.0f, 128, 18}) {}
+
+  void set_pos(Vector2 pos) {
+    frame.x = pos.x;
+    frame.y = pos.y;
+  }
+
+  void update() {
+    if (!is_active && IsMouseButtonPressed(0) &&
+        CheckCollisionPointRec(GetMousePosition(), frame))
+      is_active = true;
+
+    if (is_active && IsKeyPressed(KEY_TAB)) is_active = false;
+
+    if (is_active) {
+      int ch;
+      while ((ch = GetKeyPressed())) {
+        if (ch >= 32 && ch <= 126) {
+          value.push_back((char)ch);
+        } else if (ch == KEY_BACKSPACE) {
+          value.pop_back();
+        }
+      }
+    }
+  }
+
+  void draw() {
+    DrawRectangleRec(frame, WHITE);
+    if (is_active) DrawRectangleLinesEx(frame, 2, BLUE);
+    DrawText(value.c_str(), frame.x + 4, frame.y + 4, 10, BLACK);
+  }
 };
 
 struct App {
@@ -46,13 +86,18 @@ struct App {
   int prev_offsy;
   Vector2 start_mouse_pos;
 
-  int selected_tile_idx = 1;
+  int selected_tile_idx = TILE_TYPE_GROUND;
 
   bool is_bulk_creation;
+
+  Input input_window_width;
 
   App() {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
+
+    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 256),
+                                       (float)(GetScreenHeight() - 90)});
   }
 
   void run() {
@@ -109,6 +154,10 @@ struct App {
         selected_tile_idx = (selected_tile_idx + 1) % tile_count();
       }
     }
+
+    {  // Input fields.
+      input_window_width.update();
+    }
   }
 
   void draw() {
@@ -117,7 +166,8 @@ struct App {
     // Map.
     for (int y = 0; y < MAP_MAX_HEIGHT; y++) {
       for (int x = 0; x < MAP_MAX_WIDTH; x++) {
-        Vector2 tile_pos{x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy};
+        Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
+                         (float)(y * BLOCK_SIZE - offsy)};
         draw_tile(map[y][x].type, tile_pos);
       }
     }
@@ -150,6 +200,8 @@ struct App {
         DrawText(tile_type_names[i], i * 96 + 32, GetScreenHeight() - 30, 16,
                  WHITE);
       }
+
+      input_window_width.draw();
     }
   }
 
@@ -176,6 +228,9 @@ struct App {
 
     switch (type) {
       case TILE_TYPE_NOTHING:
+        color = RAYWHITE;
+        break;
+      case TILE_TYPE_AIR:
         color = Fade(BLUE, 0.2);
         break;
       case TILE_TYPE_GROUND:
