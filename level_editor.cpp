@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <iostream>
 #include <map>
 #include <string>
@@ -13,6 +14,7 @@
 #define BLOCK_SIZE 32
 #define MAP_WINDOW_WIDTH 40
 #define MAP_WINDOW_HEIGHT 20
+#define MAP_MIN_WIDTH 40
 #define MAP_MAX_WIDTH 200
 #define MAP_MAX_HEIGHT 20
 
@@ -47,7 +49,9 @@ struct InputManager {
 
   void on_change(Input* input);
   vector<pair<string, string>> get_events() {
-    return vector<pair<string, string>>{events};
+    vector<pair<string, string>> out{events};
+    events.clear();
+    return out;
   }
 };
 
@@ -66,6 +70,8 @@ struct Input {
     frame.y = pos.y;
   }
 
+  void set_value(string new_value) { value = new_value; }
+
   void update() {
     if (!is_active && IsMouseButtonPressed(0) &&
         CheckCollisionPointRec(GetMousePosition(), frame))
@@ -79,7 +85,7 @@ struct Input {
         if (ch >= 32 && ch <= 126) {
           value.push_back((char)ch);
         } else if (ch == KEY_BACKSPACE) {
-          value.pop_back();
+          if (!value.empty()) value.pop_back();
         } else if (ch == KEY_ENTER) {
           manager->on_change(this);
         }
@@ -116,12 +122,15 @@ struct App {
   InputManager input_manager;
   Input input_window_width;
 
+  int map_width = MAP_WINDOW_WIDTH;
+
   App() : input_window_width(&input_manager, "Width") {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
     input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 132),
                                        (float)(GetScreenHeight() - 90)});
+    input_window_width.set_value(to_string(MAP_WINDOW_WIDTH));
   }
 
   void run() {
@@ -137,6 +146,23 @@ struct App {
   }
 
   void update() {
+    {  // Input fields.
+      for (pair<string, string> input_change : input_manager.get_events()) {
+        if (input_change.first == "Width") {
+          int new_width = stoi(input_change.second);
+          if (new_width > MAP_MAX_WIDTH) {
+            input_window_width.set_value(to_string(MAP_MAX_WIDTH));
+            map_width = MAP_MAX_WIDTH;
+          } else if (new_width < MAP_MIN_WIDTH) {
+            input_window_width.set_value(to_string(MAP_MIN_WIDTH));
+            map_width = MAP_MIN_WIDTH;
+          } else {
+            map_width = new_width;
+          }
+        }
+      }
+    }
+
     {  // Drag space.
       if (IsKeyPressed(KEY_LEFT_ALT)) {
         prev_offsx = offsx;
@@ -189,7 +215,7 @@ struct App {
 
     // Map.
     for (int y = 0; y < MAP_MAX_HEIGHT; y++) {
-      for (int x = 0; x < MAP_MAX_WIDTH; x++) {
+      for (int x = 0; x < map_width; x++) {
         Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
                          (float)(y * BLOCK_SIZE - offsy)};
         draw_tile(map[y][x].type, tile_pos);
@@ -197,9 +223,7 @@ struct App {
     }
 
     // Window frame.
-    DrawRectangleLines(0 - offsx, 0 - offsy, MAP_MAX_WIDTH * BLOCK_SIZE,
-                       MAP_MAX_HEIGHT * BLOCK_SIZE, RED);
-    DrawRectangleLines(0 - offsx, 0 - offsy, MAP_WINDOW_WIDTH * BLOCK_SIZE,
+    DrawRectangleLines(0 - offsx, 0 - offsy, map_width * BLOCK_SIZE,
                        MAP_WINDOW_HEIGHT * BLOCK_SIZE, MAGENTA);
 
     if (mouse_in_max_frame()) {
@@ -245,7 +269,7 @@ struct App {
     pair<int, int> mouse_tile_coord = tile_coord();
 
     return mouse_tile_coord.first >= 0 && mouse_tile_coord.second >= 0 &&
-           mouse_tile_coord.first < MAP_MAX_WIDTH &&
+           mouse_tile_coord.first < map_width &&
            mouse_tile_coord.second < MAP_MAX_HEIGHT;
   }
 
