@@ -27,7 +27,7 @@ clean:
 # Level editor:
 
 LE_BIN = level_editor
-LE_SRC := $(filter-out main.cpp, $(SRC))
+LE_SRC = level_editor.cpp
 LE_OBJ=$(addsuffix .o,$(basename $(LE_SRC)))
 
 le_executable: $(LE_OBJ)

@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <fstream>
 #include <iostream>
 #include <map>
 #include <string>
@@ -29,6 +30,23 @@ enum TileType {
   TILE_TYPE_COIN = 5,
 };
 
+TileType char_to_tile_type(char ch) {
+  switch (ch) {
+    case '.':
+      return TILE_TYPE_AIR;
+    case 'g':
+      return TILE_TYPE_GROUND;
+    case 's':
+      return TILE_TYPE_START;
+    case 'e':
+      return TILE_TYPE_END;
+    case '*':
+      return TILE_TYPE_COIN;
+    default:
+      return TILE_TYPE_NOTHING;
+  }
+}
+
 static const TileType tile_types[] = {
     TILE_TYPE_NOTHING, TILE_TYPE_AIR, TILE_TYPE_GROUND,
     TILE_TYPE_START,   TILE_TYPE_END, TILE_TYPE_COIN,
@@ -40,6 +58,12 @@ static const char* tile_type_names[] = {
 
 struct Tile {
   TileType type = TILE_TYPE_NOTHING;
+  string value;
+
+  void reset() {
+    type = TILE_TYPE_NOTHING;
+    value = "";
+  }
 };
 
 struct Input;
@@ -131,6 +155,37 @@ struct App {
     input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 132),
                                        (float)(GetScreenHeight() - 90)});
     input_window_width.set_value(to_string(MAP_WINDOW_WIDTH));
+  }
+
+  void load_map_file(const char* file_name) {
+    ifstream map_file{file_name};
+    if (!map_file.is_open()) {
+      fprintf(stderr, "Cannot open map file");
+      exit(EXIT_FAILURE);
+    }
+
+    for (int y = 0; y < MAP_MAX_HEIGHT; y++) {
+      for (int x = 0; x < MAP_MAX_WIDTH; x++) {
+        map[y][x].reset();
+      }
+    }
+
+    string line;
+    int width;
+
+    for (int i = 0; i < MAP_WINDOW_HEIGHT; i++) {
+      getline(map_file, line);
+
+      if (i == 0) {
+        width = line.size();
+        map_width = width;
+        input_window_width.set_value(to_string(width));
+      }
+
+      for (int j = 0; j < (int)line.size(); j++) {
+        map[i][j].type = char_to_tile_type(line.at(j));
+      }
+    }
   }
 
   void run() {
@@ -305,7 +360,12 @@ struct App {
   int tile_count() const { return sizeof(tile_types) / sizeof(TileType); }
 };
 
-int main() {
+int main(int argc, char** argv) {
   App app{};
+
+  if (argc >= 1) {
+    app.load_map_file(argv[1]);
+  }
+
   app.run();
 }
