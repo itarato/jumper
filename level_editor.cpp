@@ -1,6 +1,8 @@
 #include <iostream>
+#include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "raylib.h"
 
@@ -38,13 +40,26 @@ struct Tile {
   TileType type = TILE_TYPE_NOTHING;
 };
 
+struct Input;
+
+struct InputManager {
+  vector<pair<string, string>> events;
+
+  void on_change(Input* input);
+  vector<pair<string, string>> get_events() {
+    return vector<pair<string, string>>{events};
+  }
+};
+
 struct Input {
   string value;
   Rectangle frame;
   bool is_active;
   string label;
+  InputManager* manager;
 
-  Input(string label) : frame({0.0f, 0.0f, 128, 18}), label(label) {}
+  Input(InputManager* manager, string label)
+      : frame({0.0f, 0.0f, 128, 18}), label(label), manager(manager) {}
 
   void set_pos(Vector2 pos) {
     frame.x = pos.x;
@@ -65,6 +80,8 @@ struct Input {
           value.push_back((char)ch);
         } else if (ch == KEY_BACKSPACE) {
           value.pop_back();
+        } else if (ch == KEY_ENTER) {
+          manager->on_change(this);
         }
       }
     }
@@ -77,6 +94,10 @@ struct Input {
     DrawText(label.c_str(), frame.x + 4, frame.y + 22, 8, WHITE);
   }
 };
+
+void InputManager::on_change(Input* input) {
+  events.push_back({input->label, input->value});
+}
 
 struct App {
   Tile map[MAP_MAX_HEIGHT][MAP_MAX_WIDTH];
@@ -92,9 +113,10 @@ struct App {
 
   bool is_bulk_creation;
 
+  InputManager input_manager;
   Input input_window_width;
 
-  App() : input_window_width("Width") {
+  App() : input_window_width(&input_manager, "Width") {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
@@ -182,9 +204,12 @@ struct App {
 
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
-      DrawRectangle(mouse_tile_coord.first * BLOCK_SIZE - offsx,
-                    mouse_tile_coord.second * BLOCK_SIZE - offsy, BLOCK_SIZE,
-                    BLOCK_SIZE, RED);
+      draw_tile(tile_types[selected_tile_idx],
+                Vector2{(float)(mouse_tile_coord.first * BLOCK_SIZE - offsx),
+                        (float)(mouse_tile_coord.second * BLOCK_SIZE - offsy)});
+      DrawRectangleLines(mouse_tile_coord.first * BLOCK_SIZE - offsx,
+                         mouse_tile_coord.second * BLOCK_SIZE - offsy,
+                         BLOCK_SIZE, BLOCK_SIZE, BLACK);
     }
 
     {  // Overlay
