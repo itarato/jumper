@@ -129,6 +129,30 @@ void InputManager::on_change(Input* input) {
   events.push_back({input->label, input->value});
 }
 
+struct Button {
+  Vector2 pos;
+  string label;
+  int font_size = 10;
+
+  Button(string label) : label(label) {}
+
+  bool is_clicked() {
+    return (IsMouseButtonPressed(0) &&
+            CheckCollisionPointRec(GetMousePosition(), frame()));
+  }
+
+  Rectangle frame() {
+    return Rectangle{pos.x, pos.y,
+                     (float)(MeasureText(label.c_str(), font_size) + 8),
+                     (float)(font_size + 8)};
+  }
+
+  void draw() {
+    DrawRectangleRec(frame(), BLUE);
+    DrawText(label.c_str(), pos.x + 4, pos.y + 4, font_size, WHITE);
+  }
+};
+
 struct App {
   Tile map[MAP_MAX_HEIGHT][MAP_MAX_WIDTH];
 
@@ -148,13 +172,18 @@ struct App {
 
   int map_width = MAP_WINDOW_WIDTH;
 
-  App() : input_window_width(&input_manager, "Width") {
+  Button save_button;
+
+  App() : input_window_width(&input_manager, "Width"), save_button("Save") {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
     input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 132),
                                        (float)(GetScreenHeight() - 90)});
     input_window_width.set_value(to_string(MAP_WINDOW_WIDTH));
+
+    save_button.pos.x = GetScreenWidth() - 42;
+    save_button.pos.y = GetScreenHeight() - 28;
   }
 
   void load_map_file(const char* file_name) {
@@ -263,6 +292,12 @@ struct App {
     {  // Input fields.
       input_window_width.update();
     }
+
+    {  // Button.
+      if (save_button.is_clicked()) {
+        cout << "Write\n";
+      }
+    }
   }
 
   void draw() {
@@ -308,6 +343,8 @@ struct App {
       }
 
       input_window_width.draw();
+
+      save_button.draw();
     }
   }
 
