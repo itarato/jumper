@@ -66,28 +66,18 @@ struct Tile {
   }
 };
 
-struct Input;
-
-struct InputManager {
-  vector<pair<string, string>> events;
-
-  void on_change(Input* input);
-  vector<pair<string, string>> get_events() {
-    vector<pair<string, string>> out{events};
-    events.clear();
-    return out;
-  }
-};
-
 struct Input {
+  static vector<Input*> inputs;
+
   string value;
   Rectangle frame;
   bool is_active;
   string label;
-  InputManager* manager;
 
-  Input(InputManager* manager, string label)
-      : frame({0.0f, 0.0f, 128, 18}), label(label), manager(manager) {}
+  Input(string label)
+      : frame({0.0f, 0.0f, 128, 18}), is_active(false), label(label) {
+    Input::inputs.push_back(this);
+  }
 
   void set_pos(Vector2 pos) {
     frame.x = pos.x;
@@ -98,8 +88,13 @@ struct Input {
 
   void update() {
     if (!is_active && IsMouseButtonPressed(0) &&
-        CheckCollisionPointRec(GetMousePosition(), frame))
+        CheckCollisionPointRec(GetMousePosition(), frame)) {
+      for (auto input : Input::inputs) {
+        input->is_active = false;
+      }
+
       is_active = true;
+    }
 
     if (is_active && IsKeyPressed(KEY_TAB)) is_active = false;
 
@@ -110,12 +105,12 @@ struct Input {
           value.push_back((char)ch);
         } else if (ch == KEY_BACKSPACE) {
           if (!value.empty()) value.pop_back();
-        } else if (ch == KEY_ENTER) {
-          manager->on_change(this);
         }
       }
     }
   }
+
+  bool has_changed() { return is_active && IsKeyPressed(KEY_ENTER); }
 
   void draw() {
     DrawRectangleRec(frame, WHITE);
@@ -125,9 +120,7 @@ struct Input {
   }
 };
 
-void InputManager::on_change(Input* input) {
-  events.push_back({input->label, input->value});
-}
+vector<Input*> Input::inputs{};
 
 struct Button {
   Vector2 pos;
@@ -167,23 +160,30 @@ struct App {
 
   bool is_bulk_creation;
 
-  InputManager input_manager;
   Input input_window_width;
+  Input input_map_file_name;
 
   int map_width = MAP_WINDOW_WIDTH;
 
   Button save_button;
 
-  App() : input_window_width(&input_manager, "Width"), save_button("Save") {
+  App()
+      : input_window_width("Width"),
+        input_map_file_name("Map file"),
+        save_button("Save") {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
-    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 132),
+    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 232),
                                        (float)(GetScreenHeight() - 90)});
     input_window_width.set_value(to_string(MAP_WINDOW_WIDTH));
 
+    input_map_file_name.set_pos(Vector2{(float)(GetScreenWidth() - 232),
+                                        (float)(GetScreenHeight() - 50)});
+    input_map_file_name.set_value("maps/untitled.jm");
+
     save_button.pos.x = GetScreenWidth() - 42;
-    save_button.pos.y = GetScreenHeight() - 28;
+    save_button.pos.y = GetScreenHeight() - 58;
   }
 
   void load_map_file(const char* file_name) {
@@ -231,18 +231,16 @@ struct App {
 
   void update() {
     {  // Input fields.
-      for (pair<string, string> input_change : input_manager.get_events()) {
-        if (input_change.first == "Width") {
-          int new_width = stoi(input_change.second);
-          if (new_width > MAP_MAX_WIDTH) {
-            input_window_width.set_value(to_string(MAP_MAX_WIDTH));
-            map_width = MAP_MAX_WIDTH;
-          } else if (new_width < MAP_MIN_WIDTH) {
-            input_window_width.set_value(to_string(MAP_MIN_WIDTH));
-            map_width = MAP_MIN_WIDTH;
-          } else {
-            map_width = new_width;
-          }
+      if (input_window_width.has_changed()) {
+        int new_width = stoi(input_window_width.value);
+        if (new_width > MAP_MAX_WIDTH) {
+          input_window_width.set_value(to_string(MAP_MAX_WIDTH));
+          map_width = MAP_MAX_WIDTH;
+        } else if (new_width < MAP_MIN_WIDTH) {
+          input_window_width.set_value(to_string(MAP_MIN_WIDTH));
+          map_width = MAP_MIN_WIDTH;
+        } else {
+          map_width = new_width;
         }
       }
     }
@@ -291,11 +289,13 @@ struct App {
 
     {  // Input fields.
       input_window_width.update();
+      input_map_file_name.update();
     }
 
     {  // Button.
       if (save_button.is_clicked()) {
-        cout << "Write\n";
+        save_map();
+        // cout << "Map saved: " << ;
       }
     }
   }
@@ -343,6 +343,7 @@ struct App {
       }
 
       input_window_width.draw();
+      input_map_file_name.draw();
 
       save_button.draw();
     }
@@ -395,6 +396,8 @@ struct App {
   }
 
   int tile_count() const { return sizeof(tile_types) / sizeof(TileType); }
+
+  void save_map() {}
 };
 
 int main(int argc, char** argv) {
