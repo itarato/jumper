@@ -27,6 +27,8 @@ enum TileType {
   TILE_TYPE_START = 3,
   TILE_TYPE_END = 4,
   TILE_TYPE_COIN = 5,
+  TILE_TYPE_REGEX = 6,
+  TILE_TYPE_DOOR = 7,
 };
 
 TileType char_to_tile_type(char ch) {
@@ -41,6 +43,10 @@ TileType char_to_tile_type(char ch) {
       return TILE_TYPE_END;
     case '*':
       return TILE_TYPE_COIN;
+    case 'r':
+      return TILE_TYPE_REGEX;
+    case 'd':
+      return TILE_TYPE_DOOR;
     default:
       return TILE_TYPE_NOTHING;
   }
@@ -58,6 +64,10 @@ char tile_type_to_char(TileType type) {
       return 'e';
     case TILE_TYPE_COIN:
       return '*';
+    case TILE_TYPE_REGEX:
+      return 'r';
+    case TILE_TYPE_DOOR:
+      return 'd';
     default:
       fprintf(stderr, "Unknown tile on tile->char conversion");
       return ' ';
@@ -65,12 +75,12 @@ char tile_type_to_char(TileType type) {
 }
 
 static const TileType tile_types[] = {
-    TILE_TYPE_NOTHING, TILE_TYPE_AIR, TILE_TYPE_GROUND,
-    TILE_TYPE_START,   TILE_TYPE_END, TILE_TYPE_COIN,
+    TILE_TYPE_NOTHING, TILE_TYPE_AIR,  TILE_TYPE_GROUND, TILE_TYPE_START,
+    TILE_TYPE_END,     TILE_TYPE_COIN, TILE_TYPE_REGEX,  TILE_TYPE_DOOR,
 };
 
 static const char* tile_type_names[] = {
-    "Nothing", "Air", "Ground", "Start", "End", "Coin",
+    "Nothing", "Air", "Ground", "Start", "End", "Coin", "Regex", "Door",
 };
 
 struct Tile {
@@ -179,15 +189,20 @@ struct App {
 
   Input input_window_width;
   Input input_map_file_name;
+  Input input_tile_value;
 
   int map_width = MAP_WINDOW_WIDTH;
 
   Button save_button;
 
+  Tile* selected_tile;
+
   App()
       : input_window_width("Width"),
         input_map_file_name("Map file"),
-        save_button("Save") {
+        input_tile_value("Tile value"),
+        save_button("Save"),
+        selected_tile(nullptr) {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
@@ -198,6 +213,9 @@ struct App {
     input_map_file_name.set_pos(Vector2{(float)(GetScreenWidth() - 232),
                                         (float)(GetScreenHeight() - 50)});
     input_map_file_name.set_value("maps/untitled.jm");
+
+    input_tile_value.set_pos(Vector2{(float)(GetScreenWidth() - 432),
+                                     (float)(GetScreenHeight() - 90)});
 
     save_button.pos.x = GetScreenWidth() - 42;
     save_button.pos.y = GetScreenHeight() - 58;
@@ -260,6 +278,10 @@ struct App {
           map_width = new_width;
         }
       }
+
+      if (input_tile_value.has_changed() && selected_tile) {
+        selected_tile->value = input_tile_value.value;
+      }
     }
 
     {  // Drag space.
@@ -307,12 +329,22 @@ struct App {
     {  // Input fields.
       input_window_width.update();
       input_map_file_name.update();
+      input_tile_value.update();
     }
 
     {  // Button.
       if (save_button.is_clicked()) {
         save_map();
         // cout << "Map saved: " << ;
+      }
+    }
+
+    {  // Tile selection.
+      if (IsMouseButtonPressed(1) && mouse_in_max_frame()) {
+        auto selected_tile_coord = tile_coord();
+        selected_tile =
+            &map[selected_tile_coord.second][selected_tile_coord.first];
+        input_tile_value.value = selected_tile->value;
       }
     }
   }
@@ -326,6 +358,16 @@ struct App {
         Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
                          (float)(y * BLOCK_SIZE - offsy)};
         draw_tile(map[y][x].type, tile_pos);
+
+        if (selected_tile == &map[y][x]) {
+          DrawRectangleLines(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy,
+                             BLOCK_SIZE, BLOCK_SIZE, BLACK);
+        }
+
+        if (!map[y][x].value.empty()) {
+          DrawText(map[y][x].value.c_str(), x * BLOCK_SIZE - offsx + 2,
+                   y * BLOCK_SIZE - offsy + 2, 6, BLACK);
+        }
       }
     }
 
@@ -355,12 +397,13 @@ struct App {
 
         draw_tile(tile_types[i], Vector2{(float)(32 + i * 96),
                                          (float)(GetScreenHeight() - 76)});
-        DrawText(tile_type_names[i], i * 96 + 32, GetScreenHeight() - 30, 16,
+        DrawText(tile_type_names[i], i * 96 + 32, GetScreenHeight() - 30, 20,
                  WHITE);
       }
 
       input_window_width.draw();
       input_map_file_name.draw();
+      input_tile_value.draw();
 
       save_button.draw();
     }
@@ -406,6 +449,12 @@ struct App {
       case TILE_TYPE_COIN:
         color = ORANGE;
         break;
+      case TILE_TYPE_REGEX:
+        color = BLUE;
+        break;
+      case TILE_TYPE_DOOR:
+        color = MAGENTA;
+        break;
       default:
         break;
     }
@@ -424,11 +473,21 @@ struct App {
       return;
     }
 
+    // Tiles.
     for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
       for (int x = 0; x < map_width; x++) {
         map_file.put(tile_type_to_char(map[y][x].type));
       }
       map_file.put('\n');
+    }
+
+    // Values.
+    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
+      for (int x = 0; x < map_width; x++) {
+        if (map[y][x].value.empty()) continue;
+
+        map_file << x << " " << y << " " << map[y][x].value << endl;
+      }
     }
   }
 };
