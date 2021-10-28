@@ -17,7 +17,6 @@
 #define MAP_WINDOW_HEIGHT 20
 #define MAP_MIN_WIDTH 40
 #define MAP_MAX_WIDTH 200
-#define MAP_MAX_HEIGHT 20
 
 using namespace std;
 
@@ -44,6 +43,24 @@ TileType char_to_tile_type(char ch) {
       return TILE_TYPE_COIN;
     default:
       return TILE_TYPE_NOTHING;
+  }
+}
+
+char tile_type_to_char(TileType type) {
+  switch (type) {
+    case TILE_TYPE_AIR:
+      return '.';
+    case TILE_TYPE_GROUND:
+      return 'g';
+    case TILE_TYPE_START:
+      return 's';
+    case TILE_TYPE_END:
+      return 'e';
+    case TILE_TYPE_COIN:
+      return '*';
+    default:
+      fprintf(stderr, "Unknown tile on tile->char conversion");
+      return ' ';
   }
 }
 
@@ -147,7 +164,7 @@ struct Button {
 };
 
 struct App {
-  Tile map[MAP_MAX_HEIGHT][MAP_MAX_WIDTH];
+  Tile map[MAP_WINDOW_HEIGHT][MAP_MAX_WIDTH];
 
   int offsx = -BLOCK_SIZE;
   int offsy = -BLOCK_SIZE;
@@ -193,7 +210,7 @@ struct App {
       exit(EXIT_FAILURE);
     }
 
-    for (int y = 0; y < MAP_MAX_HEIGHT; y++) {
+    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
       for (int x = 0; x < MAP_MAX_WIDTH; x++) {
         map[y][x].reset();
       }
@@ -304,7 +321,7 @@ struct App {
     pair<int, int> mouse_tile_coord = tile_coord();
 
     // Map.
-    for (int y = 0; y < MAP_MAX_HEIGHT; y++) {
+    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
       for (int x = 0; x < map_width; x++) {
         Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
                          (float)(y * BLOCK_SIZE - offsy)};
@@ -363,7 +380,7 @@ struct App {
 
     return mouse_tile_coord.first >= 0 && mouse_tile_coord.second >= 0 &&
            mouse_tile_coord.first < map_width &&
-           mouse_tile_coord.second < MAP_MAX_HEIGHT;
+           mouse_tile_coord.second < MAP_WINDOW_HEIGHT;
   }
 
   void draw_tile(TileType type, Vector2 pos) const {
@@ -397,7 +414,23 @@ struct App {
 
   int tile_count() const { return sizeof(tile_types) / sizeof(TileType); }
 
-  void save_map() {}
+  void save_map() {
+    ofstream map_file;
+    map_file.open(input_map_file_name.value,
+                  ofstream::out | ofstream::in | ofstream::trunc);
+
+    if (!map_file.is_open()) {
+      fprintf(stderr, "Cannot write to file");
+      return;
+    }
+
+    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
+      for (int x = 0; x < map_width; x++) {
+        map_file.put(tile_type_to_char(map[y][x].type));
+      }
+      map_file.put('\n');
+    }
+  }
 };
 
 int main(int argc, char** argv) {
