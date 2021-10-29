@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include "asset_manager.h"
+#include "defines.h"
 #include "raylib.h"
 #include "stage_game.h"
 #include "stage_menu.h"
@@ -11,7 +12,7 @@ void App::init() {
 
   current_stage = STAGE_MENU;
 
-  InitWindow(WINDOW_WITDH, WINDOW_HEIGH, "Jumper");
+  InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Jumper");
   SetTargetFPS(60);
 
   std::vector<std::string> images{IMG_GROUND,

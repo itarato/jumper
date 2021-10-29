@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "asset_manager.h"
+#include "defines.h"
 #include "raylib.h"
 #include "util.h"
 
@@ -34,12 +35,16 @@ TileType char_to_tile_type(char ch) {
       return TILE_START;
     case 'e':
       return TILE_END;
-    case 'r':
+    case 'm':
       return TILE_ENEMY_RANDOM;
     case 'c':
       return TILE_ENEMY_CHASER;
     case '*':
       return TILE_COIN;
+    case 'r':
+      return TILE_REGEX;
+    case 'd':
+      return TILE_DOOR;
     default:
       fprintf(stderr, "Invalid char on map: %c\n", ch);
       exit(EXIT_FAILURE);
@@ -65,14 +70,14 @@ void Map::draw(int scroll_offset) {
                       h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, WHITE);
           break;
 
-        case TILE_START:
-          DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
-                        BLOCK_SIZE, BLOCK_SIZE, GREEN);
+        case TILE_END:
+          DrawRectangleLines(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
+                             BLOCK_SIZE, BLOCK_SIZE, BLACK);
           break;
 
-        case TILE_END:
-          DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
-                        BLOCK_SIZE, BLOCK_SIZE, RED);
+        case TILE_DOOR:
+          DrawTexture(asset_manager.textures[IMG_GROUND],
+                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, BROWN);
           break;
 
         default:
@@ -84,9 +89,9 @@ void Map::draw(int scroll_offset) {
 
 std::optional<int> Map::next_floor(Rectangle p) {
   int curr_col_lhs = p.x / BLOCK_SIZE;
-  int curr_col_rhs = (p.x + p.width - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+  int curr_col_rhs = (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_row = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+  int curr_row = (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   std::optional<int> floor;
 
@@ -113,7 +118,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
 
 std::optional<int> Map::next_ceiling(Rectangle p) {
   int curr_col_lhs = p.x / BLOCK_SIZE;
-  int curr_col_rhs = (p.x + p.width - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+  int curr_col_rhs = (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   int curr_row = p.y / BLOCK_SIZE;
 
@@ -142,7 +147,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
 
 std::optional<int> Map::next_left(Rectangle p) {
   int curr_row_top = p.y / BLOCK_SIZE;
-  int curr_row_bottom = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+  int curr_row_bottom = (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   int curr_col = p.x / BLOCK_SIZE;
 
@@ -174,11 +179,10 @@ std::optional<int> Map::next_left(Rectangle p) {
 }
 
 std::optional<int> Map::next_right(Rectangle p) {
-  // LOG_INFO("JUMPER %.2f %.2f %.2f %.2f", p.x, p.y, p.width, p.height);
   int curr_row_top = p.y / BLOCK_SIZE;
-  int curr_row_bottom = (p.y + p.height - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+  int curr_row_bottom = (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_col = (p.x + p.width - PROXIMITY_TRESHOLD) / BLOCK_SIZE;
+  int curr_col = (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   std::optional<int> right;
 
@@ -227,7 +231,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
                 obj->get_frame().height;
     mos.floor = floor;
 
-    if (obj->get_frame().y + obj->get_v().y + PROXIMITY_TRESHOLD >=
+    if (obj->get_frame().y + obj->get_v().y + PROXIMITY_THRESHOLD >=
         floor) {  // On floor.
       mos.type = MAP_OBJECT_VERTICAL_STATE_ON_FLOOR;
     } else if (abs(obj->get_v().y) <

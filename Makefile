@@ -5,6 +5,7 @@ CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat
 BIN=main
 
 SRC=$(wildcard *.cpp)
+SRC:=$(filter-out level_editor.cpp, $(SRC))
 
 OBJ=$(addsuffix .o,$(basename $(SRC)))
 
@@ -16,6 +17,8 @@ debug: executable
 fs: CXXFLAGS += -DFULLSCREEN
 fs: executable
 
+executable: $(OBJ)
+	$(CXX) -o $(BIN) $^ $(CXXFLAGS) $(LIBS)
 
 %.o:%.cpp
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

@@ -1,6 +1,7 @@
 #include "enemy.h"
 
 #include "asset_manager.h"
+#include "defines.h"
 #include "map.h"
 #include "util.h"
 

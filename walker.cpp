@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 
+#include "defines.h"
 #include "types.h"
 #include "util.h"
 

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "asset_manager.h"
+#include "defines.h"
 #include "util.h"
 
 #define JUMPER_WIDTH 28

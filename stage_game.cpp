@@ -4,6 +4,7 @@
 #include <cmath>
 #include <memory>
 
+#include "defines.h"
 #include "util.h"
 
 /**

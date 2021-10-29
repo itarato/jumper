@@ -1,6 +1,7 @@
 #include "coin.h"
 
 #include "asset_manager.h"
+#include "defines.h"
 #include "util.h"
 
 Coin::Coin(Vector2 pos)
