@@ -6,11 +6,20 @@
 #include "stage_game.h"
 #include "stage_menu.h"
 
+#include <ranges>
+
+App::App() = default;
+
+App::~App() {
+  for (auto & stage : stages | std::views::values) {
+    delete stage;
+    stage = nullptr;
+  }
+}
+
 void App::init() {
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
-
-  current_stage = STAGE_MENU;
 
   InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Jumper");
   SetTargetFPS(60);
@@ -34,6 +43,7 @@ void App::init() {
 }
 
 void App::loop() {
+  StageT current_stage = STAGE_MENU;
   stages[current_stage]->init();
 
   while (!WindowShouldClose()) {

@@ -10,23 +10,11 @@
 
 struct App {
   std::map<StageT, IStage *> stages;
-  StageT current_stage;
   GameConfig game_config;
 
-  App() {}
+  App();
 
-  ~App() {
-    for (auto &[_, stage] : stages) {
-      delete stage;
-      stage = nullptr;
-    }
-
-    // Fixme: this can be part of asset manager.
-    for (auto &[_, texture] : asset_manager.textures) {
-      UnloadTexture(texture);
-    }
-    asset_manager.textures.clear();
-  };
+  ~App();
 
   void init();
   void loop();

@@ -1,6 +1,5 @@
 #include "stage_game.h"
 
-#include <algorithm>
 #include <cmath>
 #include <memory>
 

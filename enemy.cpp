@@ -2,7 +2,6 @@
 
 #include "asset_manager.h"
 #include "defines.h"
-#include "map.h"
 #include "util.h"
 
 void Enemy::init() { walker->init(frame); }

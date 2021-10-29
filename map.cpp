@@ -88,7 +88,7 @@ void Map::draw(int scroll_offset) {
 }
 
 std::optional<int> Map::next_floor(Rectangle p) {
-  int curr_col_lhs = p.x / BLOCK_SIZE;
+  int curr_col_lhs = (int)p.x / BLOCK_SIZE;
   int curr_col_rhs = (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   int curr_row = (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
@@ -220,7 +220,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
 
     if (obj->get_frame().y + obj->get_v().y <= ceiling) {  // Hit ceiling.
       mos.type = MAP_OBJECT_VERTICAL_STATE_HIT_CEILING;
-    } else if (abs(obj->get_v().y) <
+    } else if (fabs(obj->get_v().y) <
                VELOCITY_ZERO_THRESHOLD) {  // Reaching top.
       mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
     } else {  // Jump.
@@ -234,7 +234,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
     if (obj->get_frame().y + obj->get_v().y + PROXIMITY_THRESHOLD >=
         floor) {  // On floor.
       mos.type = MAP_OBJECT_VERTICAL_STATE_ON_FLOOR;
-    } else if (abs(obj->get_v().y) <
+    } else if (fabs(obj->get_v().y) <
                VELOCITY_ZERO_THRESHOLD) {  // Reaching top.
       mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
     } else {  // Falling down.
@@ -291,7 +291,7 @@ std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
   for (std::size_t y = 0; y < map.size(); y++) {
     for (std::size_t x = 0; x < map[0].size(); x++) {
       if (map[y][x] == type) {
-        out.emplace_back(x, y);
+        out.emplace_back((int)x, (int)y);
       }
     }
   }

@@ -20,9 +20,6 @@ fs: executable
 executable: $(OBJ)
 	$(CXX) -o $(BIN) $^ $(CXXFLAGS) $(LIBS)
 
-%.o:%.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $<
-
 clean:
 	rm -f ./*.o
 	rm -f ./$(BIN)

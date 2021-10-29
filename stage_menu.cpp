@@ -1,10 +1,6 @@
 #include "stage_menu.h"
 
 #include "raylib.h"
-#include "util.h"
-
-#define BUTTON_START "Start"
-#define BUTTON_TEXT_SIZE 64
 
 void StageMenu::update() {
   if ((IsMouseButtonPressed(0) &&

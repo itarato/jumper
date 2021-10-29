@@ -25,8 +25,8 @@ struct MapObjectState {
 };
 
 struct IMapStateUpdatable {
-  virtual Rectangle get_frame() const = 0;
-  virtual Vector2 get_v() const = 0;
+  [[nodiscard]] virtual Rectangle get_frame() const = 0;
+  [[nodiscard]] virtual Vector2 get_v() const = 0;
   virtual void set_map_state(MapObjectState &&mos) = 0;
 };
 
@@ -62,7 +62,7 @@ struct Map {
 
   void evaluate_map_object_state(IMapStateUpdatable *obj);
   void load_map(std::string file_path);
-  bool is_steppable(int y, int x) const;
+  [[nodiscard]] bool is_steppable(int y, int x) const;
 
   std::vector<IntVector2D> coords_of_tile_type(TileType type);
 };

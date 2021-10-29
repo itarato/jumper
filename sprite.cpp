@@ -2,9 +2,6 @@
 
 #include <utility>
 
-Sprite::Sprite(std::vector<std::string> img_names)
-    : img_names(move(img_names)) {}
-
 Sprite::Sprite(std::vector<std::string> img_names, int frame_skip_count)
     : img_names(move(img_names)), frame_skip_count(frame_skip_count) {}
 

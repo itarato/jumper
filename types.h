@@ -10,14 +10,14 @@ typedef enum {
   STAGE_GAME = 1,
 } StageT;
 
-struct IntVector2D {
+typedef struct IntVector2D {
   int x;
   int y;
 
-  int dist(const IntVector2D other) const {
-    return abs(x - other.x) + abs(y - other.y) /*+
-           abs(abs(x - other.x) - abs(y - other.y))*/
-        ;
+  IntVector2D(int x, int y) : x(x), y(y) {}
+
+  [[nodiscard]] int dist(const IntVector2D other) const {
+    return abs(x - other.x) + abs(y - other.y);
   }
 
   friend bool operator<(IntVector2D const& lhs, IntVector2D const& rhs) {
@@ -28,7 +28,7 @@ struct IntVector2D {
                                    const IntVector2D& rhs) {
     return lhs.x == rhs.x && lhs.y == rhs.y;
   }
-};
+} IntVector2D;
 
 struct AStarNode {
   IntVector2D p;

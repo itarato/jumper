@@ -40,7 +40,7 @@ void Jumper::update(Map *map) {
       }
     } else {
       v.x *= FRICTION;
-      if (abs(v.x) < VELOCITY_ZERO_THRESHOLD) {
+      if (fabs(v.x) < VELOCITY_ZERO_THRESHOLD) {
         v.x = 0.0f;
       }
     }

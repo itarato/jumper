@@ -14,7 +14,4 @@ struct Enemy {
   void draw(int scroll_offset) const;
 
   Enemy(Rectangle frame, std::unique_ptr<IWalker> walker);
-
- private:
-  void set_next_target();
 };

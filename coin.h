@@ -8,5 +8,5 @@ struct Coin {
 
   Coin(Vector2 pos);
 
-  void draw(int screen_offset);
+  void draw(int screen_offset) const;
 };
