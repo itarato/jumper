@@ -38,22 +38,6 @@ bool in_range(int number, int min, int max) {
 
 int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
 
-IntVector2D top_left_block_coord(Rectangle rectangle) {
-  return IntVector2D{(int)rectangle.x / BLOCK_SIZE, (int)rectangle.y / BLOCK_SIZE};
-}
-
-IntVector2D top_right_block_coord(Rectangle rectangle) {
-  return IntVector2D{(int)(rectangle.x + rectangle.width) / BLOCK_SIZE, (int)rectangle.y / BLOCK_SIZE};
-}
-
-IntVector2D bottom_left_block_coord(Rectangle rectangle) {
-  return IntVector2D{(int)rectangle.x / BLOCK_SIZE, (int)(rectangle.y + rectangle.height) / BLOCK_SIZE};
-}
-
-IntVector2D bottom_right_block_coord(Rectangle rectangle) {
-  return IntVector2D{(int)(rectangle.x + rectangle.width) / BLOCK_SIZE, (int)(rectangle.y + rectangle.height) / BLOCK_SIZE};
-}
-
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
   return Rectangle{
     rec.x + v.x,
@@ -64,7 +48,7 @@ Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
 }
 
 std::vector<std::string> split(std::string word, char delim) {
-  int prev_delim_pos = -1;
+  size_t prev_delim_pos = -1;
   std::vector<std::string> out{};
 
   for (size_t i = 0; i < word.size(); i++) {
@@ -81,9 +65,9 @@ std::vector<std::string> split(std::string word, char delim) {
 std::vector<IntVector2D> corner_block_coords(Rectangle frame) {
   std::vector<IntVector2D> out{
     IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Top left
-    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Top right
-    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Bottom left
-    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Bottom right
+    IntVector2D{(int)(frame.x + frame.width) / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Top right
+    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)(frame.y + frame.height) / BLOCK_SIZE}, // Bottom left
+    IntVector2D{(int)(frame.x + frame.width) / BLOCK_SIZE, (int)(frame.y + frame.height) / BLOCK_SIZE}, // Bottom right
   };
 
   std::sort(out.begin(), out.end());

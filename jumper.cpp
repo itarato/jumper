@@ -45,39 +45,25 @@ void Jumper::update(Map *map) {
       }
     }
 
-    if (v.x < 0.0f) {  // Going left.
-      int left_wall_x = map->next_left(frame).value_or(0);
-
-      // Door check.
-      if (frame.x + v.x <= (float)left_wall_x) {
-        IntVector2D top_left = top_left_block_coord(rec_plus_vector2(frame, v));
-        IntVector2D bottom_left = bottom_left_block_coord(rec_plus_vector2(frame, v));
-
-        if (map->get_tile(top_left).type == TILE_DOOR) {
-          map->get_tile(top_left).disable();
-        } else if (map->get_tile(bottom_left).type == TILE_DOOR) {
-          map->get_tile(bottom_left).disable();
+    {// Door check.
+      Rectangle planned_next_frame{rec_plus_vector2(frame, v)};
+      for (auto &corner : corner_block_coords(planned_next_frame)) {
+        Tile &tile = map->get_tile(corner);
+        if (!regex_raw.empty() && tile.type == TILE_DOOR && tile.is_enabled) {
+          if (std::regex_search(tile.value, get_regex())) {
+            tile.disable();
+          }
         }
       }
+    }
 
+    if (v.x < 0.0f) {  // Going left.
+      int left_wall_x = map->next_left(frame).value_or(0);
       frame.x = std::max((int)(frame.x + v.x), left_wall_x);
     } else if (v.x > 0.0f) {  // Going right.
       int right_wall_x =
           map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
           frame.width;
-
-      // Door check.
-      if (frame.x + v.x >= (float)right_wall_x) {
-        IntVector2D top_right = top_right_block_coord(rec_plus_vector2(frame, v));
-        IntVector2D bottom_right = bottom_right_block_coord(rec_plus_vector2(frame, v));
-
-        if (map->get_tile(top_right).type == TILE_DOOR) {
-          map->get_tile(top_right).disable();
-        } else if (map->get_tile(bottom_right).type == TILE_DOOR) {
-          map->get_tile(bottom_right).disable();
-        }
-      }
-
       frame.x = std::min((int)(frame.x + v.x), right_wall_x);
     }
   }
@@ -176,3 +162,12 @@ void Jumper::init(Vector2 start_pos) {
 Rectangle Jumper::get_frame() const { return frame; }
 Vector2 Jumper::get_v() const { return v; }
 void Jumper::set_map_state(MapObjectState mos) { map_state = mos; }
+
+std::regex Jumper::get_regex() const {
+  std::string raw{regex_raw};
+
+  raw.insert(0, 1, '^');
+  raw.push_back('$');
+
+  return std::regex{raw};
+}

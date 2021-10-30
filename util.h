@@ -23,11 +23,6 @@ void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
 int rand_range(int min, int max);
 
-IntVector2D top_left_block_coord(Rectangle rectangle);
-IntVector2D top_right_block_coord(Rectangle rectangle);
-IntVector2D bottom_left_block_coord(Rectangle rectangle);
-IntVector2D bottom_right_block_coord(Rectangle rectangle);
-
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
 
 std::vector<std::string> split(std::string word, char delim);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <regex>
 
 #include "map.h"
 #include "raylib.h"
@@ -46,6 +47,7 @@ struct Jumper : IMapStateUpdatable {
   [[nodiscard]] Rectangle get_frame() const override;
   [[nodiscard]] Vector2 get_v() const override;
   void set_map_state(MapObjectState mos) override;
+  [[nodiscard]] std::regex get_regex() const;
 
   Jumper();
 };
