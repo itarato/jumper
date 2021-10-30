@@ -2,7 +2,6 @@
 #include "defines.h"
 
 #include <cstdlib>
-#include <algorithm>
 
 void log(LogLevelT level, std::string msg, ...) {
   va_list argptr;
