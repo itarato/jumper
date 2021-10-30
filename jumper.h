@@ -40,9 +40,9 @@ struct Jumper : IMapStateUpdatable {
   void update(Map *map);
   void init(Vector2 start_pos);
 
-  Rectangle get_frame() const;
-  Vector2 get_v() const;
-  void set_map_state(MapObjectState &&mos);
+  [[nodiscard]] Rectangle get_frame() const override;
+  [[nodiscard]] Vector2 get_v() const override;
+  void set_map_state(MapObjectState mos) override;
 
   Jumper();
 };

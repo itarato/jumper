@@ -40,21 +40,46 @@ void Jumper::update(Map *map) {
       }
     } else {
       v.x *= FRICTION;
-      if (fabs(v.x) < VELOCITY_ZERO_THRESHOLD) {
+      if (fabsf(v.x) < VELOCITY_ZERO_THRESHOLD) {
         v.x = 0.0f;
       }
     }
 
     if (v.x < 0.0f) {  // Going left.
       int left_wall_x = map->next_left(frame).value_or(0);
-      // LOG_INFO("Left wall: %d", left_wall_x);
+
+      // Door check.
+      if (frame.x + v.x <= (float)left_wall_x) {
+        LOG_INFO("FOUND DOOR");
+        IntVector2D top_left = top_left_block_coord(rec_plus_vector2(frame, v));
+        IntVector2D bottom_left = bottom_left_block_coord(rec_plus_vector2(frame, v));
+
+        if (map->tile_of_coord(top_left) == TILE_DOOR) {
+          map->open_door(top_left);
+        } else if (map->tile_of_coord(bottom_left) == TILE_DOOR) {
+          map->open_door(bottom_left);
+        }
+      }
+
       frame.x = std::max((int)(frame.x + v.x), left_wall_x);
     } else if (v.x > 0.0f) {  // Going right.
       int right_wall_x =
           map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
           frame.width;
 
-      // LOG_INFO("Right wall: %d", right_wall_x);
+      // Door check.
+      if (frame.x + v.x >= (float)right_wall_x) {
+        LOG_INFO("FOUND DOOR");
+        IntVector2D top_right = top_right_block_coord(rec_plus_vector2(frame, v));
+        IntVector2D bottom_right = bottom_right_block_coord(rec_plus_vector2(frame, v));
+
+        if (map->tile_of_coord(top_right) == TILE_DOOR) {
+          map->open_door(top_right);
+        } else if (map->tile_of_coord(bottom_right) == TILE_DOOR) {
+          map->open_door(bottom_right);
+        }
+      }
+
       frame.x = std::min((int)(frame.x + v.x), right_wall_x);
     }
   }
@@ -141,4 +166,4 @@ void Jumper::init(Vector2 start_pos) {
 
 Rectangle Jumper::get_frame() const { return frame; }
 Vector2 Jumper::get_v() const { return v; }
-void Jumper::set_map_state(MapObjectState &&mos) { map_state = mos; }
+void Jumper::set_map_state(MapObjectState mos) { map_state = mos; }

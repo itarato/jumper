@@ -9,8 +9,8 @@ void Enemy::init() { walker->init(frame); }
 void Enemy::update(const Rectangle &player) { walker->update(frame, player); }
 
 void Enemy::draw(int scroll_offset) const {
-  DrawTexture(asset_manager.textures[IMG_ENEMY], frame.x - scroll_offset,
-              frame.y, WHITE);
+  DrawTexture(asset_manager.textures[IMG_ENEMY], (int)frame.x - scroll_offset,
+              (int)frame.y, WHITE);
 }
 
 Enemy::Enemy(Rectangle frame, std::unique_ptr<IWalker> walker)

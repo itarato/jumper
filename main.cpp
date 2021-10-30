@@ -18,8 +18,8 @@
  * - sometimes fall through the floor when jumping
  */
 
-#include <stdlib.h>
-#include <time.h>
+#include <cstdlib>
+#include <ctime>
 
 #include "app.h"
 #include "util.h"

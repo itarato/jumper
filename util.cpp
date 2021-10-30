@@ -1,4 +1,5 @@
 #include "util.h"
+#include "defines.h"
 
 #include <stdlib.h>
 
@@ -35,3 +36,28 @@ bool in_range(int number, int min, int max) {
 }
 
 int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
+
+IntVector2D top_left_block_coord(Rectangle rectangle) {
+  return IntVector2D{(int)rectangle.x / BLOCK_SIZE, (int)rectangle.y / BLOCK_SIZE};
+}
+
+IntVector2D top_right_block_coord(Rectangle rectangle) {
+  return IntVector2D{(int)(rectangle.x + rectangle.width) / BLOCK_SIZE, (int)rectangle.y / BLOCK_SIZE};
+}
+
+IntVector2D bottom_left_block_coord(Rectangle rectangle) {
+  return IntVector2D{(int)rectangle.x / BLOCK_SIZE, (int)(rectangle.y + rectangle.height) / BLOCK_SIZE};
+}
+
+IntVector2D bottom_right_block_coord(Rectangle rectangle) {
+  return IntVector2D{(int)(rectangle.x + rectangle.width) / BLOCK_SIZE, (int)(rectangle.y + rectangle.height) / BLOCK_SIZE};
+}
+
+Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
+  return Rectangle{
+    rec.x + v.x,
+    rec.y + v.y,
+    rec.width,
+    rec.height,
+  };
+}

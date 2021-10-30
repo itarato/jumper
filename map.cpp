@@ -17,8 +17,10 @@
  */
 
 bool is_tile_steppable(TileType t) {
+  // FIXME: This needs to be aware of the state (eg door can be open).
   switch (t) {
     case TILE_GROUND:
+    case TILE_DOOR:
       return true;
     default:
       return false;
@@ -179,10 +181,10 @@ std::optional<int> Map::next_left(Rectangle p) {
 }
 
 std::optional<int> Map::next_right(Rectangle p) {
-  int curr_row_top = p.y / BLOCK_SIZE;
-  int curr_row_bottom = (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_row_top = (int)p.y / BLOCK_SIZE;
+  int curr_row_bottom = (int)(p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_col = (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_col = (int)(p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   std::optional<int> right;
 
@@ -212,7 +214,7 @@ std::optional<int> Map::next_right(Rectangle p) {
 }
 
 void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
-  MapObjectState mos;
+  MapObjectState mos{};
 
   if (obj->get_v().y < 0.0f) {  // Going up.
     int ceiling = next_ceiling(obj->get_frame()).value_or(0);
@@ -242,7 +244,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
     }
   }
 
-  obj->set_map_state(std::move(mos));
+  obj->set_map_state(mos);
 }
 
 void Map::load_map(std::string file_path) {
@@ -277,7 +279,7 @@ void Map::load_map(std::string file_path) {
 
   file.close();
 
-  block_width = map[0].size();
+  block_width = (int)map[0].size();
 }
 
 // FIXME: Not out-of-bounds safe.
@@ -297,4 +299,24 @@ std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
   }
 
   return out;
+}
+
+TileType Map::tile_of_coord(IntVector2D coord) const {
+  if (coord.y < 0 || coord.x < 0 || coord.y >= WINDOW_BLOCK_HEIGHT || coord.x >= block_width) {
+    LOG_INFO("TILE ERROR");
+    return TILE_ERROR;
+  }
+
+  LOG_INFO("TILE %c", map[coord.y][coord.x]);
+
+  return map[coord.y][coord.x];
+}
+
+void Map::open_door(IntVector2D coord) {
+  if (map[coord.y][coord.x] != TILE_DOOR) {
+    LOG_ERR("Trying to open a not door");
+    return;
+  }
+
+  map[coord.y][coord.x] = TILE_AIR;
 }

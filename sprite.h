@@ -11,6 +11,6 @@ struct Sprite {
 
   Sprite(std::vector<std::string> img_names, int frame_skip_count);
 
-  std::string current_img() const;
+  [[nodiscard]] std::string current_img() const;
   void progress();
 };

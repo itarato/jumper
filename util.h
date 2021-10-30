@@ -6,6 +6,7 @@
 #include <string>
 
 #include "raylib.h"
+#include "types.h"
 
 #define LOG_INFO(...) log(LOG_LEVEL_INFO, __VA_ARGS__)
 #define LOG_WARN(...) log(LOG_LEVEL_WARNING, __VA_ARGS__)
@@ -20,3 +21,10 @@ typedef enum {
 void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
 int rand_range(int min, int max);
+
+IntVector2D top_left_block_coord(Rectangle rectangle);
+IntVector2D top_right_block_coord(Rectangle rectangle);
+IntVector2D bottom_left_block_coord(Rectangle rectangle);
+IntVector2D bottom_right_block_coord(Rectangle rectangle);
+
+Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
