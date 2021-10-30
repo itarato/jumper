@@ -263,7 +263,12 @@ void Map::load_map(const std::string &file_path) {
     exit(EXIT_FAILURE);
   }
 
-  while (getline(file, line)) {
+  for (int i = 0; i < WINDOW_BLOCK_HEIGHT; i++) {
+    if (!getline(file, line)) {
+      fprintf(stderr, "Incomplete map");
+      exit(EXIT_FAILURE);
+    }
+
     printf("Read map: %s\n", line.c_str());
 
     std::vector<Tile> map_line;
@@ -281,6 +286,8 @@ void Map::load_map(const std::string &file_path) {
 
     map.push_back(map_line);
   }
+
+  // TODO: Read map tile info
 
   file.close();
 
