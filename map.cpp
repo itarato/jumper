@@ -90,6 +90,16 @@ void Map::draw(int scroll_offset) {
         default:
           break;
       }
+
+      if (!map[v][h].value.empty()) {
+        DrawRectangleRounded(Rectangle{
+                                     (float)h * BLOCK_SIZE - scroll_offset,
+                                     (float)v * BLOCK_SIZE,
+                                     (float)MeasureText(map[v][h].value.c_str(), 10),
+                                     10.0f,
+                             }, 6.0f, 6, WHITE);
+        DrawText(map[v][h].value.c_str(), h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, 10, BLACK);
+      }
     }
   }
 }
@@ -287,7 +297,14 @@ void Map::load_map(const std::string &file_path) {
     map.push_back(map_line);
   }
 
-  // TODO: Read map tile info
+  while (getline(file, line)) {
+    std::vector<std::string> parts{split(line, ',')};
+
+    int x{atoi(parts[0].c_str())};
+    int y{atoi(parts[1].c_str())};
+
+    map[y][x].value = parts[2];
+  }
 
   file.close();
 

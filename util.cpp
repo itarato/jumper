@@ -1,7 +1,7 @@
 #include "util.h"
 #include "defines.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 void log(LogLevelT level, std::string msg, ...) {
   va_list argptr;
@@ -60,4 +60,19 @@ Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
     rec.width,
     rec.height,
   };
+}
+
+std::vector<std::string> split(std::string word, char delim) {
+  int prev_delim_pos = -1;
+  std::vector<std::string> out{};
+
+  for (int i = 0; i < word.size(); i++) {
+    if (word.at(i) == delim) {
+      out.push_back(word.substr(prev_delim_pos + 1, i - prev_delim_pos - 1));
+      prev_delim_pos = i;
+    }
+  }
+  out.push_back(word.substr(prev_delim_pos + 1, word.size() - prev_delim_pos - 1));
+
+  return out;
 }

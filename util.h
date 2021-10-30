@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <string>
+#include <vector>
 
 #include "raylib.h"
 #include "types.h"
@@ -28,3 +29,5 @@ IntVector2D bottom_left_block_coord(Rectangle rectangle);
 IntVector2D bottom_right_block_coord(Rectangle rectangle);
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
+
+std::vector<std::string> split(std::string word, char delim);

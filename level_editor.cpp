@@ -485,7 +485,7 @@ struct App {
       for (int x = 0; x < map_width; x++) {
         if (map[y][x].value.empty()) continue;
 
-        map_file << x << " " << y << " " << map[y][x].value << endl;
+        map_file << x << "," << y << "," << map[y][x].value << endl;
       }
     }
   }
