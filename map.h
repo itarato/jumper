@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <optional>
 #include <vector>
+#include <cstdlib>
 
 #include "raylib.h"
 #include "types.h"
@@ -50,8 +51,12 @@ struct Tile {
   TileType type = TILE_AIR;
   std::string value{};
   bool is_enabled = true;
+  float fade;
 
-  explicit Tile (TileType type) : type(type) {}
+  explicit Tile (TileType type) : type(type) {
+    fade = 0.67f + (float)(rand() % 100) / 300.0f;
+  }
+
   [[nodiscard]] bool is_solid() const { return is_enabled && is_tile_type_solid(type); }
   void disable() { is_enabled = false; }
 };

@@ -55,10 +55,10 @@ void App::loop() {
     stage->update();
 
     BeginDrawing();
-    ClearBackground(Color{50, 80, 120, 255});
+    ClearBackground(RAYWHITE);
 
     stage->draw();
-    DrawFPS(GetScreenWidth() - 96, 12);
+    DrawFPS(GetScreenWidth() - 96, 6);
 
     auto next_stage = stage->next_stage();
     if (next_stage.has_value()) {

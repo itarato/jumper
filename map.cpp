@@ -71,7 +71,7 @@ void Map::draw(int scroll_offset) {
       switch (map[v][h].type) {
         case TILE_GROUND:
           DrawTexture(asset_manager.textures[IMG_GROUND],
-                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, WHITE);
+                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, Fade(WHITE, map[v][h].fade));
           break;
 
         case TILE_END:

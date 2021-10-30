@@ -17,6 +17,13 @@
 
 void StageGame::update() {
   if (state == GAME_STATE_PLAY) {
+    { // Reset stage.
+     if (IsKeyPressed(KEY_BACKSPACE)) {
+       init_level();
+       return;
+     }
+    }
+
     jumper.update(&map);
 
     {  // Enemy movement.
@@ -109,13 +116,13 @@ void StageGame::draw() {
 
   { // Overlay.
     DrawRectangle(0, 0, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
-    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, 12, 20, WHITE);
+    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, 6, 20, WHITE);
   }
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||
-      state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
-                  Fade(RAYWHITE, 0.6));
+      state == GAME_STATE_WAIT_TO_NEXT_LEVEL
+  ) {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(RAYWHITE, 0.6));
     if (is_victory) {
       victory_text.draw();
     } else {
@@ -129,8 +136,8 @@ void StageGame::init() {
 
   current_map_number = 0;
 
-  victory_text.with_font_size(64)->with_aligned_center();
-  game_over_text.with_font_size(64)->with_aligned_center();
+  victory_text.with_font_size(60)->with_aligned_center();
+  game_over_text.with_font_size(60)->with_aligned_center();
 
   init_level();
 }

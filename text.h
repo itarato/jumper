@@ -14,7 +14,7 @@ struct Text {
   Vector2 pos;
   bool is_hover_effect;
 
-  Text(const char* text) : text(text), color(DARKGRAY), font_size(32) {}
+  Text(const char* text) : text(text), color(DARKGRAY), font_size(30) {}
 
   Text* with_color(Color new_color) {
     color = new_color;
@@ -55,7 +55,7 @@ struct Text {
     Color draw_color;
     if (is_hover_effect &&
         CheckCollisionPointRec(GetMousePosition(), frame())) {
-      draw_color = Fade(color, 0.8f);
+      draw_color = Fade(color, 0.6f);
     } else {
       draw_color = color;
     }
