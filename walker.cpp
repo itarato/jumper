@@ -110,7 +110,7 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
       }
 
       // Steppable map tile.
-      if (map->is_steppable(neighbour_p.y, neighbour_p.x)) {
+      if (map->is_steppable(neighbour_p)) {
         continue;
       }
 

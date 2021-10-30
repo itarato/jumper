@@ -43,11 +43,19 @@ typedef enum {
   TILE_DOOR = 'd',
 } TileType;
 
-bool is_tile_steppable(TileType t);
+bool is_tile_type_steppable(TileType t);
 TileType char_to_tile_type(char ch);
 
+struct Tile {
+  TileType type = TILE_AIR;
+  std::string value{};
+  bool is_enabled = true;
+
+  explicit Tile (TileType type) : type(type) {}
+};
+
 struct Map {
-  std::vector<std::vector<TileType>> map;
+  std::vector<std::vector<Tile>> map;
   int block_width;
   // FIXME -> we could generally memoize these
   Vector2 start_pos;
@@ -63,10 +71,12 @@ struct Map {
 
   void evaluate_map_object_state(IMapStateUpdatable *obj);
   void load_map(std::string file_path);
-  [[nodiscard]] bool is_steppable(int y, int x) const;
+  [[nodiscard]] bool is_steppable(IntVector2D coord) const;
   [[nodiscard]] TileType tile_of_coord(IntVector2D coord) const;
 
   void open_door(IntVector2D coord);
 
   std::vector<IntVector2D> coords_of_tile_type(TileType type);
+
+  [[nodiscard]] bool is_inside_map(IntVector2D coord) const;
 };
