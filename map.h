@@ -43,7 +43,7 @@ typedef enum {
   TILE_DOOR = 'd',
 } TileType;
 
-bool is_tile_type_steppable(TileType t);
+bool is_tile_type_solid(TileType t);
 TileType char_to_tile_type(char ch);
 
 struct Tile {
@@ -52,6 +52,7 @@ struct Tile {
   bool is_enabled = true;
 
   explicit Tile (TileType type) : type(type) {}
+  [[nodiscard]] bool is_solid() const { return is_enabled && is_tile_type_solid(type); }
 };
 
 struct Map {
@@ -71,7 +72,7 @@ struct Map {
 
   void evaluate_map_object_state(IMapStateUpdatable *obj);
   void load_map(std::string file_path);
-  [[nodiscard]] bool is_steppable(IntVector2D coord) const;
+  [[nodiscard]] bool is_solid_tile(IntVector2D coord) const;
   [[nodiscard]] TileType tile_of_coord(IntVector2D coord) const;
 
   void open_door(IntVector2D coord);

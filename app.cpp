@@ -36,7 +36,10 @@ void App::init() {
                                   IMG_LADYBUG_MOVE_0,
                                   IMG_LADYBUG_MOVE_1,
                                   IMG_LADYBUG_MOVE_2,
-                                  IMG_LADYBUG_MOVE_3};
+                                  IMG_LADYBUG_MOVE_3,
+                                  IMG_DOOR_OPEN,
+                                  IMG_DOOR_CLOSE};
+
   for (auto& image : images) {
     asset_manager.textures.insert({image, LoadTexture(image.c_str())});
   }

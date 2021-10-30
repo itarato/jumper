@@ -50,7 +50,6 @@ void Jumper::update(Map *map) {
 
       // Door check.
       if (frame.x + v.x <= (float)left_wall_x) {
-        LOG_INFO("FOUND DOOR");
         IntVector2D top_left = top_left_block_coord(rec_plus_vector2(frame, v));
         IntVector2D bottom_left = bottom_left_block_coord(rec_plus_vector2(frame, v));
 
@@ -69,7 +68,6 @@ void Jumper::update(Map *map) {
 
       // Door check.
       if (frame.x + v.x >= (float)right_wall_x) {
-        LOG_INFO("FOUND DOOR");
         IntVector2D top_right = top_right_block_coord(rec_plus_vector2(frame, v));
         IntVector2D bottom_right = bottom_right_block_coord(rec_plus_vector2(frame, v));
 

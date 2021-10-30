@@ -16,7 +16,7 @@
  * floor             ceiling
  */
 
-bool is_tile_type_steppable(TileType t) {
+bool is_tile_type_solid(TileType t) {
   // FIXME: This needs to be aware of the state (eg door can be open).
   switch (t) {
     case TILE_GROUND:
@@ -65,7 +65,7 @@ void Map::draw(int scroll_offset) {
         continue;
       }
 
-      std::string ground_img;
+      std::string image;
       switch (map[v][h].type) {
         case TILE_GROUND:
           DrawTexture(asset_manager.textures[IMG_GROUND],
@@ -78,7 +78,12 @@ void Map::draw(int scroll_offset) {
           break;
 
         case TILE_DOOR:
-          DrawTexture(asset_manager.textures[IMG_GROUND],
+          if (map[v][h].is_enabled) {
+            image = IMG_DOOR_CLOSE;
+          } else {
+            image = IMG_DOOR_OPEN;
+          }
+          DrawTexture(asset_manager.textures[image],
                       h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, BROWN);
           break;
 
@@ -98,7 +103,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
   std::optional<int> floor;
 
   for (int i = std::max(0, curr_row + 1); i < WINDOW_BLOCK_HEIGHT; i++) {
-    if (is_tile_type_steppable(map[i][curr_col_lhs].type)) {
+    if (map[i][curr_col_lhs].is_solid()) {
       floor = std::optional<int>{i * BLOCK_SIZE};
       break;
     }
@@ -106,7 +111,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
 
   if (curr_col_rhs != curr_col_lhs) {
     for (int i = std::max(0, curr_row + 1); i < WINDOW_BLOCK_HEIGHT; i++) {
-      if (is_tile_type_steppable(map[i][curr_col_rhs].type)) {
+      if (map[i][curr_col_rhs].is_solid()) {
         int rhs_floor = i * BLOCK_SIZE;
         floor =
             std::optional<int>{std::min(rhs_floor, floor.value_or(rhs_floor))};
@@ -127,7 +132,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
   std::optional<int> ceiling;
 
   for (int i = std::min(WINDOW_BLOCK_HEIGHT - 1, curr_row - 1); i >= 0; i--) {
-    if (is_tile_type_steppable(map[i][curr_col_lhs].type)) {
+    if (map[i][curr_col_lhs].is_solid()) {
       ceiling = std::optional<int>{(i + 1) * BLOCK_SIZE};
       break;
     }
@@ -135,7 +140,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
 
   if (curr_col_lhs != curr_col_rhs) {
     for (int i = std::min(WINDOW_BLOCK_HEIGHT - 1, curr_row - 1); i >= 0; i--) {
-      if (is_tile_type_steppable(map[i][curr_col_rhs].type)) {
+      if (map[i][curr_col_rhs].is_solid()) {
         int rhs_ceiling = (i + 1) * BLOCK_SIZE;
         ceiling = std::optional<int>{
             std::max(rhs_ceiling, ceiling.value_or(rhs_ceiling))};
@@ -157,7 +162,7 @@ std::optional<int> Map::next_left(Rectangle p) {
 
   if (in_range(curr_row_top, 0, map.size() - 1)) {
     for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
-      if (is_tile_type_steppable(map[curr_row_top][i].type)) {
+      if (map[curr_row_top][i].is_solid()) {
         left = std::optional<int>{(i + 1) * BLOCK_SIZE};
         break;
       }
@@ -167,7 +172,7 @@ std::optional<int> Map::next_left(Rectangle p) {
   if (curr_row_top != curr_row_bottom) {
     if (in_range(curr_row_bottom, 0, map.size() - 1)) {
       for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
-        if (is_tile_type_steppable(map[curr_row_bottom][i].type)) {
+        if (map[curr_row_bottom][i].is_solid()) {
           int bottom_left = (i + 1) * BLOCK_SIZE;
           left = std::optional<int>{
               std::max(bottom_left, left.value_or(bottom_left))};
@@ -190,7 +195,7 @@ std::optional<int> Map::next_right(Rectangle p) {
 
   if (in_range(curr_row_top, 0, map.size() - 1)) {
     for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
-      if (is_tile_type_steppable(map[curr_row_top][i].type)) {
+      if (map[curr_row_top][i].is_solid()) {
         right = std::optional<int>{i * BLOCK_SIZE};
         break;
       }
@@ -200,7 +205,7 @@ std::optional<int> Map::next_right(Rectangle p) {
   if (curr_row_top != curr_row_bottom) {
     if (in_range(curr_row_bottom, 0, map.size() - 1)) {
       for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
-        if (is_tile_type_steppable(map[curr_row_bottom][i].type)) {
+        if (map[curr_row_bottom][i].is_solid()) {
           int bottom_right = i * BLOCK_SIZE;
           right = std::optional<int>{
               std::min(bottom_right, right.value_or(bottom_right))};
@@ -282,13 +287,13 @@ void Map::load_map(std::string file_path) {
   block_width = (int)map[0].size();
 }
 
-bool Map::is_steppable(IntVector2D coord) const {
+bool Map::is_solid_tile(IntVector2D coord) const {
   if (!is_inside_map(coord)) {
-    fprintf(stderr, "Map::is_steppable out of bounds");
+    fprintf(stderr, "Map::is_solid_tile out of bounds");
     exit(EXIT_FAILURE);
   }
 
-  return is_tile_type_steppable(map[coord.y][coord.x].type);
+  return map[coord.y][coord.x].is_solid();
 }
 
 std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
