@@ -1,7 +1,7 @@
 .vscode
-*.o
-*.out
-main
+src/*.o
+src/*.out
+jumper
 level_editor
 maps/untitled.jm
 .idea

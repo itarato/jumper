@@ -2,10 +2,10 @@ LIBS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat
 
-BIN=main
+BIN=jumper
 
-SRC=$(wildcard *.cpp)
-SRC:=$(filter-out level_editor.cpp, $(SRC))
+SRC=$(wildcard src/*.cpp)
+SRC:=$(filter-out src/level_editor.cpp, $(SRC))
 
 OBJ=$(addsuffix .o,$(basename $(SRC)))
 
@@ -20,10 +20,6 @@ fs: executable
 executable: $(OBJ)
 	$(CXX) -o $(BIN) $^ $(CXXFLAGS) $(LIBS)
 
-clean:
-	rm -f ./*.o
-	rm -f ./$(BIN)
-
 # Level editor:
 
 LE_BIN = level_editor
@@ -34,3 +30,9 @@ le_executable: $(LE_OBJ)
 	$(CXX) -o $(LE_BIN) $^ $(CXXFLAGS) $(LIBS)
 
 le: le_executable
+
+clean:
+	rm -f ./src/*.o
+	rm -f ./src/*.out
+	rm -f ./$(BIN)
+	rm -f ./$(LE_BIN)
