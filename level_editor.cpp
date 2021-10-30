@@ -221,10 +221,12 @@ struct App {
   }
 
   void load_map_file(const char* file_name) {
+    input_map_file_name.value = file_name;
+
     ifstream map_file{file_name};
     if (!map_file.is_open()) {
-      fprintf(stderr, "Cannot open map file");
-      exit(EXIT_FAILURE);
+      map_width = MAP_WINDOW_WIDTH;
+      return;
     }
 
     for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {

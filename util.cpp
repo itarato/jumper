@@ -2,6 +2,7 @@
 #include "defines.h"
 
 #include <cstdlib>
+#include <algorithm>
 
 void log(LogLevelT level, std::string msg, ...) {
   va_list argptr;
@@ -66,13 +67,28 @@ std::vector<std::string> split(std::string word, char delim) {
   int prev_delim_pos = -1;
   std::vector<std::string> out{};
 
-  for (int i = 0; i < word.size(); i++) {
+  for (size_t i = 0; i < word.size(); i++) {
     if (word.at(i) == delim) {
       out.push_back(word.substr(prev_delim_pos + 1, i - prev_delim_pos - 1));
       prev_delim_pos = i;
     }
   }
   out.push_back(word.substr(prev_delim_pos + 1, word.size() - prev_delim_pos - 1));
+
+  return out;
+}
+
+std::vector<IntVector2D> corner_block_coords(Rectangle frame) {
+  std::vector<IntVector2D> out{
+    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Top left
+    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Top right
+    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Bottom left
+    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Bottom right
+  };
+
+  std::sort(out.begin(), out.end());
+  auto last = std::unique(out.begin(), out.end());
+  out.erase(last, out.end());
 
   return out;
 }

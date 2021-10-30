@@ -16,6 +16,8 @@
  * floor             ceiling
  */
 
+static Tile null_tile{TILE_ERROR};
+
 bool is_tile_type_solid(TileType t) {
   // FIXME: This needs to be aware of the state (eg door can be open).
   switch (t) {
@@ -87,11 +89,16 @@ void Map::draw(int scroll_offset) {
                       h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, BROWN);
           break;
 
+        case TILE_REGEX:
+          DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
+                             BLOCK_SIZE, BLOCK_SIZE, YELLOW);
+          break;
+
         default:
           break;
       }
 
-      if (!map[v][h].value.empty()) {
+      if (!map[v][h].value.empty() && map[v][h].is_enabled) {
         DrawRectangleRounded(Rectangle{
                                      (float)h * BLOCK_SIZE - scroll_offset,
                                      (float)v * BLOCK_SIZE,
@@ -334,22 +341,13 @@ std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
   return out;
 }
 
-TileType Map::tile_of_coord(IntVector2D coord) const {
+Tile& Map::get_tile(IntVector2D coord) {
   if (!is_inside_map(coord)) {
     LOG_INFO("TILE ERROR");
-    return TILE_ERROR;
+    return null_tile;
   }
 
-  return map[coord.y][coord.x].type;
-}
-
-void Map::open_door(IntVector2D coord) {
-  if (map[coord.y][coord.x].type != TILE_DOOR) {
-    LOG_ERR("Trying to open a not door");
-    return;
-  }
-
-  map[coord.y][coord.x].is_enabled = false;
+  return map[coord.y][coord.x];
 }
 
 bool Map::is_inside_map(IntVector2D coord) const {

@@ -107,6 +107,11 @@ void StageGame::draw() {
     coin.draw(scroll_offset);
   }
 
+  { // Overlay.
+    DrawRectangle(0, 0, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
+    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, 12, 20, WHITE);
+  }
+
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||
       state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
@@ -117,8 +122,6 @@ void StageGame::draw() {
       game_over_text.draw();
     }
   }
-
-  DrawText(TextFormat("Score: %d", score), 12, 12, 20, DARKGRAY);
 }
 
 void StageGame::init() {

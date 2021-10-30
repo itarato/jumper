@@ -53,10 +53,10 @@ void Jumper::update(Map *map) {
         IntVector2D top_left = top_left_block_coord(rec_plus_vector2(frame, v));
         IntVector2D bottom_left = bottom_left_block_coord(rec_plus_vector2(frame, v));
 
-        if (map->tile_of_coord(top_left) == TILE_DOOR) {
-          map->open_door(top_left);
-        } else if (map->tile_of_coord(bottom_left) == TILE_DOOR) {
-          map->open_door(bottom_left);
+        if (map->get_tile(top_left).type == TILE_DOOR) {
+          map->get_tile(top_left).disable();
+        } else if (map->get_tile(bottom_left).type == TILE_DOOR) {
+          map->get_tile(bottom_left).disable();
         }
       }
 
@@ -71,10 +71,10 @@ void Jumper::update(Map *map) {
         IntVector2D top_right = top_right_block_coord(rec_plus_vector2(frame, v));
         IntVector2D bottom_right = bottom_right_block_coord(rec_plus_vector2(frame, v));
 
-        if (map->tile_of_coord(top_right) == TILE_DOOR) {
-          map->open_door(top_right);
-        } else if (map->tile_of_coord(bottom_right) == TILE_DOOR) {
-          map->open_door(bottom_right);
+        if (map->get_tile(top_right).type == TILE_DOOR) {
+          map->get_tile(top_right).disable();
+        } else if (map->get_tile(bottom_right).type == TILE_DOOR) {
+          map->get_tile(bottom_right).disable();
         }
       }
 
@@ -120,6 +120,17 @@ void Jumper::update(Map *map) {
   {  // Vertical movement.
     if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
       v.y -= JUMP_FORCE;
+    }
+  }
+
+  { // Regex collision check.
+    auto tile_coords = corner_block_coords(frame);
+    for (const auto &tile_coord : tile_coords) {
+      Tile& tile = map->get_tile(tile_coord);
+      if (tile.type == TILE_REGEX && tile.is_enabled) {
+        regex_raw.append(tile.value);
+        tile.disable();
+      }
     }
   }
 }

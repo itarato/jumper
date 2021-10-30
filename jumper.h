@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "map.h"
 #include "raylib.h"
 #include "sprite.h"
@@ -35,6 +37,7 @@ struct Jumper : IMapStateUpdatable {
   Sprite move_sprite;
   Sprite stand_sprite;
   DoubleJump double_jump;
+  std::string regex_raw{};
 
   void draw(int scroll_offset);
   void update(Map *map);
