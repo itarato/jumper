@@ -71,7 +71,7 @@ struct Map {
   std::optional<int> next_right(Rectangle p);
 
   void evaluate_map_object_state(IMapStateUpdatable *obj);
-  void load_map(std::string file_path);
+  void load_map(const std::string & file_path);
   [[nodiscard]] bool is_solid_tile(IntVector2D coord) const;
   [[nodiscard]] TileType tile_of_coord(IntVector2D coord) const;
 

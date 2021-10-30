@@ -96,9 +96,9 @@ void Map::draw(int scroll_offset) {
 
 std::optional<int> Map::next_floor(Rectangle p) {
   int curr_col_lhs = (int)p.x / BLOCK_SIZE;
-  int curr_col_rhs = (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_col_rhs = (int)(p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_row = (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_row = (int)(p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   std::optional<int> floor;
 
@@ -124,10 +124,10 @@ std::optional<int> Map::next_floor(Rectangle p) {
 }
 
 std::optional<int> Map::next_ceiling(Rectangle p) {
-  int curr_col_lhs = p.x / BLOCK_SIZE;
-  int curr_col_rhs = (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_col_lhs = (int)p.x / BLOCK_SIZE;
+  int curr_col_rhs = (int)(p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_row = p.y / BLOCK_SIZE;
+  int curr_row = (int)p.y / BLOCK_SIZE;
 
   std::optional<int> ceiling;
 
@@ -153,14 +153,14 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
 }
 
 std::optional<int> Map::next_left(Rectangle p) {
-  int curr_row_top = p.y / BLOCK_SIZE;
-  int curr_row_bottom = (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_row_top = (int)p.y / BLOCK_SIZE;
+  int curr_row_bottom = (int)(p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_col = p.x / BLOCK_SIZE;
+  int curr_col = (int)p.x / BLOCK_SIZE;
 
   std::optional<int> left;
 
-  if (in_range(curr_row_top, 0, map.size() - 1)) {
+  if (in_range(curr_row_top, 0, (int)map.size() - 1)) {
     for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
       if (map[curr_row_top][i].is_solid()) {
         left = std::optional<int>{(i + 1) * BLOCK_SIZE};
@@ -170,7 +170,7 @@ std::optional<int> Map::next_left(Rectangle p) {
   }
 
   if (curr_row_top != curr_row_bottom) {
-    if (in_range(curr_row_bottom, 0, map.size() - 1)) {
+    if (in_range(curr_row_bottom, 0, (int)map.size() - 1)) {
       for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
         if (map[curr_row_bottom][i].is_solid()) {
           int bottom_left = (i + 1) * BLOCK_SIZE;
@@ -241,7 +241,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
     if (obj->get_frame().y + obj->get_v().y + PROXIMITY_THRESHOLD >=
         floor) {  // On floor.
       mos.type = MAP_OBJECT_VERTICAL_STATE_ON_FLOOR;
-    } else if (fabs(obj->get_v().y) <
+    } else if (fabsf(obj->get_v().y) <
                VELOCITY_ZERO_THRESHOLD) {  // Reaching top.
       mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
     } else {  // Falling down.
@@ -252,7 +252,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
   obj->set_map_state(mos);
 }
 
-void Map::load_map(std::string file_path) {
+void Map::load_map(const std::string &file_path) {
   std::ifstream file{file_path};
   std::string line;
 
