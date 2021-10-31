@@ -8,6 +8,7 @@
 #include "raylib.h"
 #include "shared/shared_defines.h"
 #include "shared/shared_map_schema.h"
+#include "shared/util.h"
 
 #define WIN_H 800
 #define WIN_W 1600
@@ -214,6 +215,11 @@ struct App {
       for (int j = 0; j < (int) line.size(); j++) {
         map[i][j].type = char_to_tile_type(line.at(j));
       }
+    }
+
+    while (getline(map_file, line)) {
+      TileMeta tile_meta{line};
+      map[tile_meta.y][tile_meta.x].value = tile_meta.value;
     }
   }
 

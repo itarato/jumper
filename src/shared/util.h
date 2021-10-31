@@ -28,3 +28,11 @@ Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
 std::vector<std::string> split(std::string word, char delim);
 
 [[nodiscard]] std::vector<IntVector2D> corner_block_coords(Rectangle frame);
+
+struct TileMeta {
+  int x;
+  int y;
+  std::string value;
+
+  explicit TileMeta(std::string raw);
+};

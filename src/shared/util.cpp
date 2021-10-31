@@ -40,10 +40,10 @@ int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
   return Rectangle{
-    rec.x + v.x,
-    rec.y + v.y,
-    rec.width,
-    rec.height,
+          rec.x + v.x,
+          rec.y + v.y,
+          rec.width,
+          rec.height,
   };
 }
 
@@ -64,10 +64,10 @@ std::vector<std::string> split(std::string word, char delim) {
 
 std::vector<IntVector2D> corner_block_coords(Rectangle frame) {
   std::vector<IntVector2D> out{
-    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Top left
-    IntVector2D{(int)(frame.x + frame.width) / BLOCK_SIZE, (int)frame.y / BLOCK_SIZE}, // Top right
-    IntVector2D{(int)frame.x / BLOCK_SIZE, (int)(frame.y + frame.height) / BLOCK_SIZE}, // Bottom left
-    IntVector2D{(int)(frame.x + frame.width) / BLOCK_SIZE, (int)(frame.y + frame.height) / BLOCK_SIZE}, // Bottom right
+          IntVector2D{(int) frame.x / BLOCK_SIZE, (int) frame.y / BLOCK_SIZE},                                 // Top left
+          IntVector2D{(int) (frame.x + frame.width) / BLOCK_SIZE, (int) frame.y / BLOCK_SIZE},                 // Top right
+          IntVector2D{(int) frame.x / BLOCK_SIZE, (int) (frame.y + frame.height) / BLOCK_SIZE},                // Bottom left
+          IntVector2D{(int) (frame.x + frame.width) / BLOCK_SIZE, (int) (frame.y + frame.height) / BLOCK_SIZE},// Bottom right
   };
 
   std::sort(out.begin(), out.end());
@@ -75,4 +75,11 @@ std::vector<IntVector2D> corner_block_coords(Rectangle frame) {
   out.erase(last, out.end());
 
   return out;
+}
+
+TileMeta::TileMeta(std::string raw) {
+  std::vector<std::string> parts{split(raw, ',')};
+  x = atoi(parts[0].c_str());
+  y = atoi(parts[1].c_str());
+  value = parts[2];
 }
