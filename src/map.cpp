@@ -261,12 +261,8 @@ void Map::load_map(const std::string &file_path) {
   }
 
   while (getline(file, line)) {
-    std::vector<std::string> parts{split(line, ',')};
-
-    int x{atoi(parts[0].c_str())};
-    int y{atoi(parts[1].c_str())};
-
-    map[y][x].value = parts[2];
+    TileMeta tile_meta{line};
+    map[tile_meta.y][tile_meta.x].value = tile_meta.value;
   }
 
   file.close();
