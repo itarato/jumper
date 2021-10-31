@@ -26,3 +26,4 @@
 #define IMG_LADYBUG_MOVE_3 "assets/images/ladybug_move_3.png"
 #define IMG_DOOR_OPEN "assets/images/door_open.png"
 #define IMG_DOOR_CLOSE "assets/images/door_close.png"
+#define IMG_REGEX "assets/images/regex.png"

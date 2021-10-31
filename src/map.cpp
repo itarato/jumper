@@ -45,8 +45,8 @@ void Map::draw(int scroll_offset) {
           break;
 
         case TILE_REGEX:
-          DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
-                        BLOCK_SIZE, BLOCK_SIZE, YELLOW);
+          DrawTexture(asset_manager.textures[IMG_REGEX],
+                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, Fade(WHITE, map[v][h].is_enabled ? 1.0f : 0.2f));
           break;
 
         default:

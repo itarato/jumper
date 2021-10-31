@@ -1,17 +1,17 @@
 #include "app.h"
 
+#include <ranges>
+
 #include "asset_manager.h"
 #include "defines.h"
 #include "raylib.h"
 #include "stage_game.h"
 #include "stage_menu.h"
 
-#include <ranges>
-
 App::App() = default;
 
 App::~App() {
-  for (auto & stage : stages | std::views::values) {
+  for (auto& stage : stages | std::views::values) {
     delete stage;
     stage = nullptr;
   }
@@ -38,7 +38,8 @@ void App::init() {
                                   IMG_LADYBUG_MOVE_2,
                                   IMG_LADYBUG_MOVE_3,
                                   IMG_DOOR_OPEN,
-                                  IMG_DOOR_CLOSE};
+                                  IMG_DOOR_CLOSE,
+                                  IMG_REGEX};
 
   for (auto& image : images) {
     asset_manager.textures.insert({image, LoadTexture(image.c_str())});
