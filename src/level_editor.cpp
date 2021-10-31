@@ -7,7 +7,7 @@
 
 #include "raylib.h"
 #include "shared/shared_defines.h"
-#include "shared/util.h"
+#include "shared/shared_map_schema.h"
 
 #define WIN_H 800
 #define WIN_W 1600
@@ -18,75 +18,38 @@
 
 using namespace std;
 
-enum TileType {
-  TILE_TYPE_NOTHING = 0,
-  TILE_TYPE_AIR = 1,
-  TILE_TYPE_GROUND = 2,
-  TILE_TYPE_START = 3,
-  TILE_TYPE_END = 4,
-  TILE_TYPE_COIN = 5,
-  TILE_TYPE_REGEX = 6,
-  TILE_TYPE_DOOR = 7,
-};
-
-TileType char_to_tile_type(char ch) {
-  switch (ch) {
-    case '.':
-      return TILE_TYPE_AIR;
-    case 'g':
-      return TILE_TYPE_GROUND;
-    case 's':
-      return TILE_TYPE_START;
-    case 'e':
-      return TILE_TYPE_END;
-    case '*':
-      return TILE_TYPE_COIN;
-    case 'r':
-      return TILE_TYPE_REGEX;
-    case 'd':
-      return TILE_TYPE_DOOR;
-    default:
-      return TILE_TYPE_NOTHING;
-  }
-}
-
-char tile_type_to_char(TileType type) {
-  switch (type) {
-    case TILE_TYPE_AIR:
-      return '.';
-    case TILE_TYPE_GROUND:
-      return 'g';
-    case TILE_TYPE_START:
-      return 's';
-    case TILE_TYPE_END:
-      return 'e';
-    case TILE_TYPE_COIN:
-      return '*';
-    case TILE_TYPE_REGEX:
-      return 'r';
-    case TILE_TYPE_DOOR:
-      return 'd';
-    default:
-      fprintf(stderr, "Unknown tile on tile->char conversion");
-      return ' ';
-  }
-}
-
 static const TileType tile_types[] = {
-    TILE_TYPE_NOTHING, TILE_TYPE_AIR,  TILE_TYPE_GROUND, TILE_TYPE_START,
-    TILE_TYPE_END,     TILE_TYPE_COIN, TILE_TYPE_REGEX,  TILE_TYPE_DOOR,
+        TILE_ERROR,
+        TILE_AIR,
+        TILE_GROUND,
+        TILE_START,
+        TILE_END,
+        TILE_ENEMY_RANDOM,
+        TILE_ENEMY_CHASER,
+        TILE_COIN,
+        TILE_REGEX,
+        TILE_DOOR,
 };
 
 static const char* tile_type_names[] = {
-    "Nothing", "Air", "Ground", "Start", "End", "Coin", "Regex", "Door",
+        "Error",
+        "Air",
+        "Ground",
+        "Start",
+        "End",
+        "EnemyRnd",
+        "EnemyCsr",
+        "Coin",
+        "Regex",
+        "Door",
 };
 
 struct Tile {
-  TileType type = TILE_TYPE_NOTHING;
+  TileType type = TILE_ERROR;
   string value;
 
   void reset() {
-    type = TILE_TYPE_NOTHING;
+    type = TILE_ERROR;
     value = "";
   }
 };
@@ -100,7 +63,9 @@ struct Input {
   string label;
 
   Input(string label)
-      : frame({0.0f, 0.0f, 128, 18}), is_active(false), label(label) {
+      : frame({0.0f, 0.0f, 128, 18}),
+        is_active(false),
+        label(label) {
     Input::inputs.push_back(this);
   }
 
@@ -127,7 +92,7 @@ struct Input {
       int ch;
       while ((ch = GetKeyPressed())) {
         if (ch >= 32 && ch <= 126) {
-          value.push_back((char)ch);
+          value.push_back((char) ch);
         } else if (ch == KEY_BACKSPACE) {
           if (!value.empty()) value.pop_back();
         }
@@ -135,9 +100,9 @@ struct Input {
     }
   }
 
-  bool has_changed() { return is_active && IsKeyPressed(KEY_ENTER); }
+  bool has_changed() const { return is_active && IsKeyPressed(KEY_ENTER); }
 
-  void draw() {
+  void draw() const {
     DrawRectangleRec(frame, WHITE);
     if (is_active) DrawRectangleLinesEx(frame, 2, BLUE);
     DrawText(value.c_str(), frame.x + 4, frame.y + 4, 10, BLACK);
@@ -161,8 +126,8 @@ struct Button {
 
   Rectangle frame() {
     return Rectangle{pos.x, pos.y,
-                     (float)(MeasureText(label.c_str(), font_size) + 8),
-                     (float)(font_size + 8)};
+                     (float) (MeasureText(label.c_str(), font_size) + 8),
+                     (float) (font_size + 8)};
   }
 
   void draw() {
@@ -181,7 +146,7 @@ struct App {
   int prev_offsy;
   Vector2 start_mouse_pos;
 
-  int selected_tile_idx = TILE_TYPE_GROUND;
+  int selected_tile_idx = 2;
 
   bool is_bulk_creation;
 
@@ -204,16 +169,16 @@ struct App {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
-    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 232),
-                                       (float)(GetScreenHeight() - 90)});
+    input_window_width.set_pos(Vector2{(float) (GetScreenWidth() - 232),
+                                       (float) (GetScreenHeight() - 90)});
     input_window_width.set_value(to_string(WINDOW_BLOCK_WIDTH));
 
-    input_map_file_name.set_pos(Vector2{(float)(GetScreenWidth() - 232),
-                                        (float)(GetScreenHeight() - 50)});
+    input_map_file_name.set_pos(Vector2{(float) (GetScreenWidth() - 232),
+                                        (float) (GetScreenHeight() - 50)});
     input_map_file_name.set_value("maps/untitled.jm");
 
-    input_tile_value.set_pos(Vector2{(float)(GetScreenWidth() - 432),
-                                     (float)(GetScreenHeight() - 90)});
+    input_tile_value.set_pos(Vector2{(float) (GetScreenWidth() - 432),
+                                     (float) (GetScreenHeight() - 90)});
 
     save_button.pos.x = GetScreenWidth() - 42;
     save_button.pos.y = GetScreenHeight() - 58;
@@ -246,7 +211,7 @@ struct App {
         input_window_width.set_value(to_string(width));
       }
 
-      for (int j = 0; j < (int)line.size(); j++) {
+      for (int j = 0; j < (int) line.size(); j++) {
         map[i][j].type = char_to_tile_type(line.at(j));
       }
     }
@@ -265,7 +230,7 @@ struct App {
   }
 
   void update() {
-    {  // Input fields.
+    {// Input fields.
       if (input_window_width.has_changed()) {
         int new_width = stoi(input_window_width.value);
         if (new_width > MAX_WINDOW_BLOCK_WIDTH) {
@@ -284,7 +249,7 @@ struct App {
       }
     }
 
-    {  // Drag space.
+    {// Drag space.
       if (IsKeyPressed(KEY_LEFT_ALT)) {
         prev_offsx = offsx;
         prev_offsy = offsy;
@@ -307,43 +272,43 @@ struct App {
         if (IsMouseButtonDown(0)) {
           if (is_bulk_creation) {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                tile_types[selected_tile_idx];
+                    tile_types[selected_tile_idx];
           } else {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                TILE_TYPE_NOTHING;
+                    TILE_ERROR;
           }
         }
       }
     }
 
-    {  // Tile type switch.
+    {// Tile type switch.
       if (IsKeyPressed(KEY_PAGE_DOWN)) {
         selected_tile_idx =
-            (selected_tile_idx + tile_count() - 1) % tile_count();
+                (selected_tile_idx + tile_count() - 1) % tile_count();
       }
       if (IsKeyPressed(KEY_PAGE_UP)) {
         selected_tile_idx = (selected_tile_idx + 1) % tile_count();
       }
     }
 
-    {  // Input fields.
+    {// Input fields.
       input_window_width.update();
       input_map_file_name.update();
       input_tile_value.update();
     }
 
-    {  // Button.
+    {// Button.
       if (save_button.is_clicked()) {
         save_map();
         // cout << "Map saved: " << ;
       }
     }
 
-    {  // Tile selection.
+    {// Tile selection.
       if (IsMouseButtonPressed(1) && mouse_in_max_frame()) {
         auto selected_tile_coord = tile_coord();
         selected_tile =
-            &map[selected_tile_coord.second][selected_tile_coord.first];
+                &map[selected_tile_coord.second][selected_tile_coord.first];
         input_tile_value.value = selected_tile->value;
       }
     }
@@ -355,8 +320,8 @@ struct App {
     // Map.
     for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
       for (int x = 0; x < map_width; x++) {
-        Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
-                         (float)(y * BLOCK_SIZE - offsy)};
+        Vector2 tile_pos{(float) (x * BLOCK_SIZE - offsx),
+                         (float) (y * BLOCK_SIZE - offsy)};
         draw_tile(map[y][x].type, tile_pos);
 
         if (selected_tile == &map[y][x]) {
@@ -378,14 +343,14 @@ struct App {
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
       draw_tile(tile_types[selected_tile_idx],
-                Vector2{(float)(mouse_tile_coord.first * BLOCK_SIZE - offsx),
-                        (float)(mouse_tile_coord.second * BLOCK_SIZE - offsy)});
+                Vector2{(float) (mouse_tile_coord.first * BLOCK_SIZE - offsx),
+                        (float) (mouse_tile_coord.second * BLOCK_SIZE - offsy)});
       DrawRectangleLines(mouse_tile_coord.first * BLOCK_SIZE - offsx,
                          mouse_tile_coord.second * BLOCK_SIZE - offsy,
                          BLOCK_SIZE, BLOCK_SIZE, BLACK);
     }
 
-    {  // Overlay
+    {// Overlay
       DrawRectangle(0, GetScreenHeight() - 96, GetScreenWidth(), 96,
                     Fade(BLACK, 0.7f));
 
@@ -395,8 +360,8 @@ struct App {
                              WHITE);
         }
 
-        draw_tile(tile_types[i], Vector2{(float)(32 + i * 96),
-                                         (float)(GetScreenHeight() - 76)});
+        draw_tile(tile_types[i], Vector2{(float) (32 + i * 96),
+                                         (float) (GetScreenHeight() - 76)});
         DrawText(tile_type_names[i], i * 96 + 32, GetScreenHeight() - 30, 20,
                  WHITE);
       }
@@ -413,8 +378,8 @@ struct App {
     Vector2 mouse_pos{GetMousePosition()};
     int tile_x = (mouse_pos.x + offsx) / BLOCK_SIZE;
     int tile_y = (mouse_pos.y + offsy) / BLOCK_SIZE;
-    if (mouse_pos.x + (float)offsx < 0.0f) tile_x--;
-    if (mouse_pos.y + (float)offsy < 0.0f) tile_y--;
+    if (mouse_pos.x + (float) offsx < 0.0f) tile_x--;
+    if (mouse_pos.y + (float) offsy < 0.0f) tile_y--;
     return pair<int, int>{tile_x, tile_y};
   }
 
@@ -431,28 +396,34 @@ struct App {
     Color color;
 
     switch (type) {
-      case TILE_TYPE_NOTHING:
+      case TILE_ERROR:
         color = RAYWHITE;
         break;
-      case TILE_TYPE_AIR:
+      case TILE_AIR:
         color = Fade(BLUE, 0.2);
         break;
-      case TILE_TYPE_GROUND:
+      case TILE_GROUND:
         color = BROWN;
         break;
-      case TILE_TYPE_START:
+      case TILE_START:
         color = RED;
         break;
-      case TILE_TYPE_END:
+      case TILE_END:
         color = YELLOW;
         break;
-      case TILE_TYPE_COIN:
+      case TILE_ENEMY_RANDOM:
+        color = LIME;
+        break;
+      case TILE_ENEMY_CHASER:
+        color = SKYBLUE;
+        break;
+      case TILE_COIN:
         color = ORANGE;
         break;
-      case TILE_TYPE_REGEX:
+      case TILE_REGEX:
         color = BLUE;
         break;
-      case TILE_TYPE_DOOR:
+      case TILE_DOOR:
         color = MAGENTA;
         break;
       default:
@@ -476,7 +447,7 @@ struct App {
     // Tiles.
     for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
       for (int x = 0; x < map_width; x++) {
-        map_file.put(tile_type_to_char(map[y][x].type));
+        map_file.put((char) map[y][x].type);
       }
       map_file.put('\n');
     }

@@ -35,7 +35,6 @@ TileType char_to_tile_type(char ch) {
     case 'd':
       return TILE_DOOR;
     default:
-      fprintf(stderr, "Invalid char on map: %c\n", ch);
-      exit(EXIT_FAILURE);
+      return TILE_ERROR;
   }
 }
