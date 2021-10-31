@@ -8,6 +8,7 @@
 #include "raylib.h"
 #include "shared/types.h"
 #include "shared/util.h"
+#include "shared/shared_map_schema.h"
 
 typedef enum {
   MAP_OBJECT_VERTICAL_STATE_HIT_CEILING = 0,
@@ -30,22 +31,6 @@ struct IMapStateUpdatable {
   [[nodiscard]] virtual Vector2 get_v() const = 0;
   virtual void set_map_state(MapObjectState mos) = 0;
 };
-
-typedef enum {
-  TILE_ERROR = '\0',
-  TILE_AIR = '.',
-  TILE_GROUND = 'g',
-  TILE_START = 's',
-  TILE_END = 'e',
-  TILE_ENEMY_RANDOM = 'm',
-  TILE_ENEMY_CHASER = 'c',
-  TILE_COIN = '*',
-  TILE_REGEX = 'r',
-  TILE_DOOR = 'd',
-} TileType;
-
-bool is_tile_type_solid(TileType t);
-TileType char_to_tile_type(char ch);
 
 struct Tile {
   TileType type = TILE_AIR;

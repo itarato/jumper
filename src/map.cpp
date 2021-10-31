@@ -8,62 +8,17 @@
 #include "raylib.h"
 #include "shared/util.h"
 
-/**
- * Map: 32 bit uint representing map - 20 bit used for blocks.
- *
- * 0b00000000000000000000
- *   ^                  ^
- * floor             ceiling
- */
-
 static Tile null_tile{TILE_ERROR};
-
-bool is_tile_type_solid(TileType t) {
-  // FIXME: This needs to be aware of the state (eg door can be open).
-  switch (t) {
-    case TILE_GROUND:
-    case TILE_DOOR:
-      return true;
-    default:
-      return false;
-  }
-}
-
-TileType char_to_tile_type(char ch) {
-  switch (ch) {
-    case '.':
-      return TILE_AIR;
-    case 'g':
-      return TILE_GROUND;
-    case 's':
-      return TILE_START;
-    case 'e':
-      return TILE_END;
-    case 'm':
-      return TILE_ENEMY_RANDOM;
-    case 'c':
-      return TILE_ENEMY_CHASER;
-    case '*':
-      return TILE_COIN;
-    case 'r':
-      return TILE_REGEX;
-    case 'd':
-      return TILE_DOOR;
-    default:
-      fprintf(stderr, "Invalid char on map: %c\n", ch);
-      exit(EXIT_FAILURE);
-  }
-}
 
 void Map::build(std::string map_file_path) { load_map(map_file_path); }
 
 void Map::draw(int scroll_offset) {
-  for (int v = 0; v < (int)map.size(); v++) {
-    for (int h = 0; h < (int)map[v].size(); h++) {
+  for (int v = 0; v < (int) map.size(); v++) {
+    for (int h = 0; h < (int) map[v].size(); h++) {
       int block_lhs_x = h * BLOCK_SIZE - scroll_offset;
       int block_rhs_x = block_lhs_x + BLOCK_SIZE;
       if (block_rhs_x <= 0 ||
-          block_lhs_x >= (block_width * BLOCK_SIZE)) {  // Out of window.
+          block_lhs_x >= (block_width * BLOCK_SIZE)) {// Out of window.
         continue;
       }
 
@@ -91,7 +46,7 @@ void Map::draw(int scroll_offset) {
 
         case TILE_REGEX:
           DrawRectangle(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
-                             BLOCK_SIZE, BLOCK_SIZE, YELLOW);
+                        BLOCK_SIZE, BLOCK_SIZE, YELLOW);
           break;
 
         default:
@@ -100,11 +55,12 @@ void Map::draw(int scroll_offset) {
 
       if (!map[v][h].value.empty() && map[v][h].is_enabled) {
         DrawRectangleRounded(Rectangle{
-                                     (float)h * BLOCK_SIZE - scroll_offset,
-                                     (float)v * BLOCK_SIZE,
-                                     (float)MeasureText(map[v][h].value.c_str(), 10),
-                                     10.0f,
-                             }, 6.0f, 6, WHITE);
+                                     (float) h * BLOCK_SIZE - scroll_offset - 2,
+                                     (float) v * BLOCK_SIZE - 2,
+                                     (float) MeasureText(map[v][h].value.c_str(), 10) + 4,
+                                     10.0f + 4,
+                             },
+                             6.0f, 6, WHITE);
         DrawText(map[v][h].value.c_str(), h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, 10, BLACK);
       }
     }
@@ -112,10 +68,10 @@ void Map::draw(int scroll_offset) {
 }
 
 std::optional<int> Map::next_floor(Rectangle p) {
-  int curr_col_lhs = (int)p.x / BLOCK_SIZE;
-  int curr_col_rhs = (int)(p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_col_lhs = (int) p.x / BLOCK_SIZE;
+  int curr_col_rhs = (int) (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_row = (int)(p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_row = (int) (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   std::optional<int> floor;
 
@@ -131,7 +87,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
       if (map[i][curr_col_rhs].is_solid()) {
         int rhs_floor = i * BLOCK_SIZE;
         floor =
-            std::optional<int>{std::min(rhs_floor, floor.value_or(rhs_floor))};
+                std::optional<int>{std::min(rhs_floor, floor.value_or(rhs_floor))};
         break;
       }
     }
@@ -141,10 +97,10 @@ std::optional<int> Map::next_floor(Rectangle p) {
 }
 
 std::optional<int> Map::next_ceiling(Rectangle p) {
-  int curr_col_lhs = (int)p.x / BLOCK_SIZE;
-  int curr_col_rhs = (int)(p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_col_lhs = (int) p.x / BLOCK_SIZE;
+  int curr_col_rhs = (int) (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_row = (int)p.y / BLOCK_SIZE;
+  int curr_row = (int) p.y / BLOCK_SIZE;
 
   std::optional<int> ceiling;
 
@@ -160,7 +116,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
       if (map[i][curr_col_rhs].is_solid()) {
         int rhs_ceiling = (i + 1) * BLOCK_SIZE;
         ceiling = std::optional<int>{
-            std::max(rhs_ceiling, ceiling.value_or(rhs_ceiling))};
+                std::max(rhs_ceiling, ceiling.value_or(rhs_ceiling))};
         break;
       }
     }
@@ -170,14 +126,14 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
 }
 
 std::optional<int> Map::next_left(Rectangle p) {
-  int curr_row_top = (int)p.y / BLOCK_SIZE;
-  int curr_row_bottom = (int)(p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_row_top = (int) p.y / BLOCK_SIZE;
+  int curr_row_bottom = (int) (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_col = (int)p.x / BLOCK_SIZE;
+  int curr_col = (int) p.x / BLOCK_SIZE;
 
   std::optional<int> left;
 
-  if (in_range(curr_row_top, 0, (int)map.size() - 1)) {
+  if (in_range(curr_row_top, 0, (int) map.size() - 1)) {
     for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
       if (map[curr_row_top][i].is_solid()) {
         left = std::optional<int>{(i + 1) * BLOCK_SIZE};
@@ -187,12 +143,12 @@ std::optional<int> Map::next_left(Rectangle p) {
   }
 
   if (curr_row_top != curr_row_bottom) {
-    if (in_range(curr_row_bottom, 0, (int)map.size() - 1)) {
+    if (in_range(curr_row_bottom, 0, (int) map.size() - 1)) {
       for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
         if (map[curr_row_bottom][i].is_solid()) {
           int bottom_left = (i + 1) * BLOCK_SIZE;
           left = std::optional<int>{
-              std::max(bottom_left, left.value_or(bottom_left))};
+                  std::max(bottom_left, left.value_or(bottom_left))};
           break;
         }
       }
@@ -203,10 +159,10 @@ std::optional<int> Map::next_left(Rectangle p) {
 }
 
 std::optional<int> Map::next_right(Rectangle p) {
-  int curr_row_top = (int)p.y / BLOCK_SIZE;
-  int curr_row_bottom = (int)(p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_row_top = (int) p.y / BLOCK_SIZE;
+  int curr_row_bottom = (int) (p.y + p.height - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
-  int curr_col = (int)(p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
+  int curr_col = (int) (p.x + p.width - PROXIMITY_THRESHOLD) / BLOCK_SIZE;
 
   std::optional<int> right;
 
@@ -225,7 +181,7 @@ std::optional<int> Map::next_right(Rectangle p) {
         if (map[curr_row_bottom][i].is_solid()) {
           int bottom_right = i * BLOCK_SIZE;
           right = std::optional<int>{
-              std::min(bottom_right, right.value_or(bottom_right))};
+                  std::min(bottom_right, right.value_or(bottom_right))};
           break;
         }
       }
@@ -238,30 +194,30 @@ std::optional<int> Map::next_right(Rectangle p) {
 void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
   MapObjectState mos{};
 
-  if (obj->get_v().y < 0.0f) {  // Going up.
+  if (obj->get_v().y < 0.0f) {// Going up.
     int ceiling = next_ceiling(obj->get_frame()).value_or(0);
     mos.ceiling = ceiling;
 
-    if (obj->get_frame().y + obj->get_v().y <= ceiling) {  // Hit ceiling.
+    if (obj->get_frame().y + obj->get_v().y <= ceiling) {// Hit ceiling.
       mos.type = MAP_OBJECT_VERTICAL_STATE_HIT_CEILING;
     } else if (fabs(obj->get_v().y) <
-               VELOCITY_ZERO_THRESHOLD) {  // Reaching top.
+               VELOCITY_ZERO_THRESHOLD) {// Reaching top.
       mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
-    } else {  // Jump.
+    } else {// Jump.
       mos.type = MAP_OBJECT_VERTICAL_STATE_JUMP;
     }
-  } else {  // Going down.
+  } else {// Going down.
     int floor = next_floor(obj->get_frame()).value_or(2 * GetScreenHeight()) -
                 obj->get_frame().height;
     mos.floor = floor;
 
     if (obj->get_frame().y + obj->get_v().y + PROXIMITY_THRESHOLD >=
-        floor) {  // On floor.
+        floor) {// On floor.
       mos.type = MAP_OBJECT_VERTICAL_STATE_ON_FLOOR;
     } else if (fabsf(obj->get_v().y) <
-               VELOCITY_ZERO_THRESHOLD) {  // Reaching top.
+               VELOCITY_ZERO_THRESHOLD) {// Reaching top.
       mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
-    } else {  // Falling down.
+    } else {// Falling down.
       mos.type = MAP_OBJECT_VERTICAL_STATE_FALLING;
     }
   }
@@ -315,7 +271,7 @@ void Map::load_map(const std::string &file_path) {
 
   file.close();
 
-  block_width = (int)map[0].size();
+  block_width = (int) map[0].size();
 }
 
 bool Map::is_solid_tile(IntVector2D coord) const {
@@ -333,7 +289,7 @@ std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
   for (std::size_t y = 0; y < map.size(); y++) {
     for (std::size_t x = 0; x < map[0].size(); x++) {
       if (map[y][x].type == type) {
-        out.emplace_back((int)x, (int)y);
+        out.emplace_back((int) x, (int) y);
       }
     }
   }
@@ -341,7 +297,7 @@ std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
   return out;
 }
 
-Tile& Map::get_tile(IntVector2D coord) {
+Tile &Map::get_tile(IntVector2D coord) {
   if (!is_inside_map(coord)) {
     LOG_INFO("TILE ERROR");
     return null_tile;
