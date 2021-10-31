@@ -55,13 +55,13 @@ void Map::draw(int scroll_offset) {
 
       if (!map[v][h].value.empty() && map[v][h].is_enabled) {
         DrawRectangleRounded(Rectangle{
-                                     (float) h * BLOCK_SIZE - scroll_offset - 2,
+                                     (float) h * BLOCK_SIZE - scroll_offset - 4,
                                      (float) v * BLOCK_SIZE - 2,
-                                     (float) MeasureText(map[v][h].value.c_str(), 10) + 4,
+                                     (float) MeasureText(map[v][h].value.c_str(), 10) + 8,
                                      10.0f + 4,
                              },
-                             6.0f, 6, WHITE);
-        DrawText(map[v][h].value.c_str(), h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, 10, BLACK);
+                             2.0f, 2, LIME);
+        DrawText(map[v][h].value.c_str(), h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, 10, WHITE);
       }
     }
   }
