@@ -45,6 +45,35 @@ static const char* tile_type_names[] = {
         "Door",
 };
 
+char shift_version(char ch) {
+  switch (ch) {
+    case '1':
+      return '!';
+    case '4':
+      return '$';
+    case '6':
+      return '^';
+    case '8':
+      return '*';
+    case '9':
+      return '(';
+    case '0':
+      return ')';
+    case '[':
+      return '{';
+    case ']':
+      return '}';
+    case '=':
+      return '+';
+    case '-':
+      return '_';
+    case '/':
+      return '?';
+    default:
+      return ch;
+  }
+}
+
 struct Tile {
   TileType type = TILE_ERROR;
   string value;
@@ -93,7 +122,11 @@ struct Input {
       int ch;
       while ((ch = GetKeyPressed())) {
         if (ch >= 32 && ch <= 126) {
-          value.push_back((char) ch);
+          if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
+            value.push_back(shift_version((char) ch));
+          } else {
+            value.push_back((char) ch);
+          }
         } else if (ch == KEY_BACKSPACE) {
           if (!value.empty()) value.pop_back();
         }
