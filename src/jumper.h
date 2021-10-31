@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
 #include <regex>
+#include <string>
 
 #include "map.h"
 #include "raylib.h"
+#include "shared/types.h"
 #include "sprite.h"
-#include "types.h"
 
 struct DoubleJump {
   int air_jumps;

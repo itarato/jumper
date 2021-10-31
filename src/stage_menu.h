@@ -1,8 +1,8 @@
 #pragma once
 
 #include "game_config.h"
+#include "shared/types.h"
 #include "text.h"
-#include "types.h"
 
 struct StageMenu : public IStage {
   bool is_start;

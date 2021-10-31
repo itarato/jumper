@@ -5,6 +5,7 @@
 
 #include "raylib.h"
 
+// FIXME: Does not belong here.
 typedef enum {
   STAGE_MENU = 0,
   STAGE_GAME = 1,
@@ -45,5 +46,5 @@ struct IStage {
   virtual void draw() = 0;
   virtual void init() = 0;
   virtual std::optional<StageT> next_stage() = 0;
-  virtual ~IStage(){};
+  virtual ~IStage() = default;
 };

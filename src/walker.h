@@ -2,7 +2,7 @@
 
 #include "map.h"
 #include "raylib.h"
-#include "util.h"
+#include "shared/util.h"
 
 #define RANDOM_WALKER_STEP_COUNT 16
 

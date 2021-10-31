@@ -4,7 +4,7 @@ CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat
 
 BIN=jumper
 
-SRC=$(wildcard src/*.cpp)
+SRC=$(wildcard src/*.cpp) $(wildcard src/shared/*.cpp)
 SRC:=$(filter-out src/level_editor.cpp, $(SRC))
 
 OBJ=$(addsuffix .o,$(basename $(SRC)))
@@ -23,7 +23,8 @@ executable: $(OBJ)
 # Level editor:
 
 LE_BIN = level_editor
-LE_SRC = level_editor.cpp
+LE_SRC = src/level_editor.cpp $(wildcard src/shared/*.cpp)
+
 LE_OBJ=$(addsuffix .o,$(basename $(LE_SRC)))
 
 le_executable: $(LE_OBJ)

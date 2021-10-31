@@ -1,7 +1,7 @@
 .vscode
+*.out
 src/*.o
-src/*.out
+src/shared/*.o
 jumper
 level_editor
-maps/untitled.jm
 .idea

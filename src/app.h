@@ -5,8 +5,8 @@
 
 #include "asset_manager.h"
 #include "game_config.h"
+#include "shared/types.h"
 #include "stage_menu.h"
-#include "types.h"
 
 struct App {
   std::map<StageT, IStage *> stages;

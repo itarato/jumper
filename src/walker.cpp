@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "defines.h"
-#include "types.h"
-#include "util.h"
+#include "shared/types.h"
+#include "shared/util.h"
 
 void TargetWalker::init(Rectangle &self_frame) {
   step = RANDOM_WALKER_STEP_COUNT;

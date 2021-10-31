@@ -22,7 +22,7 @@
 #include <ctime>
 
 #include "app.h"
-#include "util.h"
+#include "shared/util.h"
 
 int main() {
   LOG_INFO("Start main");

@@ -6,7 +6,7 @@
 #include "asset_manager.h"
 #include "defines.h"
 #include "raylib.h"
-#include "util.h"
+#include "shared/util.h"
 
 /**
  * Map: 32 bit uint representing map - 20 bit used for blocks.

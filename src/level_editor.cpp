@@ -6,16 +6,15 @@
 #include <vector>
 
 #include "raylib.h"
+#include "shared/shared_defines.h"
+#include "shared/util.h"
 
 #define WIN_H 800
 #define WIN_W 1600
 #define FPS 120
 
-#define BLOCK_SIZE 32
-#define MAP_WINDOW_WIDTH 40
-#define MAP_WINDOW_HEIGHT 20
-#define MAP_MIN_WIDTH 40
-#define MAP_MAX_WIDTH 200
+#define MIN_WINDOW_BLOCK_WIDTH 40
+#define MAX_WINDOW_BLOCK_WIDTH 200
 
 using namespace std;
 
@@ -173,7 +172,7 @@ struct Button {
 };
 
 struct App {
-  Tile map[MAP_WINDOW_HEIGHT][MAP_MAX_WIDTH];
+  Tile map[WINDOW_BLOCK_HEIGHT][MAX_WINDOW_BLOCK_WIDTH];
 
   int offsx = -BLOCK_SIZE;
   int offsy = -BLOCK_SIZE;
@@ -190,7 +189,7 @@ struct App {
   Input input_map_file_name;
   Input input_tile_value;
 
-  int map_width = MAP_WINDOW_WIDTH;
+  int map_width = WINDOW_BLOCK_WIDTH;
 
   Button save_button;
 
@@ -207,7 +206,7 @@ struct App {
 
     input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 232),
                                        (float)(GetScreenHeight() - 90)});
-    input_window_width.set_value(to_string(MAP_WINDOW_WIDTH));
+    input_window_width.set_value(to_string(WINDOW_BLOCK_WIDTH));
 
     input_map_file_name.set_pos(Vector2{(float)(GetScreenWidth() - 232),
                                         (float)(GetScreenHeight() - 50)});
@@ -225,12 +224,12 @@ struct App {
 
     ifstream map_file{file_name};
     if (!map_file.is_open()) {
-      map_width = MAP_WINDOW_WIDTH;
+      map_width = WINDOW_BLOCK_WIDTH;
       return;
     }
 
-    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
-      for (int x = 0; x < MAP_MAX_WIDTH; x++) {
+    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
+      for (int x = 0; x < MAX_WINDOW_BLOCK_WIDTH; x++) {
         map[y][x].reset();
       }
     }
@@ -238,7 +237,7 @@ struct App {
     string line;
     int width;
 
-    for (int i = 0; i < MAP_WINDOW_HEIGHT; i++) {
+    for (int i = 0; i < WINDOW_BLOCK_HEIGHT; i++) {
       getline(map_file, line);
 
       if (i == 0) {
@@ -269,12 +268,12 @@ struct App {
     {  // Input fields.
       if (input_window_width.has_changed()) {
         int new_width = stoi(input_window_width.value);
-        if (new_width > MAP_MAX_WIDTH) {
-          input_window_width.set_value(to_string(MAP_MAX_WIDTH));
-          map_width = MAP_MAX_WIDTH;
-        } else if (new_width < MAP_MIN_WIDTH) {
-          input_window_width.set_value(to_string(MAP_MIN_WIDTH));
-          map_width = MAP_MIN_WIDTH;
+        if (new_width > MAX_WINDOW_BLOCK_WIDTH) {
+          input_window_width.set_value(to_string(MAX_WINDOW_BLOCK_WIDTH));
+          map_width = MAX_WINDOW_BLOCK_WIDTH;
+        } else if (new_width < MIN_WINDOW_BLOCK_WIDTH) {
+          input_window_width.set_value(to_string(MIN_WINDOW_BLOCK_WIDTH));
+          map_width = MIN_WINDOW_BLOCK_WIDTH;
         } else {
           map_width = new_width;
         }
@@ -354,7 +353,7 @@ struct App {
     pair<int, int> mouse_tile_coord = tile_coord();
 
     // Map.
-    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
+    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
       for (int x = 0; x < map_width; x++) {
         Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
                          (float)(y * BLOCK_SIZE - offsy)};
@@ -374,7 +373,7 @@ struct App {
 
     // Window frame.
     DrawRectangleLines(0 - offsx, 0 - offsy, map_width * BLOCK_SIZE,
-                       MAP_WINDOW_HEIGHT * BLOCK_SIZE, MAGENTA);
+                       WINDOW_BLOCK_HEIGHT * BLOCK_SIZE, MAGENTA);
 
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
@@ -424,7 +423,7 @@ struct App {
 
     return mouse_tile_coord.first >= 0 && mouse_tile_coord.second >= 0 &&
            mouse_tile_coord.first < map_width &&
-           mouse_tile_coord.second < MAP_WINDOW_HEIGHT;
+           mouse_tile_coord.second < WINDOW_BLOCK_HEIGHT;
   }
 
   void draw_tile(TileType type, Vector2 pos) const {
@@ -475,7 +474,7 @@ struct App {
     }
 
     // Tiles.
-    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
+    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
       for (int x = 0; x < map_width; x++) {
         map_file.put(tile_type_to_char(map[y][x].type));
       }
@@ -483,7 +482,7 @@ struct App {
     }
 
     // Values.
-    for (int y = 0; y < MAP_WINDOW_HEIGHT; y++) {
+    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
       for (int x = 0; x < map_width; x++) {
         if (map[y][x].value.empty()) continue;
 
@@ -496,7 +495,7 @@ struct App {
 int main(int argc, char** argv) {
   App app{};
 
-  if (argc >= 1) {
+  if (argc >= 2) {
     app.load_map_file(argv[1]);
   }
 

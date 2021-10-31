@@ -8,8 +8,8 @@
 #include "game_config.h"
 #include "jumper.h"
 #include "map.h"
+#include "shared/types.h"
 #include "text.h"
-#include "types.h"
 
 #define WAIT_TO_COMPLETE_FRAMES 180
 

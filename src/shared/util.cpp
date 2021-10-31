@@ -1,7 +1,8 @@
 #include "util.h"
-#include "defines.h"
 
 #include <cstdlib>
+
+#include "shared_defines.h"
 
 void log(LogLevelT level, std::string msg, ...) {
   va_list argptr;

@@ -1,13 +1,13 @@
 #pragma once
 
 #include <cstdint>
+#include <cstdlib>
 #include <optional>
 #include <vector>
-#include <cstdlib>
 
 #include "raylib.h"
-#include "types.h"
-#include "util.h"
+#include "shared/types.h"
+#include "shared/util.h"
 
 typedef enum {
   MAP_OBJECT_VERTICAL_STATE_HIT_CEILING = 0,

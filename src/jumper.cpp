@@ -5,7 +5,7 @@
 
 #include "asset_manager.h"
 #include "defines.h"
-#include "util.h"
+#include "shared/util.h"
 
 #define JUMPER_WIDTH 28
 #define JUMPER_HEIGHT 20
