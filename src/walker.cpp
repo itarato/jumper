@@ -29,39 +29,51 @@ void TargetWalker::update(Rectangle &self_frame,
 
   step++;
 
-  float fragment_multiplier = (float)step / (float)RANDOM_WALKER_STEP_COUNT;
+  float fragment_multiplier = (float) step / (float) RANDOM_WALKER_STEP_COUNT;
   self_frame.x = origin.x + ((target.x - origin.x) * fragment_multiplier);
   self_frame.y = origin.y + ((target.y - origin.y) * fragment_multiplier);
 }
 
 void RandomWalker::set_next_target(Rectangle &self_frame,
                                    const Rectangle &player_frame) {
-  switch (rand_range(0, 3)) {
-    case 0:
-      target.x += BLOCK_SIZE;
+  Vector2 next_target{target};
+
+  for (int i = 0; i < 4; i++) {
+    // 4 tries to find a viable next option - not to waste too much and keep it stupid.
+
+    switch (rand_range(0, 3)) {
+      case 0:
+        next_target.x = target.x + BLOCK_SIZE;
+        break;
+      case 1:
+        next_target.x = target.x - BLOCK_SIZE;
+        break;
+      case 2:
+        next_target.y = target.y + BLOCK_SIZE;
+        break;
+      case 3:
+        next_target.y = target.y - BLOCK_SIZE;
+        break;
+    }
+
+    IntVector2D coord{(int) next_target.x / BLOCK_SIZE, (int) next_target.y / BLOCK_SIZE};
+    if (!map->is_solid_tile(coord)) {
+      target = next_target;
       break;
-    case 1:
-      target.x -= BLOCK_SIZE;
-      break;
-    case 2:
-      target.y += BLOCK_SIZE;
-      break;
-    case 3:
-      target.y -= BLOCK_SIZE;
-      break;
+    }
   }
 }
 
 void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
                                             const Rectangle &player_frame) {
-  IntVector2D start_p{(int)(player_frame.x / BLOCK_SIZE),
-                      (int)(player_frame.y / BLOCK_SIZE)};
-  IntVector2D end_p{(int)(target.x / BLOCK_SIZE), (int)(target.y / BLOCK_SIZE)};
+  IntVector2D start_p{(int) (player_frame.x / BLOCK_SIZE),
+                      (int) (player_frame.y / BLOCK_SIZE)};
+  IntVector2D end_p{(int) (target.x / BLOCK_SIZE), (int) (target.y / BLOCK_SIZE)};
 
   AStarNode start{
-      start_p,
-      0,
-      start_p.dist(end_p),
+          start_p,
+          0,
+          start_p.dist(end_p),
   };
 
   std::vector<AStarNode> inspected;
@@ -71,19 +83,19 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
   visited.insert(start.p);
 
   const IntVector2D dirs[4]{
-      {-1, 0},
-      {1, 0},
-      {0, -1},
-      {0, 1},
+          {-1, 0},
+          {1, 0},
+          {0, -1},
+          {0, 1},
   };
 
   while (!inspected.empty()) {
     auto closest_it =
-        std::min_element(inspected.begin(), inspected.end(),
-                         [](AStarNode const &lhs, AStarNode const &rhs) {
-                           return (lhs.pre_cost + lhs.estimate_to_goal) <
-                                  (rhs.pre_cost + rhs.estimate_to_goal);
-                         });
+            std::min_element(inspected.begin(), inspected.end(),
+                             [](AStarNode const &lhs, AStarNode const &rhs) {
+                               return (lhs.pre_cost + lhs.estimate_to_goal) <
+                                      (rhs.pre_cost + rhs.estimate_to_goal);
+                             });
     if (closest_it == inspected.end()) {
       fprintf(stderr, "Cannot find closest element.");
       exit(EXIT_FAILURE);
@@ -115,16 +127,16 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
       }
 
       auto existing_node_it =
-          std::find(visited.begin(), visited.end(), neighbour_p);
+              std::find(visited.begin(), visited.end(), neighbour_p);
 
       // Already visited.
       if (existing_node_it != visited.end()) continue;
       visited.insert(neighbour_p);
 
       AStarNode neighbour_node{
-          neighbour_p,
-          node.pre_cost + 1,
-          neighbour_p.dist(end_p),
+              neighbour_p,
+              node.pre_cost + 1,
+              neighbour_p.dist(end_p),
       };
       inspected.push_back(neighbour_node);
     }

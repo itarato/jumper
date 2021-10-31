@@ -25,7 +25,7 @@ Jumper::Jumper()
                    JUMPER_STAND_SLOWNESS) {}
 
 void Jumper::update(Map *map) {
-  {  // Horizontal movement.
+  {// Horizontal movement.
     if (IsKeyDown(KEY_LEFT)) {
       v.x = std::min(-JUMPER_HMOVE_V, v.x * FRICTION);
 
@@ -57,18 +57,18 @@ void Jumper::update(Map *map) {
       }
     }
 
-    if (v.x < 0.0f) {  // Going left.
+    if (v.x < 0.0f) {// Going left.
       int left_wall_x = map->next_left(frame).value_or(0);
-      frame.x = std::max((int)(frame.x + v.x), left_wall_x);
-    } else if (v.x > 0.0f) {  // Going right.
+      frame.x = std::max((int) (frame.x + v.x), left_wall_x);
+    } else if (v.x > 0.0f) {// Going right.
       int right_wall_x =
-          map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
-          frame.width;
-      frame.x = std::min((int)(frame.x + v.x), right_wall_x);
+              map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
+              frame.width;
+      frame.x = std::min((int) (frame.x + v.x), right_wall_x);
     }
   }
 
-  {  // Vertical movement.
+  {// Vertical movement.
     map->evaluate_map_object_state(this);
 
     switch (map_state.type) {
@@ -103,18 +103,18 @@ void Jumper::update(Map *map) {
     }
   }
 
-  {  // Vertical movement.
+  {// Vertical movement.
     if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
       v.y -= JUMP_FORCE;
     }
   }
 
-  { // Regex collision check.
+  {// Regex collision check.
     auto tile_coords = corner_block_coords(frame);
     for (const auto &tile_coord : tile_coords) {
-      Tile& tile = map->get_tile(tile_coord);
+      Tile &tile = map->get_tile(tile_coord);
       if (tile.type == TILE_REGEX && tile.is_enabled) {
-        regex_raw.append(tile.value);
+        merge_pattern(regex_raw, tile.value);
         tile.disable();
       }
     }

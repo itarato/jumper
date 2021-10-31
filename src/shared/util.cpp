@@ -1,5 +1,6 @@
 #include "util.h"
 
+#include <algorithm>
 #include <cstdlib>
 
 #include "shared_defines.h"
@@ -82,4 +83,29 @@ TileMeta::TileMeta(std::string raw) {
   x = atoi(parts[0].c_str());
   y = atoi(parts[1].c_str());
   value = parts[2];
+}
+
+void merge_pattern(std::string &base, std::string new_part) {
+  if (new_part.empty()) {
+    LOG_WARN("Empty new pattern");
+    return;
+  }
+
+  if (new_part == "[CLR]") {// Clear regex.
+    base.clear();
+  } else if (new_part == "[REV]") {// Reverse regex.
+    std::string new_base{base};
+    base.clear();
+    std::copy(new_base.rbegin(), new_base.rend(), std::back_inserter(base));
+  } else if (new_part.front() == '/' && new_part.back() == '/') {// Replace.
+    new_part.pop_back();
+    new_part.erase(0, 1);
+    base = new_part;
+  } else if (new_part.front() == '/') {// To beginning.
+    new_part.erase(0, 1);
+    base.insert(0, new_part);
+  } else if (new_part.back() == '/') {// To end.
+    new_part.pop_back();
+    base.append(new_part);
+  }
 }

@@ -36,3 +36,5 @@ struct TileMeta {
 
   explicit TileMeta(std::string raw);
 };
+
+void merge_pattern(std::string &base, std::string new_part);
