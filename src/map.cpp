@@ -12,13 +12,18 @@ static Tile null_tile{TILE_ERROR};
 
 void Map::build(std::string map_file_path) { load_map(map_file_path); }
 
-void Map::draw(int scroll_offset) {
+void Map::draw(IntVector2D scroll_offset) {
   for (int v = 0; v < (int) map.size(); v++) {
+    int block_lhs_y = v * BLOCK_SIZE - scroll_offset.y;
+    int block_rhs_y = block_lhs_y + BLOCK_SIZE;
+    if (block_rhs_y <= 0 || block_lhs_y >= GetScreenHeight()) {// Out of window.
+      continue;
+    }
+
     for (int h = 0; h < (int) map[v].size(); h++) {
-      int block_lhs_x = h * BLOCK_SIZE - scroll_offset;
+      int block_lhs_x = h * BLOCK_SIZE - scroll_offset.x;
       int block_rhs_x = block_lhs_x + BLOCK_SIZE;
-      if (block_rhs_x <= 0 ||
-          block_lhs_x >= (block_width * BLOCK_SIZE)) {// Out of window.
+      if (block_rhs_x <= 0 || block_lhs_x >= GetScreenWidth()) {// Out of window.
         continue;
       }
 
@@ -26,11 +31,11 @@ void Map::draw(int scroll_offset) {
       switch (map[v][h].type) {
         case TILE_GROUND:
           DrawTexture(asset_manager.textures[IMG_GROUND],
-                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, Fade(WHITE, map[v][h].fade));
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].fade));
           break;
 
         case TILE_END:
-          DrawRectangleLines(h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE,
+          DrawRectangleLines(h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y,
                              BLOCK_SIZE, BLOCK_SIZE, BLACK);
           break;
 
@@ -41,12 +46,12 @@ void Map::draw(int scroll_offset) {
             image = IMG_DOOR_OPEN;
           }
           DrawTexture(asset_manager.textures[image],
-                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, BROWN);
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, BROWN);
           break;
 
         case TILE_REGEX:
           DrawTexture(asset_manager.textures[IMG_REGEX],
-                      h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, Fade(WHITE, map[v][h].is_enabled ? 1.0f : 0.2f));
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].is_enabled ? 1.0f : 0.2f));
           break;
 
         default:
@@ -55,13 +60,13 @@ void Map::draw(int scroll_offset) {
 
       if (!map[v][h].value.empty() && map[v][h].is_enabled) {
         DrawRectangleRounded(Rectangle{
-                                     (float) h * BLOCK_SIZE - scroll_offset - 4,
-                                     (float) v * BLOCK_SIZE - 2,
+                                     (float) (h * BLOCK_SIZE - scroll_offset.x - 4),
+                                     (float) (v * BLOCK_SIZE - scroll_offset.y - 2),
                                      (float) MeasureText(map[v][h].value.c_str(), 10) + 8,
                                      10.0f + 4,
                              },
                              2.0f, 2, LIME);
-        DrawText(map[v][h].value.c_str(), h * BLOCK_SIZE - scroll_offset, v * BLOCK_SIZE, 10, WHITE);
+        DrawText(map[v][h].value.c_str(), h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, 10, WHITE);
       }
     }
   }
@@ -75,7 +80,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
 
   std::optional<int> floor;
 
-  for (int i = std::max(0, curr_row + 1); i < WINDOW_BLOCK_HEIGHT; i++) {
+  for (int i = std::max(0, curr_row + 1); i < block_height; i++) {
     if (map[i][curr_col_lhs].is_solid()) {
       floor = std::optional<int>{i * BLOCK_SIZE};
       break;
@@ -83,7 +88,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
   }
 
   if (curr_col_rhs != curr_col_lhs) {
-    for (int i = std::max(0, curr_row + 1); i < WINDOW_BLOCK_HEIGHT; i++) {
+    for (int i = std::max(0, curr_row + 1); i < block_height; i++) {
       if (map[i][curr_col_rhs].is_solid()) {
         int rhs_floor = i * BLOCK_SIZE;
         floor =
@@ -104,7 +109,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
 
   std::optional<int> ceiling;
 
-  for (int i = std::min(WINDOW_BLOCK_HEIGHT - 1, curr_row - 1); i >= 0; i--) {
+  for (int i = std::min((int) block_height - 1, curr_row - 1); i >= 0; i--) {
     if (map[i][curr_col_lhs].is_solid()) {
       ceiling = std::optional<int>{(i + 1) * BLOCK_SIZE};
       break;
@@ -112,7 +117,7 @@ std::optional<int> Map::next_ceiling(Rectangle p) {
   }
 
   if (curr_col_lhs != curr_col_rhs) {
-    for (int i = std::min(WINDOW_BLOCK_HEIGHT - 1, curr_row - 1); i >= 0; i--) {
+    for (int i = std::min((int) block_height - 1, curr_row - 1); i >= 0; i--) {
       if (map[i][curr_col_rhs].is_solid()) {
         int rhs_ceiling = (i + 1) * BLOCK_SIZE;
         ceiling = std::optional<int>{
@@ -134,7 +139,7 @@ std::optional<int> Map::next_left(Rectangle p) {
   std::optional<int> left;
 
   if (in_range(curr_row_top, 0, (int) map.size() - 1)) {
-    for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
+    for (int i = std::min(curr_col - 1, (int) block_width - 1); i >= 0; i--) {
       if (map[curr_row_top][i].is_solid()) {
         left = std::optional<int>{(i + 1) * BLOCK_SIZE};
         break;
@@ -144,7 +149,7 @@ std::optional<int> Map::next_left(Rectangle p) {
 
   if (curr_row_top != curr_row_bottom) {
     if (in_range(curr_row_bottom, 0, (int) map.size() - 1)) {
-      for (int i = std::min(curr_col - 1, block_width - 1); i >= 0; i--) {
+      for (int i = std::min(curr_col - 1, (int) block_width - 1); i >= 0; i--) {
         if (map[curr_row_bottom][i].is_solid()) {
           int bottom_left = (i + 1) * BLOCK_SIZE;
           left = std::optional<int>{
@@ -236,7 +241,13 @@ void Map::load_map(const std::string &file_path) {
     exit(EXIT_FAILURE);
   }
 
-  for (int i = 0; i < WINDOW_BLOCK_HEIGHT; i++) {
+  if (!getline(file, line)) {
+    fprintf(stderr, "Cannot find height");
+    exit(EXIT_FAILURE);
+  }
+  block_height = atoi(line.c_str());
+
+  for (int i = 0; i < block_height; i++) {
     if (!getline(file, line)) {
       fprintf(stderr, "Incomplete map");
       exit(EXIT_FAILURE);
@@ -303,5 +314,9 @@ Tile &Map::get_tile(IntVector2D coord) {
 }
 
 bool Map::is_inside_map(IntVector2D coord) const {
-  return coord.y >= 0 || coord.x >= 0 || coord.y < WINDOW_BLOCK_HEIGHT || coord.x < block_width;
+  return coord.y >= 0 || coord.x >= 0 || coord.y < block_height || coord.x < block_width;
+}
+
+size_t Map::pixel_height() const {
+  return block_height * BLOCK_SIZE;
 }

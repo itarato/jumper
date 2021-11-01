@@ -40,7 +40,7 @@ struct Jumper : IMapStateUpdatable {
   DoubleJump double_jump;
   std::string regex_raw{};
 
-  void draw(int scroll_offset);
+  void draw(IntVector2D scroll_offset);
   void update(Map *map);
   void init(Vector2 start_pos);
 

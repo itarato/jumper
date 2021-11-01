@@ -1,6 +1,7 @@
 #pragma once
 
 #include "raylib.h"
+#include "shared/types.h"
 
 struct Coin {
   Rectangle frame;
@@ -8,5 +9,5 @@ struct Coin {
 
   explicit Coin(Vector2 pos);
 
-  void draw(int screen_offset) const;
+  void draw(IntVector2D screen_offset) const;
 };

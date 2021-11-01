@@ -121,7 +121,7 @@ void Jumper::update(Map *map) {
   }
 }
 
-void Jumper::draw(int scroll_offset) {
+void Jumper::draw(IntVector2D scroll_offset) {
   std::string image_name;
   if (v.x == 0.0) {
     image_name = stand_sprite.current_img();
@@ -140,10 +140,10 @@ void Jumper::draw(int scroll_offset) {
   if (is_facing_right) {
     DrawTextureRec(asset_manager.textures[image_name],
                    Rectangle{0.0f, 0.0f, -frame.width, frame.height},
-                   Vector2{frame.x - scroll_offset, frame.y}, WHITE);
+                   Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, WHITE);
   } else {
-    DrawTexture(asset_manager.textures[image_name], frame.x - scroll_offset,
-                frame.y, WHITE);
+    DrawTexture(asset_manager.textures[image_name], frame.x - scroll_offset.x,
+                frame.y - scroll_offset.y, WHITE);
   }
 }
 

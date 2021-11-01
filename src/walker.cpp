@@ -116,7 +116,7 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
 
       // Out of map.
       if (neighbour_p.x < 0 || neighbour_p.y < 0 ||
-          neighbour_p.y >= WINDOW_BLOCK_HEIGHT ||
+          neighbour_p.y >= map->block_height ||
           neighbour_p.x >= map->block_width) {
         continue;
       }

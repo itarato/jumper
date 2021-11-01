@@ -11,7 +11,7 @@ struct Enemy {
 
   void init();
   void update(const Rectangle &player);
-  void draw(int scroll_offset) const;
+  void draw(IntVector2D scroll_offset) const;
 
   Enemy(Rectangle frame, std::unique_ptr<IWalker> walker);
 };

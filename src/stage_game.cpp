@@ -17,23 +17,23 @@
 
 void StageGame::update() {
   if (state == GAME_STATE_PLAY) {
-    { // Reset stage.
-     if (IsKeyPressed(KEY_BACKSPACE)) {
-       init_level();
-       return;
-     }
+    {// Reset stage.
+      if (IsKeyPressed(KEY_BACKSPACE)) {
+        init_level();
+        return;
+      }
     }
 
     jumper.update(&map);
 
-    {  // Enemy movement.
+    {// Enemy movement.
       for (Enemy& enemy : enemies) {
         enemy.update(jumper.frame);
       }
     }
   }
 
-  {  // Coin collection.
+  {// Coin collection.
     for (auto& coin : coins) {
       if (CheckCollisionRecs(coin.frame, jumper.frame)) {
         coin.is_collected = true;
@@ -46,16 +46,16 @@ void StageGame::update() {
                 coins.end());
   }
 
-  {  // Completion checks.
+  {// Completion checks.
     if (state == GAME_STATE_PLAY) {
-      if (jumper.frame.y > GetScreenHeight()) {
+      if (jumper.frame.y > (float) map.pixel_height()) {
         state = GAME_STATE_WAIT_TO_COMPLETE;
         is_victory = false;
       }
 
       Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
       if (CheckCollisionRecs(end_rec, jumper.frame)) {
-        if (current_map_number < (int)map_file_paths.size() - 1) {
+        if (current_map_number < (int) map_file_paths.size() - 1) {
           state = GAME_STATE_WAIT_TO_NEXT_LEVEL;
         } else {
           state = GAME_STATE_WAIT_TO_COMPLETE;
@@ -97,10 +97,12 @@ void StageGame::draw() {
    * Window:           |--------------|
    * Offset:  ---------^
    */
-  int scroll_offset = 0;
+  IntVector2D scroll_offset{0, 0};
   if (jumper.frame.x >= WINDOW_SCROLL_PADDING) {
-    scroll_offset = std::min((map.block_width * BLOCK_SIZE) - GetScreenWidth(),
-                             (int)jumper.frame.x - WINDOW_SCROLL_PADDING);
+    scroll_offset.x = std::min(((int) map.block_width * BLOCK_SIZE) - GetScreenWidth(),
+                               (int) jumper.frame.x - WINDOW_SCROLL_PADDING);
+    scroll_offset.y = std::min(((int) map.block_height * BLOCK_SIZE) - GetScreenHeight(),
+                               (int) jumper.frame.y - WINDOW_SCROLL_PADDING);
   }
 
   map.draw(scroll_offset);
@@ -114,14 +116,13 @@ void StageGame::draw() {
     coin.draw(scroll_offset);
   }
 
-  { // Overlay.
+  {// Overlay.
     DrawRectangle(0, 0, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
     DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, 6, 20, WHITE);
   }
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||
-      state == GAME_STATE_WAIT_TO_NEXT_LEVEL
-  ) {
+      state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(RAYWHITE, 0.6));
     if (is_victory) {
       victory_text.draw();
@@ -156,17 +157,17 @@ void StageGame::init_level() {
 
   auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
   for (auto enemy_block_coord : random_enemies) {
-    enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
-                                   (float)(enemy_block_coord.y * BLOCK_SIZE),
-                                   (float)BLOCK_SIZE, (float)BLOCK_SIZE},
+    enemies.emplace_back(Rectangle{(float) (enemy_block_coord.x * BLOCK_SIZE),
+                                   (float) (enemy_block_coord.y * BLOCK_SIZE),
+                                   (float) BLOCK_SIZE, (float) BLOCK_SIZE},
                          std::make_unique<RandomWalker>(&map));
   }
 
   auto chaser_enemies = map.coords_of_tile_type(TILE_ENEMY_CHASER);
   for (auto enemy_block_coord : chaser_enemies) {
-    enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
-                                   (float)(enemy_block_coord.y * BLOCK_SIZE),
-                                   (float)BLOCK_SIZE, (float)BLOCK_SIZE},
+    enemies.emplace_back(Rectangle{(float) (enemy_block_coord.x * BLOCK_SIZE),
+                                   (float) (enemy_block_coord.y * BLOCK_SIZE),
+                                   (float) BLOCK_SIZE, (float) BLOCK_SIZE},
                          std::make_unique<StrictPathChaseWalker>(&map));
   }
 
@@ -174,8 +175,8 @@ void StageGame::init_level() {
 
   auto coin_coords = map.coords_of_tile_type(TILE_COIN);
   for (auto coin_coord : coin_coords) {
-    coins.emplace_back(Vector2{(float)(coin_coord.x * BLOCK_SIZE),
-                               (float)(coin_coord.y * BLOCK_SIZE)});
+    coins.emplace_back(Vector2{(float) (coin_coord.x * BLOCK_SIZE),
+                               (float) (coin_coord.y * BLOCK_SIZE)});
   }
 }
 
