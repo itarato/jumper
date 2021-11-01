@@ -80,7 +80,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
 
   std::optional<int> floor;
 
-  for (int i = std::max(0, curr_row + 1); i < block_height; i++) {
+  for (size_t i = std::max(0, curr_row + 1); i < block_height; i++) {
     if (map[i][curr_col_lhs].is_solid()) {
       floor = std::optional<int>{i * BLOCK_SIZE};
       break;
@@ -88,7 +88,7 @@ std::optional<int> Map::next_floor(Rectangle p) {
   }
 
   if (curr_col_rhs != curr_col_lhs) {
-    for (int i = std::max(0, curr_row + 1); i < block_height; i++) {
+    for (size_t i = std::max(0, curr_row + 1); i < block_height; i++) {
       if (map[i][curr_col_rhs].is_solid()) {
         int rhs_floor = i * BLOCK_SIZE;
         floor =
@@ -172,7 +172,7 @@ std::optional<int> Map::next_right(Rectangle p) {
   std::optional<int> right;
 
   if (in_range(curr_row_top, 0, map.size() - 1)) {
-    for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
+    for (size_t i = std::max(0, curr_col + 1); i < block_width; i++) {
       if (map[curr_row_top][i].is_solid()) {
         right = std::optional<int>{i * BLOCK_SIZE};
         break;
@@ -182,7 +182,7 @@ std::optional<int> Map::next_right(Rectangle p) {
 
   if (curr_row_top != curr_row_bottom) {
     if (in_range(curr_row_bottom, 0, map.size() - 1)) {
-      for (int i = std::max(0, curr_col + 1); i < block_width; i++) {
+      for (size_t i = std::max(0, curr_col + 1); i < block_width; i++) {
         if (map[curr_row_bottom][i].is_solid()) {
           int bottom_right = i * BLOCK_SIZE;
           right = std::optional<int>{
@@ -247,7 +247,7 @@ void Map::load_map(const std::string &file_path) {
   }
   block_height = atoi(line.c_str());
 
-  for (int i = 0; i < block_height; i++) {
+  for (size_t i = 0; i < block_height; i++) {
     if (!getline(file, line)) {
       fprintf(stderr, "Incomplete map");
       exit(EXIT_FAILURE);
@@ -314,7 +314,7 @@ Tile &Map::get_tile(IntVector2D coord) {
 }
 
 bool Map::is_inside_map(IntVector2D coord) const {
-  return coord.y >= 0 || coord.x >= 0 || coord.y < block_height || coord.x < block_width;
+  return coord.y >= 0 || coord.x >= 0 || coord.y < (int) block_height || coord.x < (int) block_width;
 }
 
 size_t Map::pixel_height() const {
