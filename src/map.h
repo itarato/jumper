@@ -72,4 +72,5 @@ struct Map {
   [[nodiscard]] bool is_inside_map(IntVector2D coord) const;
 
   [[nodiscard]] size_t pixel_height() const;
+  [[nodiscard]] size_t pixel_width() const;
 };

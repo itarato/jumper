@@ -320,3 +320,7 @@ bool Map::is_inside_map(IntVector2D coord) const {
 size_t Map::pixel_height() const {
   return block_height * BLOCK_SIZE;
 }
+
+size_t Map::pixel_width() const {
+  return block_width * BLOCK_SIZE;
+}

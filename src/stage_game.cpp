@@ -99,9 +99,11 @@ void StageGame::draw() {
    */
   IntVector2D scroll_offset{0, 0};
   if (jumper.frame.x >= WINDOW_SCROLL_PADDING) {
-    scroll_offset.x = std::min(((int) map.block_width * BLOCK_SIZE) - GetScreenWidth(),
+    scroll_offset.x = std::min((int) map.pixel_width() - GetScreenWidth(),
                                (int) jumper.frame.x - WINDOW_SCROLL_PADDING);
-    scroll_offset.y = std::min(((int) map.block_height * BLOCK_SIZE) - GetScreenHeight(),
+  }
+  if (jumper.frame.y >= WINDOW_SCROLL_PADDING) {
+    scroll_offset.y = std::min((int) map.pixel_height() - GetScreenHeight(),
                                (int) jumper.frame.y - WINDOW_SCROLL_PADDING);
   }
 

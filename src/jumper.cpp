@@ -96,7 +96,7 @@ void Jumper::update(Map *map) {
         if (IsKeyDown(KEY_LEFT_ALT)) {
           v.y = PARACHUTE_V;
         } else {
-          v.y *= GRAVITY_ACC;
+          v.y = std::min(v.y * GRAVITY_ACC, JUMPER_MAX_VERTICAL_SPEED);
         }
         frame.y += v.y;
         break;
