@@ -79,10 +79,10 @@ std::vector<IntVector2D> corner_block_coords(Rectangle frame) {
 }
 
 TileMeta::TileMeta(std::string raw) {
-  std::vector<std::string> parts{split(raw, ',')};
-  x = atoi(parts[0].c_str());
-  y = atoi(parts[1].c_str());
-  value = parts[2];
+  std::vector<std::string> parts{split(std::move(raw), ',')};
+  x = std::stoi(parts[0]);
+  y = std::stoi(parts[1]);
+  value.swap(parts[2]);
 }
 
 void merge_pattern(std::string &base, std::string new_part) {

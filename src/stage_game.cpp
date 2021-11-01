@@ -98,14 +98,21 @@ void StageGame::draw() {
    * Offset:  ---------^
    */
   IntVector2D scroll_offset{0, 0};
-  if (jumper.frame.x >= WINDOW_SCROLL_PADDING) {
+  if (map.pixel_width() <= GetScreenWidth()) {
+    scroll_offset.x = -(GetScreenWidth() - (int) map.pixel_width()) / 2;
+  } else if (jumper.frame.x >= WINDOW_SCROLL_PADDING) {
     scroll_offset.x = std::min((int) map.pixel_width() - GetScreenWidth(),
                                (int) jumper.frame.x - WINDOW_SCROLL_PADDING);
   }
-  if (jumper.frame.y >= WINDOW_SCROLL_PADDING) {
+  if (map.pixel_height() <= GetScreenHeight()) {
+    scroll_offset.y = -(GetScreenHeight() - (int) map.pixel_height()) / 2;
+  } else if (jumper.frame.y >= WINDOW_SCROLL_PADDING) {
     scroll_offset.y = std::min((int) map.pixel_height() - GetScreenHeight(),
                                (int) jumper.frame.y - WINDOW_SCROLL_PADDING);
   }
+
+  DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKGRAY);
+  DrawRectangle(-scroll_offset.x, -scroll_offset.y, (int) map.pixel_width(), (int) map.pixel_height(), RAYWHITE);
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
@@ -119,8 +126,8 @@ void StageGame::draw() {
   }
 
   {// Overlay.
-    DrawRectangle(0, 0, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
-    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, 6, 20, WHITE);
+    DrawRectangle(0, GetScreenHeight() - 32, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
+    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, GetScreenHeight() - 26, 20, WHITE);
   }
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||
