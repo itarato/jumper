@@ -314,7 +314,7 @@ Tile &Map::get_tile(IntVector2D coord) {
 }
 
 bool Map::is_inside_map(IntVector2D coord) const {
-  return coord.y >= 0 || coord.x >= 0 || coord.y < (int) block_height || coord.x < (int) block_width;
+  return coord.y >= 0 && coord.x >= 0 && coord.y < (int) block_height && coord.x < (int) block_width;
 }
 
 size_t Map::pixel_height() const {

@@ -8,10 +8,6 @@
 #define JUMP_FORCE 22.0f
 #define JUMPER_MAX_VERTICAL_SPEED 16.0f
 #define FRICTION 0.9f
-
-#define WINDOW_WIDTH (WINDOW_BLOCK_WIDTH * BLOCK_SIZE)
-#define WINDOW_HEIGHT (WINDOW_BLOCK_HEIGHT * BLOCK_SIZE)
-
 #define IMG_GROUND "assets/images/ground.png"
 #define IMG_GROUND_TOP "assets/images/ground_top.png"
 #define IMG_BACKGROUND "assets/images/background.png"

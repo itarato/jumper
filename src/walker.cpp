@@ -36,11 +36,12 @@ void TargetWalker::update(Rectangle &self_frame,
 
 void RandomWalker::set_next_target(Rectangle &self_frame,
                                    const Rectangle &player_frame) {
-  Vector2 next_target{target};
+  Vector2 next_target;
 
   for (int i = 0; i < 4; i++) {
     // 4 tries to find a viable next option - not to waste too much and keep it stupid.
 
+    next_target = target;
     switch (rand_range(0, 3)) {
       case 0:
         next_target.x = target.x + BLOCK_SIZE;
@@ -57,7 +58,7 @@ void RandomWalker::set_next_target(Rectangle &self_frame,
     }
 
     IntVector2D coord{(int) next_target.x / BLOCK_SIZE, (int) next_target.y / BLOCK_SIZE};
-    if (!map->is_solid_tile(coord)) {
+    if (map->is_inside_map(coord) && !map->is_solid_tile(coord)) {
       target = next_target;
       break;
     }

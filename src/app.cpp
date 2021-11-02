@@ -21,7 +21,7 @@ void App::init() {
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
 
-  InitWindow(320, 320, "Jumper");
+  InitWindow(1280, 640, "Jumper");
   SetTargetFPS(60);
 
   std::vector<std::string> images{IMG_GROUND,
