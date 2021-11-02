@@ -14,13 +14,17 @@
 #define WIN_W 1600
 #define FPS 120
 
+#define DEFAULT_WINDOW_BLOCK_WIDTH 40
+#define DEFAULT_WINDOW_BLOCK_HEIGHT 20
 #define MIN_WINDOW_BLOCK_WIDTH 40
+#define MIN_WINDOW_BLOCK_HEIGHT 40
 #define MAX_WINDOW_BLOCK_WIDTH 200
+#define MAX_WINDOW_BLOCK_HEIGHT 200
 
 using namespace std;
 
 static const TileType tile_types[] = {
-        TILE_ERROR,
+        TILE_NULL,
         TILE_AIR,
         TILE_GROUND,
         TILE_START,
@@ -33,7 +37,7 @@ static const TileType tile_types[] = {
 };
 
 static const char* tile_type_names[] = {
-        "Error",
+        "NULL",
         "Air",
         "Ground",
         "Start",
@@ -45,7 +49,7 @@ static const char* tile_type_names[] = {
         "Door",
 };
 
-char shift_version(char ch) {
+char char_shift_version(char ch) {
   switch (ch) {
     case '1':
       return '!';
@@ -75,11 +79,11 @@ char shift_version(char ch) {
 }
 
 struct Tile {
-  TileType type = TILE_ERROR;
+  TileType type = TILE_NULL;
   string value;
 
   void reset() {
-    type = TILE_ERROR;
+    type = TILE_NULL;
     value = "";
   }
 };
@@ -123,7 +127,7 @@ struct Input {
       while ((ch = GetKeyPressed())) {
         if (ch >= 32 && ch <= 126) {
           if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
-            value.push_back(shift_version((char) ch));
+            value.push_back(char_shift_version((char) ch));
           } else {
             value.push_back((char) ch);
           }
@@ -134,7 +138,7 @@ struct Input {
     }
   }
 
-  bool has_changed() const { return is_active && IsKeyPressed(KEY_ENTER); }
+  [[nodiscard]] bool has_changed() const { return is_active && IsKeyPressed(KEY_ENTER); }
 
   void draw() const {
     DrawRectangleRec(frame, WHITE);
@@ -147,8 +151,8 @@ struct Input {
 vector<Input*> Input::inputs{};
 
 struct Button {
-  Vector2 pos;
-  string label;
+  Vector2 pos{};
+  string label{};
   int font_size = 10;
 
   Button(string label) : label(label) {}
@@ -171,7 +175,7 @@ struct Button {
 };
 
 struct App {
-  Tile map[WINDOW_BLOCK_HEIGHT][MAX_WINDOW_BLOCK_WIDTH];
+  Tile map[MAX_WINDOW_BLOCK_HEIGHT][MAX_WINDOW_BLOCK_WIDTH];
 
   int offsx = -BLOCK_SIZE;
   int offsy = -BLOCK_SIZE;
@@ -185,10 +189,12 @@ struct App {
   bool is_bulk_creation;
 
   Input input_window_width;
+  Input input_window_height;
   Input input_map_file_name;
   Input input_tile_value;
 
-  int map_width = WINDOW_BLOCK_WIDTH;
+  int map_width = DEFAULT_WINDOW_BLOCK_WIDTH;
+  int map_height = DEFAULT_WINDOW_BLOCK_HEIGHT;
 
   Button save_button;
 
@@ -196,6 +202,7 @@ struct App {
 
   App()
       : input_window_width("Width"),
+        input_window_height("Height"),
         input_map_file_name("Map file"),
         input_tile_value("Tile value"),
         save_button("Save"),
@@ -205,9 +212,13 @@ struct App {
 
     input_window_width.set_pos(Vector2{(float) (GetScreenWidth() - 232),
                                        (float) (GetScreenHeight() - 90)});
-    input_window_width.set_value(to_string(WINDOW_BLOCK_WIDTH));
+    input_window_width.set_value(to_string(DEFAULT_WINDOW_BLOCK_WIDTH));
 
-    input_map_file_name.set_pos(Vector2{(float) (GetScreenWidth() - 232),
+    input_window_height.set_pos(Vector2{(float) (GetScreenWidth() - 232),
+                                        (float) (GetScreenHeight() - 50)});
+    input_window_height.set_value(to_string(DEFAULT_WINDOW_BLOCK_HEIGHT));
+
+    input_map_file_name.set_pos(Vector2{(float) (GetScreenWidth() - 432),
                                         (float) (GetScreenHeight() - 50)});
     input_map_file_name.set_value("maps/untitled.jm");
 
@@ -223,26 +234,29 @@ struct App {
 
     ifstream map_file{file_name};
     if (!map_file.is_open()) {
-      map_width = WINDOW_BLOCK_WIDTH;
+      map_width = DEFAULT_WINDOW_BLOCK_WIDTH;
+      map_height = DEFAULT_WINDOW_BLOCK_HEIGHT;
       return;
     }
 
-    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
+    string line;
+
+    getline(map_file, line);
+    map_height = stoi(line);
+    input_window_height.set_value(to_string(map_height));
+
+    for (int y = 0; y < MAX_WINDOW_BLOCK_HEIGHT; y++) {
       for (int x = 0; x < MAX_WINDOW_BLOCK_WIDTH; x++) {
         map[y][x].reset();
       }
     }
 
-    string line;
-    int width;
-
-    for (int i = 0; i < WINDOW_BLOCK_HEIGHT; i++) {
+    for (int i = 0; i < map_height; i++) {
       getline(map_file, line);
 
       if (i == 0) {
-        width = line.size();
-        map_width = width;
-        input_window_width.set_value(to_string(width));
+        map_width = line.size();
+        input_window_width.set_value(to_string(map_width));
       }
 
       for (int j = 0; j < (int) line.size(); j++) {
@@ -283,6 +297,19 @@ struct App {
         }
       }
 
+      if (input_window_height.has_changed()) {
+        int new_height = stoi(input_window_height.value);
+        if (new_height > MAX_WINDOW_BLOCK_HEIGHT) {
+          input_window_height.set_value(to_string(MAX_WINDOW_BLOCK_HEIGHT));
+          map_height = MAX_WINDOW_BLOCK_HEIGHT;
+        } else if (new_height < MIN_WINDOW_BLOCK_HEIGHT) {
+          input_window_height.set_value(to_string(MIN_WINDOW_BLOCK_HEIGHT));
+          map_height = MIN_WINDOW_BLOCK_HEIGHT;
+        } else {
+          map_height = new_height;
+        }
+      }
+
       if (input_tile_value.has_changed() && selected_tile) {
         selected_tile->value = input_tile_value.value;
       }
@@ -314,7 +341,7 @@ struct App {
                     tile_types[selected_tile_idx];
           } else {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                    TILE_ERROR;
+                    TILE_NULL;
           }
         }
       }
@@ -332,6 +359,7 @@ struct App {
 
     {// Input fields.
       input_window_width.update();
+      input_window_height.update();
       input_map_file_name.update();
       input_tile_value.update();
     }
@@ -357,7 +385,7 @@ struct App {
     pair<int, int> mouse_tile_coord = tile_coord();
 
     // Map.
-    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
+    for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
         Vector2 tile_pos{(float) (x * BLOCK_SIZE - offsx),
                          (float) (y * BLOCK_SIZE - offsy)};
@@ -377,7 +405,7 @@ struct App {
 
     // Window frame.
     DrawRectangleLines(0 - offsx, 0 - offsy, map_width * BLOCK_SIZE,
-                       WINDOW_BLOCK_HEIGHT * BLOCK_SIZE, MAGENTA);
+                       map_height * BLOCK_SIZE, MAGENTA);
 
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
@@ -406,6 +434,7 @@ struct App {
       }
 
       input_window_width.draw();
+      input_window_height.draw();
       input_map_file_name.draw();
       input_tile_value.draw();
 
@@ -427,7 +456,7 @@ struct App {
 
     return mouse_tile_coord.first >= 0 && mouse_tile_coord.second >= 0 &&
            mouse_tile_coord.first < map_width &&
-           mouse_tile_coord.second < WINDOW_BLOCK_HEIGHT;
+           mouse_tile_coord.second < map_height;
   }
 
   void draw_tile(TileType type, Vector2 pos) const {
@@ -435,7 +464,7 @@ struct App {
     Color color;
 
     switch (type) {
-      case TILE_ERROR:
+      case TILE_NULL:
         color = RAYWHITE;
         break;
       case TILE_AIR:
@@ -483,8 +512,10 @@ struct App {
       return;
     }
 
+    map_file << map_height << endl;
+
     // Tiles.
-    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
+    for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
         map_file.put((char) map[y][x].type);
       }
@@ -492,7 +523,7 @@ struct App {
     }
 
     // Values.
-    for (int y = 0; y < WINDOW_BLOCK_HEIGHT; y++) {
+    for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
         if (map[y][x].value.empty()) continue;
 

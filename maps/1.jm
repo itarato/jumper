@@ -31,3 +31,11 @@ gggggggggg......................g.......
 gggggggggg...ggggggggggggggggggggggggggg
 g.mggggggg...ggggggggggggggggggggggggggg
 g..ggggggggggggggggggggggggggggggggggggg
+13,20,[CLR]
+17,20,/A*
+24,20,[REV]
+15,24,/.*
+31,25,/B
+1,28,B/
+9,28,A
+32,28,AB

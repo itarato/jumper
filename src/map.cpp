@@ -8,7 +8,7 @@
 #include "raylib.h"
 #include "shared/util.h"
 
-static Tile null_tile{TILE_ERROR};
+static Tile null_tile{TILE_NULL};
 
 void Map::build(std::string map_file_path) { load_map(map_file_path); }
 

@@ -1,7 +1,7 @@
 #pragma once
 
 typedef enum {
-  TILE_ERROR = '\0',
+  TILE_NULL = '\0',
   TILE_AIR = '.',
   TILE_GROUND = 'g',
   TILE_START = 's',
