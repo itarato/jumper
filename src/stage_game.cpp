@@ -48,7 +48,7 @@ void StageGame::update() {
 
   {// Completion checks.
     if (state == GAME_STATE_PLAY) {
-      if (jumper.frame.y > (float) map.pixel_height()) {
+      if (jumper.frame.y >= (float) map.pixel_height() || jumper.is_dead()) {
         state = GAME_STATE_WAIT_TO_COMPLETE;
         is_victory = false;
       }
@@ -100,13 +100,13 @@ void StageGame::draw() {
   IntVector2D scroll_offset{0, 0};
   int h_offs_padding = (GetScreenHeight() - BLOCK_SIZE) / 2;
   int v_offs_padding = (GetScreenHeight() - BLOCK_SIZE) / 2;
-  if (map.pixel_width() <= GetScreenWidth()) {
+  if ((int) map.pixel_width() <= GetScreenWidth()) {
     scroll_offset.x = -(GetScreenWidth() - (int) map.pixel_width()) / 2;
   } else if (jumper.frame.x >= h_offs_padding) {
     scroll_offset.x = std::min((int) map.pixel_width() - GetScreenWidth(),
                                (int) jumper.frame.x - h_offs_padding);
   }
-  if (map.pixel_height() <= GetScreenHeight()) {
+  if ((int) map.pixel_height() <= GetScreenHeight()) {
     scroll_offset.y = -(GetScreenHeight() - (int) map.pixel_height()) / 2;
   } else if (jumper.frame.y >= v_offs_padding) {
     scroll_offset.y = std::min((int) map.pixel_height() - GetScreenHeight(),

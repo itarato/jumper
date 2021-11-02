@@ -50,8 +50,12 @@ void Jumper::update(Map *map) {
       for (auto &corner : corner_block_coords(planned_next_frame)) {
         Tile &tile = map->get_tile(corner);
         if (tile.type == TILE_DOOR && tile.is_enabled) {
-          if (std::regex_search(tile.value, get_regex())) {
-            tile.disable();
+          try {
+            if (std::regex_search(tile.value, get_regex())) {
+              tile.disable();
+            }
+          } catch (...) {
+            _is_dead = true;
           }
         }
       }
@@ -159,6 +163,8 @@ void Jumper::init(Vector2 start_pos) {
   v.y = 0.0f;
 
   regex_raw.clear();
+
+  _is_dead = false;
 }
 
 Rectangle Jumper::get_frame() const { return frame; }
@@ -172,4 +178,8 @@ std::regex Jumper::get_regex() const {
   raw.push_back('$');
 
   return std::regex{raw};
+}
+
+bool Jumper::is_dead() const {
+  return _is_dead;
 }

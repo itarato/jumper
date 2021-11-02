@@ -49,5 +49,10 @@ struct Jumper : IMapStateUpdatable {
   void set_map_state(MapObjectState mos) override;
   [[nodiscard]] std::regex get_regex() const;
 
+  [[nodiscard]] bool is_dead() const;
+
   Jumper();
+
+  private:
+  bool _is_dead;
 };
