@@ -115,15 +115,8 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
         return;
       }
 
-      // Out of map.
-      if (neighbour_p.x < 0 || neighbour_p.y < 0 ||
-          neighbour_p.y >= (int) map->block_height ||
-          neighbour_p.x >= (int) map->block_width) {
-        continue;
-      }
-
-      // Steppable map tile.
-      if (map->is_solid_tile(neighbour_p)) {
+      // Out of map or steppable map tile.
+      if (!map->is_inside_map(neighbour_p) || map->is_solid_tile(neighbour_p)) {
         continue;
       }
 
