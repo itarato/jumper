@@ -2,20 +2,19 @@
  * Jumper
  *
  * Features:
- * - different map tiles (earth/obstacle/decoration)
- * - custom size tile type
  * - xbox controller
  *
  * Optional features:
+ * - door animation
+ * - regex catch animation
  * - score save (to file)
  * - limit dashes
  * - health
  * - teleport
  * - destroyable map type
- * - flying enemy
  *
  * Bug:
- * - sometimes fall through the floor when jumping
+ * - sometimes fall through the floor when jumping (limited falling velocity, lets see now)
  */
 
 #include <cstdlib>
@@ -32,4 +31,6 @@ int main() {
   App app{};
   app.init();
   app.loop();
+
+  LOG_INFO("End main");
 }
