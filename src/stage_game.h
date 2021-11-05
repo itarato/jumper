@@ -20,7 +20,7 @@ typedef enum {
   GAME_STATE_COMPLETE = 3,
 } GameStateT;
 
-struct StageGame : public IStage {
+struct StageGame : IStage, JumperObserver {
   GameStateT state;
   int wait_to_state_timeout;
   bool is_victory;
@@ -44,10 +44,15 @@ struct StageGame : public IStage {
   int current_map_number;
   std::vector<std::string> map_file_paths;
 
+  void on_jumper_update(JumperEvent event, JumperEventData data) override;
+
   StageGame(GameConfig *game_config)
-      : game_config(game_config),
+      : JumperObserver(),
+        game_config(game_config),
         victory_text("Victory"),
         game_over_text("Game over"),
-        map_file_paths({"./maps/1.jm", "./maps/2.jm"}){};
-  ~StageGame(){};
+        map_file_paths({"./maps/1.jm", "./maps/2.jm"}) {
+    jumper.JumperSubject::subscribe(this);
+  };
+  ~StageGame() override = default;
 };

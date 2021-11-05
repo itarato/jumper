@@ -198,3 +198,7 @@ std::optional<StageT> StageGame::next_stage() {
     return std::nullopt;
   }
 }
+
+void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
+  LOG_INFO("GOT IT");
+}

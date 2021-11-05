@@ -116,6 +116,7 @@ void Jumper::update(Map *map) {
       if (tile.type == TILE_REGEX && tile.is_enabled) {
         merge_pattern(regex_raw, tile.value);
         tile.disable();
+        JumperSubject::notify_all(JumperEvent::DidCaptureRegex, JumperEventData{frame});
       }
     }
   }

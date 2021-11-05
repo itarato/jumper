@@ -35,10 +35,13 @@ enum class JumperEvent {
 };
 
 struct JumperEventData {
+  Rectangle frame;
+
+  explicit JumperEventData(Rectangle frame) : frame(frame) {}
 };
 
 struct JumperObserver {
-  virtual void on_jumper_update(JumperEvent event, JumperEventData data);
+  virtual void on_jumper_update(JumperEvent event, JumperEventData data) = 0;
 };
 
 struct JumperSubject {
@@ -49,7 +52,7 @@ struct JumperSubject {
   }
 
   void notify_all(JumperEvent event, JumperEventData data) {
-    for (auto& observer : observers) {
+    for (auto &observer : observers) {
       observer->on_jumper_update(event, data);
     }
   }
