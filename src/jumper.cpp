@@ -12,10 +12,6 @@
 #define JUMPER_STEP_SLOWNESS 3
 #define JUMPER_STAND_SLOWNESS 6
 
-/**
- * - Jumper pos represents bottom left corner of its bounding rect.
- */
-
 Jumper::Jumper()
     : move_sprite({IMG_LADYBUG_MOVE_0, IMG_LADYBUG_MOVE_1, IMG_LADYBUG_MOVE_2,
                    IMG_LADYBUG_MOVE_3},

@@ -30,7 +30,32 @@ struct DoubleJump {
   void reset() { air_jumps = 0; }
 };
 
-struct Jumper : IMapStateUpdatable {
+enum class JumperEvent {
+  DidCaptureRegex,
+};
+
+struct JumperEventData {
+};
+
+struct JumperObserver {
+  virtual void on_jumper_update(JumperEvent event, JumperEventData data);
+};
+
+struct JumperSubject {
+  std::vector<JumperObserver *> observers;
+
+  void subscribe(JumperObserver *observer) {
+    observers.push_back(observer);
+  }
+
+  void notify_all(JumperEvent event, JumperEventData data) {
+    for (auto& observer : observers) {
+      observer->on_jumper_update(event, data);
+    }
+  }
+};
+
+struct Jumper : IMapStateUpdatable, JumperSubject {
   Rectangle frame;
   Vector2 v;
   MapObjectState map_state;
