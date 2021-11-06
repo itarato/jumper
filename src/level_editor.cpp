@@ -108,7 +108,7 @@ struct Input {
     frame.y = pos.y;
   }
 
-  void set_value(string new_value) { value = new_value; }
+  void set_value(string&& new_value) { value = new_value; }
 
   void update() {
     if (!is_active && IsMouseButtonPressed(0) &&
@@ -155,7 +155,7 @@ struct Button {
   string label{};
   int font_size = 10;
 
-  Button(string label) : label(label) {}
+  Button(string label) : label(std::move(label)) {}
 
   bool is_clicked() {
     return (IsMouseButtonPressed(0) &&
@@ -500,7 +500,7 @@ struct App {
     DrawRectangleRec(frame, color);
   }
 
-  int tile_count() const { return sizeof(tile_types) / sizeof(TileType); }
+  [[nodiscard]] int tile_count() const { return sizeof(tile_types) / sizeof(TileType); }
 
   void save_map() {
     ofstream map_file;
