@@ -8,6 +8,7 @@
 #include "game_config.h"
 #include "jumper.h"
 #include "map.h"
+#include "particles.h"
 #include "shared/types.h"
 #include "text.h"
 
@@ -43,6 +44,7 @@ struct StageGame : IStage, JumperObserver {
 
   int current_map_number;
   std::vector<std::string> map_file_paths;
+  std::vector<Explosion> explosions{};
 
   void on_jumper_update(JumperEvent event, JumperEventData data) override;
 

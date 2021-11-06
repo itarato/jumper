@@ -31,6 +31,15 @@ void StageGame::update() {
         enemy.update(jumper.frame);
       }
     }
+
+    {// Particles
+      for (auto& explosion : explosions) {
+        explosion.update();
+      }
+
+      // Cleanup completed explosions.
+      explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [](const auto& e) { return e.is_completed(); }), explosions.end());
+    }
   }
 
   {// Coin collection.
@@ -127,6 +136,12 @@ void StageGame::draw() {
     coin.draw(scroll_offset);
   }
 
+  {// Particles
+    for (auto& explosion : explosions) {
+      explosion.draw(scroll_offset);
+    }
+  }
+
   {// Overlay.
     DrawRectangle(0, GetScreenHeight() - 32, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
     DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, GetScreenHeight() - 26, 20, WHITE);
@@ -165,6 +180,7 @@ void StageGame::init_level() {
 
   enemies.clear();
   coins.clear();
+  explosions.clear();
 
   auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
   for (auto enemy_block_coord : random_enemies) {
@@ -200,5 +216,5 @@ std::optional<StageT> StageGame::next_stage() {
 }
 
 void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
-  LOG_INFO("GOT IT");
+  explosions.emplace_back(data.frame, 64);
 }

@@ -22,6 +22,7 @@ typedef enum {
 void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
 int rand_range(int min, int max);
+float randf();
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
 

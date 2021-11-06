@@ -37,6 +37,10 @@ bool in_range(int number, int min, int max) {
   return number >= min && number <= max;
 }
 
+float randf() {
+  return (float) (rand() % 1000000) / 1000000.0f;
+}
+
 int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
