@@ -45,6 +45,8 @@ void StageGame::update() {
       if (CheckCollisionRecs(coin.frame, jumper.frame)) {
         coin.is_collected = true;
         score++;
+
+        explosions.push_back(std::make_unique<Circler>(jumper.frame, 64));
       }
     }
 
