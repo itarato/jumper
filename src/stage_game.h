@@ -44,7 +44,7 @@ struct StageGame : IStage, JumperObserver {
 
   int current_map_number;
   std::vector<std::string> map_file_paths;
-  std::vector<Explosion> explosions{};
+  std::vector<std::unique_ptr<IParticle>> explosions{};
 
   void on_jumper_update(JumperEvent event, JumperEventData data) override;
 

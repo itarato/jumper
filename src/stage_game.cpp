@@ -13,8 +13,6 @@
  * CTRL  : dash
  */
 
-#define WINDOW_SCROLL_PADDING 256
-
 void StageGame::update() {
   if (state == GAME_STATE_PLAY) {
     {// Reset stage.
@@ -34,11 +32,11 @@ void StageGame::update() {
 
     {// Particles
       for (auto& explosion : explosions) {
-        explosion.update();
+        explosion->update();
       }
 
       // Cleanup completed explosions.
-      explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [](const auto& e) { return e.is_completed(); }), explosions.end());
+      explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [](const auto& e) { return e->is_completed(); }), explosions.end());
     }
   }
 
@@ -138,7 +136,7 @@ void StageGame::draw() {
 
   {// Particles
     for (auto& explosion : explosions) {
-      explosion.draw(scroll_offset);
+      explosion->draw(scroll_offset);
     }
   }
 
@@ -216,5 +214,5 @@ std::optional<StageT> StageGame::next_stage() {
 }
 
 void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
-  explosions.emplace_back(data.frame, 64);
+  explosions.push_back(std::make_unique<Explosion>(data.frame, 64));
 }

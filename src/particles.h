@@ -8,7 +8,14 @@
 #include "shared/types.h"
 #include "shared/util.h"
 
-struct Explosion {
+struct IParticle {
+  virtual void draw(IntVector2D scroll_offset) const = 0;
+  virtual void update() = 0;
+  [[nodiscard]] virtual bool is_completed() const = 0;
+  virtual ~IParticle() = default;
+};
+
+struct Explosion : IParticle {
   size_t particle_count;
   float fade = 1.0f;
 
@@ -24,7 +31,7 @@ struct Explosion {
     }
   }
 
-  void draw(IntVector2D scroll_offset) const;
-  void update();
-  [[nodiscard]] bool is_completed() const { return fade < 0.0f; }
+  void draw(IntVector2D scroll_offset) const override;
+  void update() override;
+  [[nodiscard]] bool is_completed() const override { return fade < 0.0f; }
 };
