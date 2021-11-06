@@ -1,8 +1,5 @@
 #include "shared_map_schema.h"
 
-#include <cstdio>
-#include <cstdlib>
-
 bool is_tile_type_solid(TileType t) {
   // FIXME: This needs to be aware of the state (eg door can be open).
   switch (t) {

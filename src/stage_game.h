@@ -26,11 +26,11 @@ struct StageGame : IStage, JumperObserver {
   int wait_to_state_timeout;
   bool is_victory;
 
-  void update();
-  void draw();
-  void init();
+  void update() override;
+  void draw() override;
+  void init() override;
   void init_level();
-  std::optional<StageT> next_stage();
+  std::optional<StageT> next_stage() override;
 
   GameConfig *game_config;
   Jumper jumper;

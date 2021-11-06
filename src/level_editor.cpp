@@ -99,7 +99,7 @@ struct Input {
   Input(string label)
       : frame({0.0f, 0.0f, 128, 18}),
         is_active(false),
-        label(label) {
+        label(std::move(label)) {
     Input::inputs.push_back(this);
   }
 

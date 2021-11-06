@@ -2,7 +2,6 @@
 
 #define PARTICLE_FADE_STEP 0.04f
 #define PARTICLE_CIRCLER_ROT_STEP 0.1f
-#define PARTICLE_CIRCLER_DIST_STEP 3.0f
 
 // EXPLOSION //////////////////////////////////////////////////////////////////
 
