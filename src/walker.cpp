@@ -126,12 +126,9 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
       if (existing_node_it != visited.end()) continue;
       visited.insert(neighbour_p);
 
-      AStarNode neighbour_node{
-              neighbour_p,
-              node.pre_cost + 1,
-              neighbour_p.dist(end_p),
-      };
-      inspected.push_back(neighbour_node);
+      inspected.emplace_back(neighbour_p,
+                             node.pre_cost + 1,
+                             neighbour_p.dist(end_p));
     }
   }
 }

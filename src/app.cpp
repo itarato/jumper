@@ -2,8 +2,8 @@
 
 #include <chrono>
 #include <ctime>
-#include <fstream>
 #include <iomanip>
+#include <iostream>
 #include <ranges>
 
 #include "asset_manager.h"
@@ -54,9 +54,6 @@ void App::loop() {
   StageT current_stage = STAGE_MENU;
   stages[current_stage]->init();
 
-  std::ofstream debug_file;
-  debug_file.open("/tmp/jumper_debug.txt", std::ofstream::out | std::ofstream::in | std::ofstream::trunc);
-
   while (!WindowShouldClose()) {
     auto stage = stages[current_stage];
 
@@ -71,7 +68,7 @@ void App::loop() {
     DrawFPS(GetScreenWidth() - 96, GetScreenHeight() - 26);
 
     auto end_t = std::chrono::high_resolution_clock::now();
-    debug_file << std::fixed << std::setprecision(4) << std::chrono::duration<double, std::milli>(end_t - start_t).count() << "ms" << std::endl;
+    std::cout << std::fixed << std::setprecision(4) << std::chrono::duration<double, std::milli>(end_t - start_t).count() << "ms" << std::endl;
 
     auto next_stage = stage->next_stage();
     if (next_stage.has_value()) {
@@ -82,6 +79,4 @@ void App::loop() {
 
     EndDrawing();
   }
-
-  debug_file.close();
 }
