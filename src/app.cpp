@@ -1,9 +1,5 @@
 #include "app.h"
 
-#include <chrono>
-#include <ctime>
-#include <iomanip>
-#include <iostream>
 #include <ranges>
 
 #include "asset_manager.h"
@@ -54,10 +50,12 @@ void App::loop() {
   StageT current_stage = STAGE_MENU;
   stages[current_stage]->init();
 
+  Timer dbg_timer{};
+
   while (!WindowShouldClose()) {
     auto stage = stages[current_stage];
 
-    auto start_t = std::chrono::high_resolution_clock::now();
+    //    dbg_timer.tick();
 
     stage->update();
 
@@ -67,8 +65,7 @@ void App::loop() {
     stage->draw();
     DrawFPS(GetScreenWidth() - 96, GetScreenHeight() - 26);
 
-    auto end_t = std::chrono::high_resolution_clock::now();
-    std::cout << std::fixed << std::setprecision(4) << std::chrono::duration<double, std::milli>(end_t - start_t).count() << "ms" << std::endl;
+    //    std::cout << std::fixed << std::setprecision(4) << dbg_timer.tock() << "ms" << std::endl;
 
     auto next_stage = stage->next_stage();
     if (next_stage.has_value()) {

@@ -66,6 +66,9 @@ void RandomWalker::set_next_target(Rectangle &self_frame,
 
 void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
                                             const Rectangle &player_frame) {
+  Timer dbg_timer{};
+  dbg_timer.tick();
+
   IntVector2D start_p{(int) (player_frame.x / BLOCK_SIZE),
                       (int) (player_frame.y / BLOCK_SIZE)};
   IntVector2D end_p{(int) (target.x / BLOCK_SIZE), (int) (target.y / BLOCK_SIZE)};
@@ -131,4 +134,6 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
                              neighbour_p.dist(end_p));
     }
   }
+
+  dbg_timer.tock_and_dump("A*");
 }

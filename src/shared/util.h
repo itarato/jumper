@@ -1,8 +1,10 @@
 #pragma once
 
-#include <stdarg.h>
-
+#include <chrono>
+#include <cstdarg>
 #include <cstdio>
+#include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -39,3 +41,24 @@ struct TileMeta {
 };
 
 void merge_pattern(std::string &base, std::string new_part);
+
+struct Timer {
+  std::chrono::time_point<std::chrono::system_clock> _tick{};
+
+  Timer() = default;
+
+  void tick() {
+    _tick = std::chrono::high_resolution_clock::now();
+  }
+
+  [[nodiscard]] double tock() const {
+    auto old_tick = _tick;
+    auto new_tick = std::chrono::high_resolution_clock::now();
+
+    return std::chrono::duration<double, std::milli>(new_tick - old_tick).count();
+  }
+
+  void tock_and_dump(std::string msg) const {
+    std::cout << msg << ": " << std::fixed << std::setprecision(4) << tock() << "ms" << std::endl;
+  }
+};
