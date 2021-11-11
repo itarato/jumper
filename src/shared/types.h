@@ -15,10 +15,11 @@ typedef struct IntVector2D {
   int x;
   int y;
 
-  IntVector2D(int x, int y) : x(x), y(y) {}
+  IntVector2D(int x, int y) : x(x),
+                              y(y) {}
 
   [[nodiscard]] int dist(const IntVector2D other) const {
-    return abs(x - other.x) + abs(y - other.y);
+    return (int) sqrt(pow(x - other.x, 2) + pow(y - other.y, 2));
   }
 
   friend bool operator<(IntVector2D const& lhs, IntVector2D const& rhs) {
