@@ -66,8 +66,9 @@ void RandomWalker::set_next_target(Rectangle &self_frame,
 
 void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
                                             const Rectangle &player_frame) {
-  Timer dbg_timer{};
-  dbg_timer.tick();
+  //  Timer dbg_timer{};
+  //  dbg_timer.tick();
+  //  Ticker dbg_ticker{};
 
   IntVector2D start_p{(int) (player_frame.x / BLOCK_SIZE),
                       (int) (player_frame.y / BLOCK_SIZE)};
@@ -82,9 +83,6 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
   std::vector<AStarNode> inspected;
   inspected.push_back(start);
 
-  std::set<IntVector2D> visited;
-  visited.insert(start.p);
-
   const IntVector2D dirs[4]{
           {-1, 0},
           {1, 0},
@@ -92,7 +90,14 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
           {0, 1},
   };
 
+  // Using an array for const time find() performance.
+  auto *visited = (uint8_t *) malloc(sizeof(uint8_t) * (map->pixel_height() * map->pixel_width()));
+  for (size_t i = 0; i < (map->pixel_height() * map->pixel_width()); i++) {
+    visited[i] = 0;
+  }
+
   while (!inspected.empty()) {
+    //    dbg_ticker.tick();
     auto closest_it =
             std::min_element(inspected.begin(), inspected.end(),
                              [](AStarNode const &lhs, AStarNode const &rhs) {
@@ -114,6 +119,11 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
         target.x += BLOCK_SIZE * -dirs[i].x;
         target.y += BLOCK_SIZE * -dirs[i].y;
 
+        //        dbg_timer.tock_and_dump("A* (success)");
+        //        dbg_ticker.dump("A* (success)");
+
+        free(visited);
+
         return;
       }
 
@@ -122,12 +132,9 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
         continue;
       }
 
-      auto existing_node_it =
-              std::find(visited.begin(), visited.end(), neighbour_p);
-
-      // Already visited.
-      if (existing_node_it != visited.end()) continue;
-      visited.insert(neighbour_p);
+      // Skip if already visited.
+      if (visited[neighbour_p.y * map->pixel_width() + neighbour_p.x] == 1) continue;
+      visited[neighbour_p.y * map->pixel_width() + neighbour_p.x] = 1;
 
       inspected.emplace_back(neighbour_p,
                              node.pre_cost + 1,
@@ -135,5 +142,8 @@ void StrictPathChaseWalker::set_next_target(Rectangle &self_frame,
     }
   }
 
-  dbg_timer.tock_and_dump("A*");
+  //  dbg_timer.tock_and_dump("A* (fail)");
+  //  dbg_ticker.dump("A* (fail)");
+
+  free(visited);
 }

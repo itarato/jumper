@@ -40,7 +40,7 @@ struct TileMeta {
   explicit TileMeta(std::string raw);
 };
 
-void merge_pattern(std::string &base, std::string new_part);
+void merge_pattern(std::string& base, std::string new_part);
 
 struct Timer {
   std::chrono::time_point<std::chrono::system_clock> _tick{};
@@ -58,7 +58,17 @@ struct Timer {
     return std::chrono::duration<double, std::milli>(new_tick - old_tick).count();
   }
 
-  void tock_and_dump(std::string msg) const {
+  void tock_and_dump(std::string msg = "") const {
     std::cout << msg << ": " << std::fixed << std::setprecision(4) << tock() << "ms" << std::endl;
+  }
+};
+
+struct Ticker {
+  uint64_t _tick{0};
+
+  void tick() { _tick++; }
+
+  void dump(std::string msg = "") const {
+    std::cout << msg << ": " << _tick << " ticks" << std::endl;
   }
 };
