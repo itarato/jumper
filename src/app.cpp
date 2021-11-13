@@ -21,7 +21,7 @@ void App::init() {
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
 
-  InitWindow(1280, 640, "Jumper");
+  InitWindow(960, 640, "Jumper");
   SetTargetFPS(60);
 
   std::vector<std::string> images{IMG_GROUND,
@@ -55,8 +55,6 @@ void App::loop() {
   while (!WindowShouldClose()) {
     auto stage = stages[current_stage];
 
-    //    dbg_timer.tick();
-
     stage->update();
 
     BeginDrawing();
@@ -64,8 +62,6 @@ void App::loop() {
 
     stage->draw();
     DrawFPS(GetScreenWidth() - 96, GetScreenHeight() - 26);
-
-    //    std::cout << std::fixed << std::setprecision(4) << dbg_timer.tock() << "ms" << std::endl;
 
     auto next_stage = stage->next_stage();
     if (next_stage.has_value()) {

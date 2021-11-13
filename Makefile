@@ -35,5 +35,6 @@ le: le_executable
 clean:
 	rm -f ./src/*.o
 	rm -f ./src/*.out
+	rm -f ./src/shared/*.o
 	rm -f ./$(BIN)
 	rm -f ./$(LE_BIN)
