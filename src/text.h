@@ -1,7 +1,5 @@
 #pragma once
 
-#include "asset_manager.h"
-#include "defines.h"
 #include "raylib.h"
 
 /**
@@ -12,21 +10,21 @@
 struct Text {
   const char* text;
   Color color;
-  int font_size;
+  Font* font;
   Vector2 pos;
   bool is_hover_effect;
 
   Text(const char* text) : text(text),
                            color(DARKGRAY),
-                           font_size(32) {}
+                           font(nullptr) {}
 
   Text* with_color(Color new_color) {
     color = new_color;
     return this;
   }
 
-  Text* with_font_size(int new_font_size) {
-    font_size = new_font_size;
+  Text* with_font(Font* new_font) {
+    font = new_font;
     return this;
   }
 
@@ -36,8 +34,8 @@ struct Text {
   }
 
   Text* with_aligned_center() {
-    pos.x = (float) (GetScreenWidth() - width()) / 2.0f;
-    pos.y = (float) (GetScreenHeight() - font_size) / 2.0f;
+    pos.x = (float) ((float) GetScreenWidth() - bounds().x) / 2.0f;
+    pos.y = (float) ((float) GetScreenHeight() - bounds().y) / 2.0f;
     return this;
   }
 
@@ -50,8 +48,8 @@ struct Text {
     return Rectangle{
             pos.x,
             pos.y,
-            (float) width(),
-            (float) font_size,
+            (float) bounds().x,
+            (float) bounds().y,
     };
   }
 
@@ -64,8 +62,8 @@ struct Text {
       draw_color = color;
     }
 
-    DrawTextEx(asset_manager.fonts[FONT_LARGE], text, Vector2{pos.x, pos.y}, (float) asset_manager.fonts[FONT_LARGE].baseSize, 0, draw_color);
+    DrawTextEx(*font, text, Vector2{pos.x, pos.y}, (float) font->baseSize, 0, draw_color);
   }
 
-  int width() { return MeasureText(text, font_size); }
+  [[nodiscard]] Vector2 bounds() const { return MeasureTextEx(*font, text, (float) font->baseSize, 0); }
 };

@@ -1,5 +1,7 @@
 #include "stage_menu.h"
 
+#include "asset_manager.h"
+#include "defines.h"
 #include "raylib.h"
 
 void StageMenu::update() {
@@ -21,6 +23,6 @@ std::optional<StageT> StageMenu::next_stage() {
 }
 
 void StageMenu::init() {
-  start_text.with_aligned_center()->with_hover()->with_color(DARKGRAY);
+  start_text.with_font(&asset_manager.fonts[FONT_MEDIUM])->with_aligned_center()->with_hover()->with_color(DARKGRAY);
   is_start = false;
 }

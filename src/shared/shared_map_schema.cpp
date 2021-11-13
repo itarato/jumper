@@ -1,10 +1,10 @@
 #include "shared_map_schema.h"
 
 bool is_tile_type_solid(TileType t) {
-  // FIXME: This needs to be aware of the state (eg door can be open).
   switch (t) {
     case TILE_GROUND:
     case TILE_DOOR:
+    case TILE_NULL:
       return true;
     default:
       return false;

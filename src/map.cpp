@@ -308,7 +308,6 @@ std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
 
 Tile &Map::get_tile(IntVector2D coord) {
   if (!is_inside_map(coord)) {
-    LOG_INFO("TILE ERROR");
     return null_tile;
   }
 

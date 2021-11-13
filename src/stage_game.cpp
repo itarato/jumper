@@ -165,8 +165,8 @@ void StageGame::init() {
 
   current_map_number = 0;
 
-  victory_text.with_font_size(60)->with_aligned_center();
-  game_over_text.with_font_size(60)->with_aligned_center();
+  victory_text.with_font(&asset_manager.fonts[FONT_LARGE])->with_aligned_center();
+  game_over_text.with_font(&asset_manager.fonts[FONT_LARGE])->with_aligned_center();
 
   init_level();
 }
