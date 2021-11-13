@@ -59,14 +59,16 @@ void Map::draw(IntVector2D scroll_offset) {
       }
 
       if (!map[v][h].value.empty() && map[v][h].is_enabled) {
+        Vector2 text_frame = MeasureTextEx(asset_manager.fonts[FONT_SMALL], map[v][h].value.c_str(), asset_manager.fonts[FONT_SMALL].baseSize, 0);
+
         DrawRectangleRounded(Rectangle{
                                      (float) (h * BLOCK_SIZE - scroll_offset.x - 4),
                                      (float) (v * BLOCK_SIZE - scroll_offset.y - 2),
-                                     (float) MeasureText(map[v][h].value.c_str(), 10) + 8,
-                                     10.0f + 4,
+                                     text_frame.x + 8.0f,
+                                     text_frame.y + 4.0f,
                              },
                              2.0f, 2, LIME);
-        DrawText(map[v][h].value.c_str(), h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, 10, WHITE);
+        DrawTextEx(asset_manager.fonts[FONT_SMALL], map[v][h].value.c_str(), Vector2{(float) (h * BLOCK_SIZE - scroll_offset.x), (float) (v * BLOCK_SIZE - scroll_offset.y)}, asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
       }
     }
   }

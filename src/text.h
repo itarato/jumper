@@ -1,5 +1,7 @@
 #pragma once
 
+#include "asset_manager.h"
+#include "defines.h"
 #include "raylib.h"
 
 /**
@@ -14,7 +16,9 @@ struct Text {
   Vector2 pos;
   bool is_hover_effect;
 
-  Text(const char* text) : text(text), color(DARKGRAY), font_size(30) {}
+  Text(const char* text) : text(text),
+                           color(DARKGRAY),
+                           font_size(32) {}
 
   Text* with_color(Color new_color) {
     color = new_color;
@@ -32,8 +36,8 @@ struct Text {
   }
 
   Text* with_aligned_center() {
-    pos.x = (float)(GetScreenWidth() - width()) / 2.0f;
-    pos.y = (float)(GetScreenHeight() - font_size) / 2.0f;
+    pos.x = (float) (GetScreenWidth() - width()) / 2.0f;
+    pos.y = (float) (GetScreenHeight() - font_size) / 2.0f;
     return this;
   }
 
@@ -44,10 +48,10 @@ struct Text {
 
   Rectangle frame() {
     return Rectangle{
-        pos.x,
-        pos.y,
-        (float)width(),
-        (float)font_size,
+            pos.x,
+            pos.y,
+            (float) width(),
+            (float) font_size,
     };
   }
 
@@ -60,7 +64,7 @@ struct Text {
       draw_color = color;
     }
 
-    DrawText(text, pos.x, pos.y, font_size, draw_color);
+    DrawTextEx(asset_manager.fonts[FONT_LARGE], text, Vector2{pos.x, pos.y}, (float) asset_manager.fonts[FONT_LARGE].baseSize, 0, draw_color);
   }
 
   int width() { return MeasureText(text, font_size); }

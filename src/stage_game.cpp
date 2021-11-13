@@ -3,6 +3,7 @@
 #include <cmath>
 #include <memory>
 
+#include "asset_manager.h"
 #include "defines.h"
 #include "shared/util.h"
 
@@ -144,7 +145,8 @@ void StageGame::draw() {
 
   {// Overlay.
     DrawRectangle(0, GetScreenHeight() - 32, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
-    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, GetScreenHeight() - 26, 20, WHITE);
+    //    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, GetScreenHeight() - 26, 20, WHITE);
+    DrawTextEx(asset_manager.fonts[FONT_MEDIUM], TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), Vector2{12.0f, (float) GetScreenHeight() - 26.0f}, asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
   }
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||

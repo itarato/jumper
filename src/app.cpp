@@ -25,8 +25,7 @@ void App::init() {
   InitWindow(
           is_fullscreen ? 0 : game_config.window_width(),
           is_fullscreen ? 0 : game_config.window_height(),
-          "Jumper"
-          );
+          "Jumper");
   SetTargetFPS(60);
 
   std::vector<std::string> images{IMG_GROUND,
@@ -50,6 +49,10 @@ void App::init() {
   for (auto& image : images) {
     asset_manager.textures.insert({image, LoadTexture(image.c_str())});
   }
+
+  asset_manager.fonts.insert({FONT_SMALL, LoadFontEx(FONT_FIRA_BOLD_SRC, 12, nullptr, 255)});
+  asset_manager.fonts.insert({FONT_MEDIUM, LoadFontEx(FONT_FIRA_SRC, 20, nullptr, 255)});
+  asset_manager.fonts.insert({FONT_LARGE, LoadFontEx(FONT_FIRA_SRC, 64, nullptr, 255)});
 }
 
 void App::loop() {

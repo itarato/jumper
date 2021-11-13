@@ -10,6 +10,7 @@
 #define JUMP_FORCE 22.0f
 #define JUMPER_MAX_VERTICAL_SPEED 16.0f
 #define FRICTION 0.9f
+
 #define IMG_GROUND "assets/images/ground.png"
 #define IMG_GROUND_TOP "assets/images/ground_top.png"
 #define IMG_BACKGROUND "assets/images/background.png"
@@ -27,3 +28,9 @@
 #define IMG_DOOR_CLOSE "assets/images/door_close.png"
 #define IMG_REGEX "assets/images/regex.png"
 #define IMG_END "assets/images/end.png"
+
+#define FONT_FIRA_SRC "assets/fonts/firacode.ttf"
+#define FONT_FIRA_BOLD_SRC "assets/fonts/firacode_bold.ttf"
+#define FONT_SMALL "font_small"
+#define FONT_MEDIUM "font_medium"
+#define FONT_LARGE "font_large"

@@ -9,6 +9,7 @@
 
 struct AssetManager {
   std::map<std::string, Texture2D> textures;
+  std::map<std::string, Font> fonts;
   ~AssetManager();
 };
 
