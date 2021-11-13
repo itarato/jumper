@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <optional>
 #include <string>
 
 struct GameConfig {
@@ -10,6 +11,9 @@ struct GameConfig {
 
   int window_width();
   int window_height();
+  bool is_fullscreen();
+
+  std::optional<std::string> selected_map();
 
   private:
   template<class Out>

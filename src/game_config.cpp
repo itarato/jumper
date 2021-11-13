@@ -12,10 +12,21 @@ int GameConfig::window_height() {
   return arg_val_or_default("height", 640, convert_string_to_int);
 }
 
+bool GameConfig::is_fullscreen() {
+  return argmap.contains("fullscreen");
+}
+
 template<class Out>
 Out GameConfig::arg_val_or_default(const char* key, Out def, Out (*conv)(std::string)) {
   auto it = argmap.find(key);
   if (it != argmap.end()) return conv(it->second);
 
   return def;
+}
+
+std::optional<std::string> GameConfig::selected_map() {
+  auto it = argmap.find("map");
+  if (it != argmap.end()) return std::optional<std::string>{it->second};
+
+  return std::nullopt;
 }

@@ -4,6 +4,7 @@
 
 #include "asset_manager.h"
 #include "coin.h"
+#include "defines.h"
 #include "enemy.h"
 #include "game_config.h"
 #include "jumper.h"
@@ -53,8 +54,17 @@ struct StageGame : IStage, JumperObserver {
         game_config(game_config),
         victory_text("Victory"),
         game_over_text("Game over"),
-        map_file_paths({"./maps/1.jm"}) {
+        map_file_paths({}) {
     jumper.JumperSubject::subscribe(this);
+
+    auto pre_selected_map = game_config->selected_map();
+    if (pre_selected_map.has_value()) {
+      map_file_paths.push_back(pre_selected_map.value());
+    } else {
+      for (const auto &file : game_map_files) {
+        map_file_paths.emplace_back(file);
+      }
+    }
   };
   ~StageGame() override = default;
 };

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "shared/shared_defines.h"
 
 #define PROXIMITY_THRESHOLD 2.0f
@@ -25,3 +27,7 @@
 #define IMG_DOOR_CLOSE "assets/images/door_close.png"
 #define IMG_REGEX "assets/images/regex.png"
 #define IMG_END "assets/images/end.png"
+
+static const char* game_map_files[]{
+        "./maps/1.jm",
+};
