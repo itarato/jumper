@@ -16,8 +16,8 @@
 
 #define DEFAULT_WINDOW_BLOCK_WIDTH 40
 #define DEFAULT_WINDOW_BLOCK_HEIGHT 20
-#define MIN_WINDOW_BLOCK_WIDTH 40
-#define MIN_WINDOW_BLOCK_HEIGHT 40
+#define MIN_WINDOW_BLOCK_WIDTH 4
+#define MIN_WINDOW_BLOCK_HEIGHT 4
 #define MAX_WINDOW_BLOCK_WIDTH 200
 #define MAX_WINDOW_BLOCK_HEIGHT 200
 
@@ -517,7 +517,7 @@ struct App {
     // Tiles.
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
-        map_file.put((char) map[y][x].type);
+        map_file.put((char) (map[y][x].type == TileType::TILE_NULL ? TileType::TILE_AIR : map[y][x].type));
       }
       map_file.put('\n');
     }

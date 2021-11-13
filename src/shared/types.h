@@ -5,7 +5,6 @@
 
 #include "raylib.h"
 
-// FIXME: Does not belong here.
 typedef enum {
   STAGE_MENU = 0,
   STAGE_GAME = 1,

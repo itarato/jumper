@@ -53,7 +53,7 @@ struct StageGame : IStage, JumperObserver {
         game_config(game_config),
         victory_text("Victory"),
         game_over_text("Game over"),
-        map_file_paths({"./maps/1.jm", "./maps/2.jm"}) {
+        map_file_paths({"./maps/1.jm"}) {
     jumper.JumperSubject::subscribe(this);
   };
   ~StageGame() override = default;
