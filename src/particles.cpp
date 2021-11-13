@@ -48,8 +48,8 @@ void Circler::draw(IntVector2D scroll_offset) const {
     DrawRectangle(
             particle_pos[i].x - scroll_offset.x + (sinf(toggle_rot + rot_offs[i]) * (dist_offs[i] + dist)),
             particle_pos[i].y - scroll_offset.y + (cosf(toggle_rot + rot_offs[i]) * (dist_offs[i] + dist)),
-            3,
-            3,
+            9,
+            9,
             Fade(RED, fade));
   }
 }

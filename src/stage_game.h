@@ -4,7 +4,6 @@
 
 #include "asset_manager.h"
 #include "coin.h"
-#include "defines.h"
 #include "enemy.h"
 #include "game_config.h"
 #include "jumper.h"
@@ -14,6 +13,10 @@
 #include "text.h"
 
 #define WAIT_TO_COMPLETE_FRAMES 180
+
+static const char *game_map_files[]{
+        "./maps/1.jm",
+};
 
 typedef enum {
   GAME_STATE_PLAY = 0,
