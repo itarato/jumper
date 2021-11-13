@@ -23,7 +23,7 @@
 #include "app.h"
 #include "shared/util.h"
 
-int main() {
+int main(int argc, char** argv) {
   LOG_INFO("Start main");
 
   srand(time(NULL));
