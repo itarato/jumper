@@ -8,7 +8,7 @@
 #include "stage_game.h"
 #include "stage_menu.h"
 
-App::App() = default;
+App::App(std::map<std::string, std::string> argmap) : game_config(argmap) {}
 
 App::~App() {
   for (auto& stage : stages | std::views::values) {
@@ -21,7 +21,7 @@ void App::init() {
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
 
-  InitWindow(960, 640, "Jumper");
+  InitWindow(game_config.window_width(), game_config.window_height(), "Jumper");
   SetTargetFPS(60);
 
   std::vector<std::string> images{IMG_GROUND,
@@ -39,7 +39,8 @@ void App::init() {
                                   IMG_LADYBUG_MOVE_3,
                                   IMG_DOOR_OPEN,
                                   IMG_DOOR_CLOSE,
-                                  IMG_REGEX};
+                                  IMG_REGEX,
+                                  IMG_END};
 
   for (auto& image : images) {
     asset_manager.textures.insert({image, LoadTexture(image.c_str())});

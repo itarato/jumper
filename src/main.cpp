@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
 
   srand(time(NULL));
 
-  App app{};
+  App app{parse_args(argc, argv)};
   app.init();
   app.loop();
 

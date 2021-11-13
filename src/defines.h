@@ -24,3 +24,4 @@
 #define IMG_DOOR_OPEN "assets/images/door_open.png"
 #define IMG_DOOR_CLOSE "assets/images/door_close.png"
 #define IMG_REGEX "assets/images/regex.png"
+#define IMG_END "assets/images/end.png"

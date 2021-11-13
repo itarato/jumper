@@ -16,7 +16,7 @@ Explosion::Explosion(Rectangle start_frame, size_t particle_count) : particle_co
 
 void Explosion::draw(IntVector2D scroll_offset) const {
   for (size_t i = 0; i < particle_count; i++) {
-    DrawRectangle(particle_pos[i].x - scroll_offset.x, particle_pos[i].y - scroll_offset.y, 3, 3, Fade(DARKGRAY, fade));
+    DrawRectangle(particle_pos[i].x - scroll_offset.x, particle_pos[i].y - scroll_offset.y, 12, 12, Fade(DARKGRAY, fade));
   }
 }
 

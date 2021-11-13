@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,8 @@ typedef enum {
   LOG_LEVEL_WARNING = 1,
   LOG_LEVEL_ERROR = 2,
 } LogLevelT;
+
+int convert_string_to_int(std::string s);
 
 void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
@@ -72,3 +75,5 @@ struct Ticker {
     std::cout << msg << ": " << _tick << " ticks" << std::endl;
   }
 };
+
+std::map<std::string, std::string> parse_args(int argc, char** argv);

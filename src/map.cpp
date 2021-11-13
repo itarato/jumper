@@ -35,8 +35,8 @@ void Map::draw(IntVector2D scroll_offset) {
           break;
 
         case TILE_END:
-          DrawRectangleLines(h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y,
-                             BLOCK_SIZE, BLOCK_SIZE, BLACK);
+          DrawTexture(asset_manager.textures[IMG_END],
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].fade));
           break;
 
         case TILE_DOOR:

@@ -33,6 +33,10 @@ void log(LogLevelT level, std::string msg, ...) {
   printf("\n");
 }
 
+int convert_string_to_int(std::string s) {
+  return std::stoi(s);
+}
+
 bool in_range(int number, int min, int max) {
   return number >= min && number <= max;
 }
@@ -89,7 +93,7 @@ TileMeta::TileMeta(std::string raw) {
   value.swap(parts[2]);
 }
 
-void merge_pattern(std::string &base, std::string new_part) {
+void merge_pattern(std::string& base, std::string new_part) {
   if (new_part.empty()) {
     LOG_WARN("Empty new pattern");
     return;
@@ -112,4 +116,34 @@ void merge_pattern(std::string &base, std::string new_part) {
     new_part.pop_back();
     base.append(new_part);
   }
+}
+
+/**
+ * Expected argument format:
+ * ./binary -value_argument value flagargument ...
+ *
+ * @param argc
+ * @param argv
+ * @return
+ */
+std::map<std::string, std::string> parse_args(int argc, char** argv) {
+  std::map<std::string, std::string> out{};
+
+  std::string prepare_key;
+  bool key_is_prepared = false;
+  for (int i = 1; i < argc; i++) {
+    if (key_is_prepared) {
+      std::string val{argv[i]};
+      out.insert({prepare_key, val});
+      key_is_prepared = false;
+    } else if (argv[i][0] == '-') {
+      prepare_key = argv[i];
+      prepare_key.erase(0, 1);
+      key_is_prepared = true;
+    } else {
+      out.insert({argv[i], ""});
+    }
+  }
+
+  return out;
 }

@@ -216,5 +216,5 @@ std::optional<StageT> StageGame::next_stage() {
 }
 
 void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
-  explosions.push_back(std::make_unique<Explosion>(data.frame, 64));
+  explosions.push_back(std::make_unique<Explosion>(data.frame, 12));
 }
