@@ -65,6 +65,13 @@ Rectangle shrink(Rectangle rec, float n) {
   };
 }
 
+Vector2 midpoint(Rectangle rec) {
+  return Vector2{
+          rec.width / 2.0f,
+          rec.height / 2.0f,
+  };
+}
+
 std::vector<std::string> split(std::string word, char delim) {
   size_t prev_delim_pos = -1;
   std::vector<std::string> out{};

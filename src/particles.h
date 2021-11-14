@@ -20,6 +20,7 @@ struct Explosion : IParticle {
   float fade = 1.0f;
   std::vector<Vector2> particle_v;
   std::vector<Vector2> particle_pos;
+  std::vector<float> particle_rot;
 
   Explosion(Rectangle start_frame, size_t particle_count);
 
@@ -35,7 +36,7 @@ struct Circler : IParticle {
   std::vector<float> dist_offs{};
   float rot = 0.0f;
   float dist = 0.0f;
-  float dist_step = 4.0f;
+  float dist_step;
   float fade = 1.0f;
 
   Circler(Rectangle start_frame, size_t particle_count);
