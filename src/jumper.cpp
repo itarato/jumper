@@ -11,6 +11,7 @@
 #define JUMPER_HEIGHT 20
 #define JUMPER_STEP_SLOWNESS 3
 #define JUMPER_STAND_SLOWNESS 6
+#define JUMPER_FLY_SLOWNESS 6
 
 Jumper::Jumper()
     : move_sprite({IMG_LADYBUG_MOVE_0, IMG_LADYBUG_MOVE_1, IMG_LADYBUG_MOVE_2,
@@ -18,7 +19,8 @@ Jumper::Jumper()
                   JUMPER_STEP_SLOWNESS),
       stand_sprite({IMG_LADYBUG_STAND_0, IMG_LADYBUG_STAND_1,
                     IMG_LADYBUG_STAND_2, IMG_LADYBUG_STAND_3},
-                   JUMPER_STAND_SLOWNESS) {}
+                   JUMPER_STAND_SLOWNESS),
+      fly_sprite({IMG_LADYBUG_FLY_0, IMG_LADYBUG_FLY_1}, JUMPER_FLY_SLOWNESS) {}
 
 void Jumper::update(Map *map) {
   if (state == JumperState::Normal) {
@@ -138,7 +140,10 @@ void Jumper::update(Map *map) {
 
 void Jumper::draw(IntVector2D scroll_offset) {
   std::string image_name;
-  if (v.x == 0.0) {
+  if (map_state.type == MAP_OBJECT_VERTICAL_STATE_FALLING && IsKeyDown(KEY_LEFT_ALT)) {
+    image_name = fly_sprite.current_img();
+    fly_sprite.progress();
+  } else if (v.x == 0.0) {
     image_name = stand_sprite.current_img();
     stand_sprite.progress();
   } else {

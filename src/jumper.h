@@ -71,6 +71,7 @@ struct Jumper : IMapStateUpdatable, JumperSubject {
   bool is_facing_right;
   Sprite move_sprite;
   Sprite stand_sprite;
+  Sprite fly_sprite;
   DoubleJump double_jump;
   std::string regex_raw{};
   JumperState state;

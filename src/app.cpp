@@ -41,6 +41,8 @@ void App::init() {
                                   IMG_LADYBUG_MOVE_1,
                                   IMG_LADYBUG_MOVE_2,
                                   IMG_LADYBUG_MOVE_3,
+                                  IMG_LADYBUG_FLY_0,
+                                  IMG_LADYBUG_FLY_1,
                                   IMG_DOOR_OPEN,
                                   IMG_DOOR_CLOSE,
                                   IMG_REGEX,

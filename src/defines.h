@@ -24,6 +24,8 @@
 #define IMG_LADYBUG_MOVE_1 "assets/images/ladybug_move_1.png"
 #define IMG_LADYBUG_MOVE_2 "assets/images/ladybug_move_2.png"
 #define IMG_LADYBUG_MOVE_3 "assets/images/ladybug_move_3.png"
+#define IMG_LADYBUG_FLY_0 "assets/images/ladybug_fly_0.png"
+#define IMG_LADYBUG_FLY_1 "assets/images/ladybug_fly_1.png"
 #define IMG_DOOR_OPEN "assets/images/door_open.png"
 #define IMG_DOOR_CLOSE "assets/images/door_close.png"
 #define IMG_REGEX "assets/images/regex.png"
