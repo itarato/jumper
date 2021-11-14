@@ -32,6 +32,7 @@ float randf();
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
 Rectangle shrink(Rectangle rec, float n);
 Vector2 midpoint(Rectangle rec);
+Vector2 position_of(Rectangle rec);
 
 std::vector<std::string> split(std::string word, char delim);
 

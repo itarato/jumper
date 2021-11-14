@@ -72,6 +72,10 @@ Vector2 midpoint(Rectangle rec) {
   };
 }
 
+Vector2 position_of(Rectangle rec) {
+  return Vector2{rec.x, rec.y};
+}
+
 std::vector<std::string> split(std::string word, char delim) {
   size_t prev_delim_pos = -1;
   std::vector<std::string> out{};

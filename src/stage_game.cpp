@@ -75,8 +75,7 @@ void StageGame::update() {
 
       for (Enemy& enemy : enemies) {
         if (CheckCollisionRecs(jumper.frame, enemy.frame)) {
-          state = GAME_STATE_WAIT_TO_COMPLETE;
-          is_victory = false;
+          jumper.kill();
         }
       }
     }

@@ -8,6 +8,12 @@
 #include "shared/types.h"
 #include "sprite.h"
 
+enum class JumperState {
+  Normal = 0,
+  Dying = 1,
+  Dead = 2,
+};
+
 struct DoubleJump {
   int air_jumps;
 
@@ -67,6 +73,10 @@ struct Jumper : IMapStateUpdatable, JumperSubject {
   Sprite stand_sprite;
   DoubleJump double_jump;
   std::string regex_raw{};
+  JumperState state;
+  float dying_rot;
+  float dying_fade;
+  float dying_scale;
 
   void draw(IntVector2D scroll_offset);
   void update(Map *map);
@@ -78,9 +88,7 @@ struct Jumper : IMapStateUpdatable, JumperSubject {
   [[nodiscard]] std::regex get_regex() const;
 
   [[nodiscard]] bool is_dead() const;
+  void kill();
 
   Jumper();
-
-  private:
-  bool _is_dead;
 };

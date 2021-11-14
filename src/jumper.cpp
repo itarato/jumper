@@ -21,107 +21,117 @@ Jumper::Jumper()
                    JUMPER_STAND_SLOWNESS) {}
 
 void Jumper::update(Map *map) {
-  {// Horizontal movement.
-    if (IsKeyDown(KEY_LEFT)) {
-      v.x = std::min(-JUMPER_HMOVE_V, v.x * FRICTION);
+  if (state == JumperState::Normal) {
+    {// Horizontal movement.
+      if (IsKeyDown(KEY_LEFT)) {
+        v.x = std::min(-JUMPER_HMOVE_V, v.x * FRICTION);
 
-      if (IsKeyPressed(KEY_LEFT_CONTROL)) {
-        v.x = -5 * JUMPER_HMOVE_V;
-      }
-    } else if (IsKeyDown(KEY_RIGHT)) {
-      v.x = std::max(JUMPER_HMOVE_V, v.x * FRICTION);
+        if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+          v.x = -5 * JUMPER_HMOVE_V;
+        }
+      } else if (IsKeyDown(KEY_RIGHT)) {
+        v.x = std::max(JUMPER_HMOVE_V, v.x * FRICTION);
 
-      if (IsKeyPressed(KEY_LEFT_CONTROL)) {
-        v.x = 5 * JUMPER_HMOVE_V;
+        if (IsKeyPressed(KEY_LEFT_CONTROL)) {
+          v.x = 5 * JUMPER_HMOVE_V;
+        }
+      } else {
+        v.x *= FRICTION;
+        if (fabsf(v.x) < VELOCITY_ZERO_THRESHOLD) {
+          v.x = 0.0f;
+        }
       }
-    } else {
-      v.x *= FRICTION;
-      if (fabsf(v.x) < VELOCITY_ZERO_THRESHOLD) {
-        v.x = 0.0f;
-      }
-    }
 
-    {// Door check.
-      Rectangle planned_next_frame{rec_plus_vector2(frame, v)};
-      for (auto &corner : corner_block_coords(shrink(planned_next_frame, 2.0f))) {
-        Tile &tile = map->get_tile(corner);
-        if (tile.type == TILE_DOOR && tile.is_enabled) {
-          try {
-            if (std::regex_search(tile.value, get_regex())) {
-              tile.disable();
+      {// Door check.
+        Rectangle planned_next_frame{rec_plus_vector2(frame, v)};
+        for (auto &corner : corner_block_coords(shrink(planned_next_frame, 2.0f))) {
+          Tile &tile = map->get_tile(corner);
+          if (tile.type == TILE_DOOR && tile.is_enabled) {
+            try {
+              if (std::regex_search(tile.value, get_regex())) {
+                tile.disable();
+              }
+            } catch (...) {
+              // Incorrect regex.
+              state = JumperState::Dying;
             }
-          } catch (...) {
-            // Incorrect regex.
-            _is_dead = true;
+          }
+          if (tile.type == TILE_TRAP) {
+            state = JumperState::Dying;
           }
         }
-        if (tile.type == TILE_TRAP) {
-          _is_dead = true;
-        }
+      }
+
+      if (v.x < 0.0f) {// Going left.
+        int left_wall_x = map->next_left(frame).value_or(0);
+        frame.x = std::max((int) (frame.x + v.x), left_wall_x);
+      } else if (v.x > 0.0f) {// Going right.
+        int right_wall_x =
+                map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
+                frame.width;
+        frame.x = std::min((int) (frame.x + v.x), right_wall_x);
       }
     }
 
-    if (v.x < 0.0f) {// Going left.
-      int left_wall_x = map->next_left(frame).value_or(0);
-      frame.x = std::max((int) (frame.x + v.x), left_wall_x);
-    } else if (v.x > 0.0f) {// Going right.
-      int right_wall_x =
-              map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
-              frame.width;
-      frame.x = std::min((int) (frame.x + v.x), right_wall_x);
-    }
-  }
+    {// Vertical movement.
+      map->evaluate_map_object_state(this);
 
-  {// Vertical movement.
-    map->evaluate_map_object_state(this);
+      switch (map_state.type) {
+        case MAP_OBJECT_VERTICAL_STATE_HIT_CEILING:
+          v.y = 0.0f;
+          frame.y = map_state.ceiling;
+          break;
 
-    switch (map_state.type) {
-      case MAP_OBJECT_VERTICAL_STATE_HIT_CEILING:
-        v.y = 0.0f;
-        frame.y = map_state.ceiling;
-        break;
+        case MAP_OBJECT_VERTICAL_STATE_REACHING_TOP:
+          v.y = VELOCITY_ZERO_THRESHOLD;
+          break;
 
-      case MAP_OBJECT_VERTICAL_STATE_REACHING_TOP:
-        v.y = VELOCITY_ZERO_THRESHOLD;
-        break;
+        case MAP_OBJECT_VERTICAL_STATE_JUMP:
+          v.y *= 1.0f / GRAVITY_ACC;
+          frame.y += v.y;
+          break;
 
-      case MAP_OBJECT_VERTICAL_STATE_JUMP:
-        v.y *= 1.0f / GRAVITY_ACC;
-        frame.y += v.y;
-        break;
+        case MAP_OBJECT_VERTICAL_STATE_ON_FLOOR:
+          v.y = 0.0f;
+          frame.y = map_state.floor;
+          double_jump.reset();
+          break;
 
-      case MAP_OBJECT_VERTICAL_STATE_ON_FLOOR:
-        v.y = 0.0f;
-        frame.y = map_state.floor;
-        double_jump.reset();
-        break;
-
-      case MAP_OBJECT_VERTICAL_STATE_FALLING:
-        if (IsKeyDown(KEY_LEFT_ALT)) {
-          v.y = PARACHUTE_V;
-        } else {
-          v.y = std::min(v.y * GRAVITY_ACC, JUMPER_MAX_VERTICAL_SPEED);
-        }
-        frame.y += v.y;
-        break;
-    }
-  }
-
-  {// Vertical movement.
-    if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
-      v.y -= JUMP_FORCE;
-    }
-  }
-
-  {// Regex collision check.
-    auto tile_coords = corner_block_coords(frame);
-    for (const auto &tile_coord : tile_coords) {
-      Tile &tile = map->get_tile(tile_coord);
-      if (tile.type == TILE_REGEX && tile.is_enabled) {
-        merge_pattern(regex_raw, tile.value);
-        tile.disable();
-        JumperSubject::notify_all(JumperEvent::DidCaptureRegex, JumperEventData{frame});
+        case MAP_OBJECT_VERTICAL_STATE_FALLING:
+          if (IsKeyDown(KEY_LEFT_ALT)) {
+            v.y = PARACHUTE_V;
+          } else {
+            v.y = std::min(v.y * GRAVITY_ACC, JUMPER_MAX_VERTICAL_SPEED);
+          }
+          frame.y += v.y;
+          break;
       }
+    }
+
+    {// Vertical movement.
+      if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
+        v.y -= JUMP_FORCE;
+      }
+    }
+
+    {// Regex collision check.
+      auto tile_coords = corner_block_coords(frame);
+      for (const auto &tile_coord : tile_coords) {
+        Tile &tile = map->get_tile(tile_coord);
+        if (tile.type == TILE_REGEX && tile.is_enabled) {
+          merge_pattern(regex_raw, tile.value);
+          tile.disable();
+          JumperSubject::notify_all(JumperEvent::DidCaptureRegex, JumperEventData{frame});
+        }
+      }
+    }
+  } else if (state == JumperState::Dying) {
+    dying_fade -= 0.01f;
+    dying_rot += 8.0f;
+    dying_scale *= 1.02f;
+
+    if (dying_fade <= 0.0f) {
+      state = JumperState::Dead;
     }
   }
 }
@@ -136,19 +146,16 @@ void Jumper::draw(IntVector2D scroll_offset) {
     move_sprite.progress();
   }
 
-  if (v.x < 0.0f) {
-    is_facing_right = false;
-  } else if (v.x > 0.0f) {
-    is_facing_right = true;
-  }
+  is_facing_right = v.x >= 0.0f;
+  Rectangle draw_frame{0.0f, 0.0f, is_facing_right ? -frame.width : frame.width, frame.height};
 
-  if (is_facing_right) {
+  if (state == JumperState::Normal) {
     DrawTextureRec(asset_manager.textures[image_name],
-                   Rectangle{0.0f, 0.0f, -frame.width, frame.height},
+                   draw_frame,
                    Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, WHITE);
-  } else {
-    DrawTexture(asset_manager.textures[image_name], frame.x - scroll_offset.x,
-                frame.y - scroll_offset.y, WHITE);
+  } else if (state == JumperState::Dying) {
+    DrawTextureEx(asset_manager.textures[image_name],
+                  Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, dying_rot, dying_scale, Fade(WHITE, dying_fade));
   }
 }
 
@@ -165,7 +172,11 @@ void Jumper::init(Vector2 start_pos) {
 
   regex_raw.clear();
 
-  _is_dead = false;
+  state = JumperState::Normal;
+
+  dying_rot = 0.0f;
+  dying_fade = 1.0f;
+  dying_scale = 1.0f;
 }
 
 Rectangle Jumper::get_frame() const { return frame; }
@@ -182,5 +193,9 @@ std::regex Jumper::get_regex() const {
 }
 
 bool Jumper::is_dead() const {
-  return _is_dead;
+  return state == JumperState::Dead;
+}
+
+void Jumper::kill() {
+  state = JumperState::Dying;
 }
