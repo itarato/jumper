@@ -43,7 +43,7 @@ void Jumper::update(Map *map) {
 
     {// Door check.
       Rectangle planned_next_frame{rec_plus_vector2(frame, v)};
-      for (auto &corner : corner_block_coords(planned_next_frame)) {
+      for (auto &corner : corner_block_coords(shrink(planned_next_frame, 2.0f))) {
         Tile &tile = map->get_tile(corner);
         if (tile.type == TILE_DOOR && tile.is_enabled) {
           try {
@@ -51,8 +51,12 @@ void Jumper::update(Map *map) {
               tile.disable();
             }
           } catch (...) {
+            // Incorrect regex.
             _is_dead = true;
           }
+        }
+        if (tile.type == TILE_TRAP) {
+          _is_dead = true;
         }
       }
     }

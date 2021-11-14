@@ -37,7 +37,7 @@ Circler::Circler(Rectangle start_frame, size_t particle_count) : particle_count(
   for (size_t i = 0; i < particle_count; i++) {
     particle_pos.emplace_back(start_frame.x + start_frame.width / 2, start_frame.y + start_frame.height / 2);
     rot_offs.emplace_back(randf() * PI * 2.0f);
-    dist_offs.emplace_back(randf() * 20.0f + 20.0f);
+    dist_offs.emplace_back(randf() * 32.0f);
   }
 }
 
@@ -57,7 +57,7 @@ void Circler::draw(IntVector2D scroll_offset) const {
 void Circler::update() {
   rot += PARTICLE_CIRCLER_ROT_STEP;
   dist += dist_step;
-  dist_step /= 1.1f;
+  dist_step *= 0.9f;
   fade *= 0.95f;
 }
 

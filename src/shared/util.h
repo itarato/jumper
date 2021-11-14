@@ -30,6 +30,7 @@ int rand_range(int min, int max);
 float randf();
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
+Rectangle shrink(Rectangle rec, float n);
 
 std::vector<std::string> split(std::string word, char delim);
 

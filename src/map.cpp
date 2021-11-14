@@ -54,6 +54,11 @@ void Map::draw(IntVector2D scroll_offset) {
                       h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].is_enabled ? 1.0f : 0.2f));
           break;
 
+        case TILE_TRAP:
+          DrawTexture(asset_manager.textures[IMG_SPIKE],
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].is_enabled ? 1.0f : 0.2f));
+          break;
+
         default:
           break;
       }

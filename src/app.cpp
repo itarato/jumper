@@ -44,7 +44,8 @@ void App::init() {
                                   IMG_DOOR_OPEN,
                                   IMG_DOOR_CLOSE,
                                   IMG_REGEX,
-                                  IMG_END};
+                                  IMG_END,
+                                  IMG_SPIKE};
 
   for (auto& image : images) {
     asset_manager.textures.insert({image, LoadTexture(image.c_str())});

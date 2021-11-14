@@ -11,6 +11,7 @@ typedef enum {
   TILE_COIN = '*',
   TILE_REGEX = 'r',
   TILE_DOOR = 'd',
+  TILE_TRAP = 't',
 } TileType;
 
 bool is_tile_type_solid(TileType t);

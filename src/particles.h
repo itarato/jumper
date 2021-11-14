@@ -35,7 +35,7 @@ struct Circler : IParticle {
   std::vector<float> dist_offs{};
   float rot = 0.0f;
   float dist = 0.0f;
-  float dist_step = 6.0f;
+  float dist_step = 4.0f;
   float fade = 1.0f;
 
   Circler(Rectangle start_frame, size_t particle_count);

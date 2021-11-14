@@ -56,6 +56,15 @@ Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
   };
 }
 
+Rectangle shrink(Rectangle rec, float n) {
+  return Rectangle{
+          rec.x + n,
+          rec.y + n,
+          rec.width - n * 2.0f,
+          rec.height - n * 2.0f,
+  };
+}
+
 std::vector<std::string> split(std::string word, char delim) {
   size_t prev_delim_pos = -1;
   std::vector<std::string> out{};
