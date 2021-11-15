@@ -113,6 +113,7 @@ void Jumper::update(Map *map) {
     {// Vertical movement.
       if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
         v.y -= JUMP_FORCE;
+        JumperSubject::notify_all(JumperEvent::StartJump, JumperEventData{frame});
       }
     }
 

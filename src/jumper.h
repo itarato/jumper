@@ -38,6 +38,7 @@ struct DoubleJump {
 
 enum class JumperEvent {
   DidCaptureRegex,
+  StartJump,
 };
 
 struct JumperEventData {

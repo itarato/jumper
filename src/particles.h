@@ -45,3 +45,20 @@ struct Circler : IParticle {
   void update() override;
   [[nodiscard]] bool is_completed() const override;
 };
+
+struct Smoker : IParticle {
+  Rectangle start_frame;
+  int particle_per_round{1};// How many new particles per frame group.
+  int round_frame_count{1}; // How many frame is in one frame group.
+  int frame_counter{0};
+  int total_frame_groups{16};// How many frame groups to do.
+  std::vector<Vector2> pos{};
+  std::vector<Vector2> v{};
+  std::vector<float> alpha{};
+
+  Smoker(Rectangle start_frame);
+
+  void draw(IntVector2D scroll_offset) const override;
+  void update() override;
+  [[nodiscard]] bool is_completed() const override;
+};

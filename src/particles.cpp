@@ -73,3 +73,40 @@ void Circler::update() {
 [[nodiscard]] bool Circler::is_completed() const {
   return dist >= 48.0f;
 }
+
+// SMOKER /////////////////////////////////////////////////////////////////////
+Smoker::Smoker(Rectangle start_frame) : start_frame(start_frame) {}
+
+void Smoker::draw(IntVector2D scroll_offset) const {
+  for (int i = 0; i < pos.size(); i++) {
+    if (alpha[i] <= 0.0f) continue;
+
+    DrawRectangle(pos[i].x - scroll_offset.x, pos[i].y - scroll_offset.y, 4, 4, Fade(LIGHTGRAY, alpha[i]));
+  }
+}
+
+void Smoker::update() {
+  for (int i = 0; i < pos.size(); i++) {
+    if (alpha[i] <= 0.0f) continue;
+
+    pos[i].x += v[i].x;
+    pos[i].y += v[i].y;
+    alpha[i] -= 0.05;
+  }
+
+  if (total_frame_groups <= 0) return;
+
+  if (frame_counter % round_frame_count == 0) {
+    for (int i = 0; i < particle_per_round; i++) {
+      pos.emplace_back(start_frame.x + randf() * start_frame.width, start_frame.y + start_frame.height);
+      v.emplace_back(randf() / 2.0f, randf() - 0.8f);
+      alpha.emplace_back(1.0f);
+    }
+  }
+  frame_counter++;
+  total_frame_groups--;
+}
+
+[[nodiscard]] bool Smoker::is_completed() const {
+  return total_frame_groups <= 0 && alpha.back() <= 0.0f;
+}
