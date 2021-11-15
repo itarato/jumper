@@ -66,13 +66,20 @@ void Map::draw(IntVector2D scroll_offset) {
       if (!map[v][h].value.empty() && map[v][h].is_enabled) {
         Vector2 text_frame = MeasureTextEx(asset_manager.fonts[FONT_SMALL], map[v][h].value.c_str(), asset_manager.fonts[FONT_SMALL].baseSize, 0);
 
+        Color text_bubble_color;
+        if (map[v][h].type == TILE_REGEX) {
+          text_bubble_color = LIME;
+        } else {
+          text_bubble_color = DARKPURPLE;
+        }
+
         DrawRectangleRounded(Rectangle{
                                      (float) (h * BLOCK_SIZE - scroll_offset.x - 4),
                                      (float) (v * BLOCK_SIZE - scroll_offset.y - 2),
                                      text_frame.x + 8.0f,
                                      text_frame.y + 4.0f,
                              },
-                             2.0f, 2, LIME);
+                             2.0f, 2, text_bubble_color);
         DrawTextEx(asset_manager.fonts[FONT_SMALL], map[v][h].value.c_str(), Vector2{(float) (h * BLOCK_SIZE - scroll_offset.x), (float) (v * BLOCK_SIZE - scroll_offset.y)}, asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
       }
     }
