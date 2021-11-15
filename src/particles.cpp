@@ -5,7 +5,8 @@
 
 // EXPLOSION //////////////////////////////////////////////////////////////////
 
-Explosion::Explosion(Rectangle start_frame, size_t particle_count) : particle_count(particle_count) {
+Explosion::Explosion(Rectangle start_frame, size_t particle_count, Color color) : particle_count(particle_count),
+                                                                                  color(color) {
   for (size_t i = 0; i < particle_count; i++) {
     float angle = randf() * PI * 2.0f;
     float v = randf() * 2.0f + 5.0f;
@@ -20,7 +21,7 @@ void Explosion::draw(IntVector2D scroll_offset) const {
     //    DrawRectangle(particle_pos[i].x - scroll_offset.x, particle_pos[i].y - scroll_offset.y, 12, 12, Fade(DARKGRAY, fade));
     Rectangle frame{particle_pos[i].x - scroll_offset.x, particle_pos[i].y - scroll_offset.y, 12.0f, 12.0f};
     //    //    DrawRectanglePro(frame, midpoint(frame), particle_rot[i], Fade(DARKGRAY, fade));
-    DrawRectanglePro(frame, midpoint(frame), particle_rot[i], DARKGRAY);
+    DrawRectanglePro(frame, midpoint(frame), particle_rot[i], color);
   }
 }
 
@@ -75,17 +76,20 @@ void Circler::update() {
 }
 
 // SMOKER /////////////////////////////////////////////////////////////////////
-Smoker::Smoker(Rectangle start_frame) : start_frame(start_frame) {}
+Smoker::Smoker(Rectangle *start_frame, Color color) : start_frame(start_frame),
+                                                      color(color) {}
 
 void Smoker::draw(IntVector2D scroll_offset) const {
   for (int i = 0; i < pos.size(); i++) {
     if (alpha[i] <= 0.0f) continue;
 
-    DrawRectangle(pos[i].x - scroll_offset.x, pos[i].y - scroll_offset.y, 4, 4, Fade(LIGHTGRAY, alpha[i]));
+    DrawRectangle(pos[i].x - scroll_offset.x, pos[i].y - scroll_offset.y, 4, 4, Fade(color, alpha[i]));
   }
 }
 
 void Smoker::update() {
+  //  if (start_frame == nullptr) return;
+
   for (int i = 0; i < pos.size(); i++) {
     if (alpha[i] <= 0.0f) continue;
 
@@ -98,7 +102,7 @@ void Smoker::update() {
 
   if (frame_counter % round_frame_count == 0) {
     for (int i = 0; i < particle_per_round; i++) {
-      pos.emplace_back(start_frame.x + randf() * start_frame.width, start_frame.y + start_frame.height);
+      pos.emplace_back(start_frame->x + randf() * start_frame->width, start_frame->y + start_frame->height);
       v.emplace_back(randf() / 2.0f, randf() - 0.8f);
       alpha.emplace_back(1.0f);
     }

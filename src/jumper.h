@@ -39,12 +39,14 @@ struct DoubleJump {
 enum class JumperEvent {
   DidCaptureRegex,
   StartJump,
+  StartDash,
+  StartDie,
 };
 
 struct JumperEventData {
-  Rectangle frame;
+  Rectangle *frame;
 
-  explicit JumperEventData(Rectangle frame) : frame(frame) {}
+  explicit JumperEventData(Rectangle *frame) : frame(frame) {}
 };
 
 struct JumperObserver {
@@ -90,6 +92,7 @@ struct Jumper : IMapStateUpdatable, JumperSubject {
   [[nodiscard]] std::regex get_regex() const;
 
   [[nodiscard]] bool is_dead() const;
+  [[nodiscard]] bool is_alive() const;
   void kill();
 
   Jumper();

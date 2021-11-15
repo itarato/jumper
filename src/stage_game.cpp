@@ -63,19 +63,21 @@ void StageGame::update() {
         is_victory = false;
       }
 
-      Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
-      if (CheckCollisionRecs(end_rec, jumper.frame)) {
-        if (current_map_number < (int) map_file_paths.size() - 1) {
-          state = GAME_STATE_WAIT_TO_NEXT_LEVEL;
-        } else {
-          state = GAME_STATE_WAIT_TO_COMPLETE;
+      if (jumper.is_alive()) {
+        Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
+        if (CheckCollisionRecs(end_rec, jumper.frame)) {
+          if (current_map_number < (int) map_file_paths.size() - 1) {
+            state = GAME_STATE_WAIT_TO_NEXT_LEVEL;
+          } else {
+            state = GAME_STATE_WAIT_TO_COMPLETE;
+          }
+          is_victory = true;
         }
-        is_victory = true;
-      }
 
-      for (Enemy& enemy : enemies) {
-        if (CheckCollisionRecs(jumper.frame, enemy.frame)) {
-          jumper.kill();
+        for (Enemy& enemy : enemies) {
+          if (CheckCollisionRecs(jumper.frame, enemy.frame)) {
+            jumper.kill();
+          }
         }
       }
     }
@@ -218,8 +220,12 @@ std::optional<StageT> StageGame::next_stage() {
 
 void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
   if (event == JumperEvent::DidCaptureRegex) {
-    explosions.push_back(std::make_unique<Explosion>(data.frame, 12));
+    explosions.push_back(std::make_unique<Explosion>(*data.frame, 12, DARKGRAY));
   } else if (event == JumperEvent::StartJump) {
-    explosions.push_back(std::make_unique<Smoker>(data.frame));
+    explosions.push_back(std::make_unique<Smoker>(data.frame, LIGHTGRAY));
+  } else if (event == JumperEvent::StartDash) {
+    explosions.push_back(std::make_unique<Smoker>(data.frame, ORANGE));
+  } else if (event == JumperEvent::StartDie) {
+    explosions.push_back(std::make_unique<Explosion>(*data.frame, 24, RED));
   }
 }

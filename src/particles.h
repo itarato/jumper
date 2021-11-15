@@ -18,11 +18,12 @@ struct IParticle {
 struct Explosion : IParticle {
   size_t particle_count;
   float fade = 1.0f;
+  Color color;
   std::vector<Vector2> particle_v;
   std::vector<Vector2> particle_pos;
   std::vector<float> particle_rot;
 
-  Explosion(Rectangle start_frame, size_t particle_count);
+  Explosion(Rectangle start_frame, size_t particle_count, Color color);
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;
@@ -47,7 +48,7 @@ struct Circler : IParticle {
 };
 
 struct Smoker : IParticle {
-  Rectangle start_frame;
+  Rectangle *start_frame;
   int particle_per_round{1};// How many new particles per frame group.
   int round_frame_count{1}; // How many frame is in one frame group.
   int frame_counter{0};
@@ -55,10 +56,15 @@ struct Smoker : IParticle {
   std::vector<Vector2> pos{};
   std::vector<Vector2> v{};
   std::vector<float> alpha{};
+  Color color;
 
-  Smoker(Rectangle start_frame);
+  Smoker(Rectangle *start_frame, Color color);
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;
   [[nodiscard]] bool is_completed() const override;
 };
+
+//struct Tracer : IParticle {
+//
+//};
