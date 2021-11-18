@@ -71,57 +71,26 @@ struct Repeater : IParticle {
 
   int particle_per_round{1};// How many new particles per frame group.
   int round_frame_count{1}; // How many frame is in one frame group.
-  int frame_counter{0};
   int total_frame_groups{4};// How many frame groups to do.
+  
+  int frame_counter{0};
 
   IParticle *(*particle_factory)(Rectangle start_frame);
 
   std::vector<IParticle *> sub_particles;
 
-  Repeater(Rectangle start_frame, IParticle *(*particle_factory)(Rectangle start_frame)) : start_frame(start_frame),
-                                                                                           particle_factory(particle_factory) {}
+  Repeater(
+          Rectangle start_frame,
+          int particle_per_round,
+          int round_frame_count,
+          int total_frame_groups,
+          IParticle *(*particle_factory)(Rectangle));
 
-  ~Repeater() override {
-    for (auto &sub_particle : sub_particles) {
-      delete sub_particle;
-    }
-    sub_particles.clear();
-  }
+  ~Repeater() override;
 
-  void draw(IntVector2D scroll_offset) const override {
-    for (const auto &sub_particle : sub_particles) {
-      sub_particle->draw(scroll_offset);
-    }
-  }
+  void draw(IntVector2D scroll_offset) const override;
 
-  void update() override {
-    if (total_frame_groups > 0) {
+  void update() override;
 
-      if (frame_counter % round_frame_count == 0) {
-        for (int i = 0; i < particle_per_round; i++) {
-          sub_particles.push_back(particle_factory(start_frame));
-        }
-      }
-      frame_counter++;
-      total_frame_groups--;
-    }
-
-    for (auto &sub_particle : sub_particles) {
-      if (!sub_particle->is_completed()) {
-        sub_particle->update();
-      }
-    }
-  }
-
-  [[nodiscard]] bool is_completed() const override {
-    bool done = std::all_of(sub_particles.begin(), sub_particles.end(), [](const auto &sub_particle) { return sub_particle->is_completed(); });
-
-    for (int i = 0; i < sub_particles.size(); i++) {
-      if (!sub_particles[i]->is_completed()) {
-        LOG_INFO("NOT COMPLETED: %d", i);
-      }
-    }
-
-    return done;
-  }
+  [[nodiscard]] bool is_completed() const override;
 };

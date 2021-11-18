@@ -113,3 +113,50 @@ void Smoker::update() {
 [[nodiscard]] bool Smoker::is_completed() const {
   return total_frame_groups <= 0 && alpha.back() <= 0.0f;
 }
+
+// REPEATER ///////////////////////////////////////////////////////////////////
+
+Repeater::Repeater(
+        Rectangle start_frame,
+        int particle_per_round,
+        int round_frame_count,
+        int total_frame_groups,
+        IParticle *(*particle_factory)(Rectangle)) : start_frame(start_frame),
+                                                     particle_per_round(particle_per_round),
+                                                     round_frame_count(round_frame_count),
+                                                     total_frame_groups(total_frame_groups),
+                                                     particle_factory(particle_factory) {}
+
+Repeater::~Repeater() {
+  for (auto &sub_particle : sub_particles) delete sub_particle;
+  sub_particles.clear();
+}
+
+void Repeater::draw(IntVector2D scroll_offset) const {
+  for (const auto &sub_particle : sub_particles) {
+    if (sub_particle->is_completed()) continue;
+    sub_particle->draw(scroll_offset);
+  }
+}
+
+void Repeater::update() {
+  if (total_frame_groups > 0) {
+
+    if (frame_counter % round_frame_count == 0) {
+      for (int i = 0; i < particle_per_round; i++) {
+        sub_particles.push_back(particle_factory(start_frame));
+      }
+    }
+    frame_counter++;
+    total_frame_groups--;
+  }
+
+  for (auto &sub_particle : sub_particles) {
+    if (sub_particle->is_completed()) continue;
+    sub_particle->update();
+  }
+}
+
+bool Repeater::is_completed() const {
+  return std::all_of(sub_particles.begin(), sub_particles.end(), [](const auto &sub_particle) { return sub_particle->is_completed(); });
+}
