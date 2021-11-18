@@ -18,9 +18,7 @@ Explosion::Explosion(Rectangle start_frame, size_t particle_count, Color color) 
 
 void Explosion::draw(IntVector2D scroll_offset) const {
   for (size_t i = 0; i < particle_count; i++) {
-    //    DrawRectangle(particle_pos[i].x - scroll_offset.x, particle_pos[i].y - scroll_offset.y, 12, 12, Fade(DARKGRAY, fade));
     Rectangle frame{particle_pos[i].x - scroll_offset.x, particle_pos[i].y - scroll_offset.y, 12.0f, 12.0f};
-    //    //    DrawRectanglePro(frame, midpoint(frame), particle_rot[i], Fade(DARKGRAY, fade));
     DrawRectanglePro(frame, midpoint(frame), particle_rot[i], color);
   }
 }
@@ -76,11 +74,12 @@ void Circler::update() {
 }
 
 // SMOKER /////////////////////////////////////////////////////////////////////
+
 Smoker::Smoker(Rectangle *start_frame, Color color) : start_frame(start_frame),
                                                       color(color) {}
 
 void Smoker::draw(IntVector2D scroll_offset) const {
-  for (int i = 0; i < pos.size(); i++) {
+  for (int i = 0; i < (int) pos.size(); i++) {
     if (alpha[i] <= 0.0f) continue;
 
     DrawRectangle(pos[i].x - scroll_offset.x, pos[i].y - scroll_offset.y, 4, 4, Fade(color, alpha[i]));
@@ -88,9 +87,9 @@ void Smoker::draw(IntVector2D scroll_offset) const {
 }
 
 void Smoker::update() {
-  //  if (start_frame == nullptr) return;
+  if (start_frame == nullptr) return;
 
-  for (int i = 0; i < pos.size(); i++) {
+  for (int i = 0; i < (int) pos.size(); i++) {
     if (alpha[i] <= 0.0f) continue;
 
     pos[i].x += v[i].x;
