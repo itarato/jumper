@@ -65,15 +65,32 @@ Rectangle shrink(Rectangle rec, float n) {
   };
 }
 
-Vector2 midpoint(Rectangle rec) {
+Vector2 relative_midpoint(Rectangle rec) {
   return Vector2{
           rec.width / 2.0f,
           rec.height / 2.0f,
   };
 }
 
+Vector2 absolute_midpoint(Rectangle rec) {
+  return Vector2{
+          rec.x + rec.width / 2.0f,
+          rec.y + rec.height / 2.0f,
+  };
+}
+
 Vector2 position_of(Rectangle rec) {
   return Vector2{rec.x, rec.y};
+}
+
+void mut_sum(Vector2& base, Vector2 offs) {
+  base.x += offs.x;
+  base.y += offs.y;
+}
+
+void mut_mul(Vector2& base, float m) {
+  base.x *= m;
+  base.y *= m;
 }
 
 std::vector<std::string> split(std::string word, char delim) {

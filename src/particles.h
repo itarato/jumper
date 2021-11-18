@@ -9,6 +9,21 @@
 #include "shared/types.h"
 #include "shared/util.h"
 
+struct ParticleFrameCapper {
+  uint64_t frame_counter{0};
+  uint64_t cap;
+
+  ParticleFrameCapper(uint64_t cap) : cap(cap) {}
+
+  void tick() {
+    frame_counter++;
+  }
+
+  [[nodiscard]] bool is_complete() const {
+    return frame_counter >= cap;
+  }
+};
+
 struct IParticle {
   virtual void draw(IntVector2D scroll_offset) const = 0;
   virtual void update() = 0;
@@ -72,7 +87,7 @@ struct Repeater : IParticle {
   int particle_per_round{1};// How many new particles per frame group.
   int round_frame_count{1}; // How many frame is in one frame group.
   int total_frame_groups{4};// How many frame groups to do.
-  
+
   int frame_counter{0};
 
   IParticle *(*particle_factory)(Rectangle start_frame);
@@ -89,8 +104,17 @@ struct Repeater : IParticle {
   ~Repeater() override;
 
   void draw(IntVector2D scroll_offset) const override;
-
   void update() override;
+  [[nodiscard]] bool is_completed() const override;
+};
 
+struct Sprinkler : IParticle, ParticleFrameCapper {
+  Vector2 pos;
+  Vector2 v;
+
+  Sprinkler(Rectangle start_frame, float angle, uint64_t length);
+
+  void draw(IntVector2D scroll_offset) const override;
+  void update() override;
   [[nodiscard]] bool is_completed() const override;
 };

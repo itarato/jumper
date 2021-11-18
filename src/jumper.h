@@ -41,12 +41,17 @@ enum class JumperEvent {
   StartJump,
   StartDash,
   StartDie,
+  DidOpenDoor,
 };
 
 struct JumperEventData {
   Rectangle *frame;
+  Rectangle subject;
 
-  explicit JumperEventData(Rectangle *frame) : frame(frame) {}
+  explicit JumperEventData(Rectangle *frame) : frame(frame),
+                                               subject(*frame) {}
+  explicit JumperEventData(Rectangle *frame, Rectangle subject) : frame(frame),
+                                                                  subject(subject) {}
 };
 
 struct JumperObserver {

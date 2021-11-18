@@ -31,8 +31,11 @@ float randf();
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
 Rectangle shrink(Rectangle rec, float n);
-Vector2 midpoint(Rectangle rec);
+Vector2 relative_midpoint(Rectangle rec);
+Vector2 absolute_midpoint(Rectangle rec);
 Vector2 position_of(Rectangle rec);
+void mut_sum(Vector2& base, Vector2 offs);
+void mut_mul(Vector2& base, float m);
 
 std::vector<std::string> split(std::string word, char delim);
 

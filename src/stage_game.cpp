@@ -227,5 +227,10 @@ void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
     explosions.push_back(std::make_unique<Smoker>(data.frame, ORANGE));
   } else if (event == JumperEvent::StartDie) {
     explosions.push_back(std::make_unique<Repeater>(*data.frame, 1, 4, 48, [](Rectangle start_frame) { return (IParticle*) (new Explosion(start_frame, 8, RED)); }));
+  } else if (event == JumperEvent::DidOpenDoor) {
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.25f, 16)); }));
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.25f, 16)); }));
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.75f, 16)); }));
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.75f, 16)); }));
   }
 }

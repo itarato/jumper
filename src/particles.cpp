@@ -19,7 +19,7 @@ Explosion::Explosion(Rectangle start_frame, size_t particle_count, Color color) 
 void Explosion::draw(IntVector2D scroll_offset) const {
   for (size_t i = 0; i < particle_count; i++) {
     Rectangle frame{particle_pos[i].x - scroll_offset.x, particle_pos[i].y - scroll_offset.y, 12.0f, 12.0f};
-    DrawRectanglePro(frame, midpoint(frame), particle_rot[i], color);
+    DrawRectanglePro(frame, relative_midpoint(frame), particle_rot[i], color);
   }
 }
 
@@ -146,9 +146,11 @@ void Repeater::update() {
       for (int i = 0; i < particle_per_round; i++) {
         sub_particles.push_back(particle_factory(start_frame));
       }
+      total_frame_groups--;
+      frame_counter = 0;
     }
+
     frame_counter++;
-    total_frame_groups--;
   }
 
   for (auto &sub_particle : sub_particles) {
@@ -159,4 +161,27 @@ void Repeater::update() {
 
 bool Repeater::is_completed() const {
   return std::all_of(sub_particles.begin(), sub_particles.end(), [](const auto &sub_particle) { return sub_particle->is_completed(); });
+}
+
+// SPRINKLER //////////////////////////////////////////////////////////////////
+
+Sprinkler::Sprinkler(Rectangle start_frame, float angle, uint64_t length) : ParticleFrameCapper(length) {
+  pos = absolute_midpoint(start_frame);
+
+  v.x = cosf(angle) * 2.0f;
+  v.y = sinf(angle) * 2.0f;
+}
+
+void Sprinkler::draw(IntVector2D scroll_offset) const {
+  DrawRectangle(pos.x - scroll_offset.x, pos.y - scroll_offset.y, 8, 8, BEIGE);
+}
+
+void Sprinkler::update() {
+  ParticleFrameCapper::tick();
+  mut_sum(pos, v);
+  mut_mul(v, 1.2f);
+}
+
+bool Sprinkler::is_completed() const {
+  return ParticleFrameCapper::is_complete();
 }

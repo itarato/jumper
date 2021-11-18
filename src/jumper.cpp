@@ -54,6 +54,14 @@ void Jumper::update(Map *map) {
             try {
               if (std::regex_search(tile.value, get_regex())) {
                 tile.disable();
+
+                Rectangle door_frame{
+                        (float) (corner.x * BLOCK_SIZE),
+                        (float) (corner.y * BLOCK_SIZE),
+                        BLOCK_SIZE,
+                        BLOCK_SIZE,
+                };
+                JumperSubject::notify_all(JumperEvent::DidOpenDoor, JumperEventData{&frame, door_frame});
               }
             } catch (...) {
               // Incorrect regex.
