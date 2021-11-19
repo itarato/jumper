@@ -34,6 +34,7 @@ static const TileType tile_types[] = {
         TILE_COIN,
         TILE_REGEX,
         TILE_DOOR,
+        TILE_TRAP,
 };
 
 static const char* tile_type_names[] = {
@@ -47,6 +48,7 @@ static const char* tile_type_names[] = {
         "Coin",
         "Regex",
         "Door",
+        "Trap",
 };
 
 char char_shift_version(char ch) {
@@ -468,7 +470,7 @@ struct App {
         color = RAYWHITE;
         break;
       case TILE_AIR:
-        color = Fade(BLUE, 0.2);
+        color = LIGHTGRAY;
         break;
       case TILE_GROUND:
         color = BROWN;
@@ -493,6 +495,9 @@ struct App {
         break;
       case TILE_DOOR:
         color = MAGENTA;
+        break;
+      case TILE_TRAP:
+        color = PURPLE;
         break;
       default:
         break;

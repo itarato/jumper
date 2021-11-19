@@ -16,6 +16,7 @@
 
 static const char *game_map_files[]{
         "./maps/1.jm",
+        "./maps/2.jm",
 };
 
 typedef enum {
