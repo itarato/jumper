@@ -28,6 +28,7 @@ void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
 int rand_range(int min, int max);
 float randf();
+float randf(float min, float max);
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
 Rectangle shrink(Rectangle rec, float n);
@@ -36,6 +37,7 @@ Vector2 absolute_midpoint(Rectangle rec);
 Vector2 position_of(Rectangle rec);
 void mut_sum(Vector2& base, Vector2 offs);
 void mut_mul(Vector2& base, float m);
+Vector2 mul(Vector2 base, float m);
 
 std::vector<std::string> split(std::string word, char delim);
 

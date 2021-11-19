@@ -45,6 +45,10 @@ float randf() {
   return (float) (rand() % 1000000) / 1000000.0f;
 }
 
+float randf(float min, float max) {
+  return randf() * (max - min) + min;
+}
+
 int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
@@ -91,6 +95,10 @@ void mut_sum(Vector2& base, Vector2 offs) {
 void mut_mul(Vector2& base, float m) {
   base.x *= m;
   base.y *= m;
+}
+
+Vector2 mul(Vector2 base, float m) {
+  return Vector2{base.x * m, base.y * m};
 }
 
 std::vector<std::string> split(std::string word, char delim) {

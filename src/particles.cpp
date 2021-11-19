@@ -168,12 +168,17 @@ bool Repeater::is_completed() const {
 Sprinkler::Sprinkler(Rectangle start_frame, float angle, uint64_t length) : ParticleFrameCapper(length) {
   pos = absolute_midpoint(start_frame);
 
-  v.x = cosf(angle) * 2.0f;
-  v.y = sinf(angle) * 2.0f;
+  angle += randf(-0.22f, 0.22f);
+  v.x = cosf(angle) * 1.5f;
+  v.y = sinf(angle) * 1.5f;
+
+  mut_sum(pos, mul(v, 10.0f));
+
+  if (fade > 0.0f) fade -= 0.2f;
 }
 
 void Sprinkler::draw(IntVector2D scroll_offset) const {
-  DrawRectangle(pos.x - scroll_offset.x, pos.y - scroll_offset.y, 8, 8, BEIGE);
+  DrawRectangle(pos.x - scroll_offset.x, pos.y - scroll_offset.y, 8, 8, Fade(BEIGE, fade));
 }
 
 void Sprinkler::update() {

@@ -111,6 +111,7 @@ struct Repeater : IParticle {
 struct Sprinkler : IParticle, ParticleFrameCapper {
   Vector2 pos;
   Vector2 v;
+  float fade{1.0};
 
   Sprinkler(Rectangle start_frame, float angle, uint64_t length);
 
