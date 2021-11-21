@@ -101,6 +101,10 @@ Vector2 mul(Vector2 base, float m) {
   return Vector2{base.x * m, base.y * m};
 }
 
+float distance(Vector2 lhs, Vector2 rhs) {
+  return sqrtf(powf(lhs.x - rhs.x, 2) + powf(lhs.y - rhs.y, 2));
+}
+
 std::vector<std::string> split(std::string word, char delim) {
   size_t prev_delim_pos = -1;
   std::vector<std::string> out{};

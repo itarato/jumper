@@ -125,18 +125,22 @@ void StageGame::draw() {
   }
 
   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKGRAY);
+
+
+  Vector2 jumper_midpoint{absolute_midpoint(jumper.frame)};
+  float jumper_pos[2]{jumper_midpoint.x, jumper_midpoint.y};
+  int jumper_pos_loc = GetShaderLocation(shader, "jumper_pos");
+  SetShaderValue(shader, jumper_pos_loc, jumper_pos, SHADER_UNIFORM_VEC2);
+
+  BeginShaderMode(shader);
   DrawRectangle(-scroll_offset.x, -scroll_offset.y, (int) map.pixel_width(), (int) map.pixel_height(), RAYWHITE);
+  EndShaderMode();
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
 
-  for (Enemy const& enemy : enemies) {
-    enemy.draw(scroll_offset);
-  }
-
-  for (auto coin : coins) {
-    coin.draw(scroll_offset);
-  }
+  for (Enemy const& enemy : enemies) enemy.draw(scroll_offset);
+  for (auto coin : coins) coin.draw(scroll_offset);
 
   {// Particles
     for (auto& explosion : explosions) {
@@ -163,6 +167,8 @@ void StageGame::draw() {
 
 void StageGame::init() {
   LOG_INFO("GAME STAGE INIT");
+
+  shader = LoadShader(0, "./assets/shaders/test.fs");
 
   current_map_number = 0;
 

@@ -38,6 +38,7 @@ Vector2 position_of(Rectangle rec);
 void mut_sum(Vector2& base, Vector2 offs);
 void mut_mul(Vector2& base, float m);
 Vector2 mul(Vector2 base, float m);
+float distance(Vector2 lhs, Vector2 rhs);
 
 std::vector<std::string> split(std::string word, char delim);
 

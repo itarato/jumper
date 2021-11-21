@@ -51,6 +51,8 @@ struct StageGame : IStage, JumperObserver {
   std::vector<std::string> map_file_paths;
   std::vector<std::unique_ptr<IParticle>> explosions{};
 
+  Shader shader;
+
   void on_jumper_update(JumperEvent event, JumperEventData data) override;
 
   StageGame(GameConfig *game_config)
@@ -70,5 +72,8 @@ struct StageGame : IStage, JumperObserver {
       }
     }
   };
-  ~StageGame() override = default;
+  
+  ~StageGame() override {
+    UnloadShader(shader);
+  }
 };
