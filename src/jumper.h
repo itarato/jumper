@@ -37,11 +37,12 @@ struct DoubleJump {
 };
 
 enum class JumperEvent {
-  DidCaptureRegex,
-  StartJump,
-  StartDash,
-  StartDie,
-  DidOpenDoor,
+  CaptureRegex,
+  Jump,
+  Dash,
+  Die,
+  OpenDoor,
+  FailedDoor,
 };
 
 struct JumperEventData {

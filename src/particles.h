@@ -112,8 +112,9 @@ struct Sprinkler : IParticle, ParticleFrameCapper {
   Vector2 pos;
   Vector2 v;
   float fade{1.0};
+  Color color;
 
-  Sprinkler(Rectangle start_frame, float angle, uint64_t length);
+  Sprinkler(Rectangle start_frame, float angle, uint64_t length, Color color);
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;

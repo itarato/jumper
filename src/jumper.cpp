@@ -30,14 +30,14 @@ void Jumper::update(Map *map) {
 
         if (IsKeyPressed(KEY_LEFT_CONTROL)) {
           v.x = -5 * JUMPER_HMOVE_V;
-          JumperSubject::notify_all(JumperEvent::StartDash, JumperEventData{&frame});
+          JumperSubject::notify_all(JumperEvent::Dash, JumperEventData{&frame});
         }
       } else if (IsKeyDown(KEY_RIGHT)) {
         v.x = std::max(JUMPER_HMOVE_V, v.x * FRICTION);
 
         if (IsKeyPressed(KEY_LEFT_CONTROL)) {
           v.x = 5 * JUMPER_HMOVE_V;
-          JumperSubject::notify_all(JumperEvent::StartDash, JumperEventData{&frame});
+          JumperSubject::notify_all(JumperEvent::Dash, JumperEventData{&frame});
         }
       } else {
         v.x *= FRICTION;
@@ -52,16 +52,18 @@ void Jumper::update(Map *map) {
           Tile &tile = map->get_tile(corner);
           if (tile.type == TILE_DOOR && tile.is_enabled) {
             try {
+              Rectangle door_frame{
+                      (float) (corner.x * BLOCK_SIZE),
+                      (float) (corner.y * BLOCK_SIZE),
+                      BLOCK_SIZE,
+                      BLOCK_SIZE,
+              };
+
               if (std::regex_search(tile.value, get_regex())) {
                 tile.disable();
-
-                Rectangle door_frame{
-                        (float) (corner.x * BLOCK_SIZE),
-                        (float) (corner.y * BLOCK_SIZE),
-                        BLOCK_SIZE,
-                        BLOCK_SIZE,
-                };
-                JumperSubject::notify_all(JumperEvent::DidOpenDoor, JumperEventData{&frame, door_frame});
+                JumperSubject::notify_all(JumperEvent::OpenDoor, JumperEventData{&frame, door_frame});
+              } else {
+                JumperSubject::notify_all(JumperEvent::FailedDoor, JumperEventData{&frame, door_frame});
               }
             } catch (...) {
               // Incorrect regex.
@@ -123,7 +125,7 @@ void Jumper::update(Map *map) {
     {// Vertical movement.
       if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
         v.y -= JUMP_FORCE;
-        JumperSubject::notify_all(JumperEvent::StartJump, JumperEventData{&frame});
+        JumperSubject::notify_all(JumperEvent::Jump, JumperEventData{&frame});
       }
     }
 
@@ -134,7 +136,7 @@ void Jumper::update(Map *map) {
         if (tile.type == TILE_REGEX && tile.is_enabled) {
           merge_pattern(regex_raw, tile.value);
           tile.disable();
-          JumperSubject::notify_all(JumperEvent::DidCaptureRegex, JumperEventData{&frame});
+          JumperSubject::notify_all(JumperEvent::CaptureRegex, JumperEventData{&frame});
         }
       }
     }
@@ -218,5 +220,5 @@ bool Jumper::is_alive() const {
 
 void Jumper::kill() {
   state = JumperState::Dying;
-  JumperSubject::notify_all(JumperEvent::StartDie, JumperEventData{&frame});
+  JumperSubject::notify_all(JumperEvent::Die, JumperEventData{&frame});
 }

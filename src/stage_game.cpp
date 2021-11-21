@@ -230,20 +230,26 @@ std::optional<StageT> StageGame::next_stage() {
 }
 
 void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
-  if (event == JumperEvent::DidCaptureRegex) {
+  if (event == JumperEvent::CaptureRegex) {
     explosions.push_back(std::make_unique<Explosion>(*data.frame, 12, DARKGRAY));
-  } else if (event == JumperEvent::StartJump) {
+  } else if (event == JumperEvent::Jump) {
     explosions.push_back(std::make_unique<Smoker>(data.frame, LIGHTGRAY));
-  } else if (event == JumperEvent::StartDash) {
+  } else if (event == JumperEvent::Dash) {
     explosions.push_back(std::make_unique<Smoker>(data.frame, ORANGE));
-  } else if (event == JumperEvent::StartDie) {
+  } else if (event == JumperEvent::Die) {
     explosions.push_back(std::make_unique<Repeater>(*data.frame, 1, 4, 48, [](Rectangle start_frame) { return (IParticle*) (new Explosion(start_frame, 8, RED)); }));
 
     timer.stop();
-  } else if (event == JumperEvent::DidOpenDoor) {
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.25f, 14)); }));
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.25f, 14)); }));
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.75f, 14)); }));
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.75f, 14)); }));
+  } else if (event == JumperEvent::OpenDoor) {
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.25f, 14, BEIGE)); }));
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.25f, 14, BEIGE)); }));
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.75f, 14, BEIGE)); }));
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.75f, 14, BEIGE)); }));
+  } else if (event == JumperEvent::FailedDoor) {
+    //    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 2, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, 0.0f, 14, RED)); }));
+    //    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 2, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI, 14, RED)); }));
+    //
+    explosions.push_back(std::make_unique<Sprinkler>(data.subject, 0.0f, 8, RED));
+    explosions.push_back(std::make_unique<Sprinkler>(data.subject, PI, 8, RED));
   }
 }

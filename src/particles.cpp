@@ -165,7 +165,8 @@ bool Repeater::is_completed() const {
 
 // SPRINKLER //////////////////////////////////////////////////////////////////
 
-Sprinkler::Sprinkler(Rectangle start_frame, float angle, uint64_t length) : ParticleFrameCapper(length) {
+Sprinkler::Sprinkler(Rectangle start_frame, float angle, uint64_t length, Color color) : ParticleFrameCapper(length),
+                                                                                         color(color) {
   pos = absolute_midpoint(start_frame);
 
   angle += randf(-0.22f, 0.22f);
@@ -178,7 +179,7 @@ Sprinkler::Sprinkler(Rectangle start_frame, float angle, uint64_t length) : Part
 }
 
 void Sprinkler::draw(IntVector2D scroll_offset) const {
-  DrawRectangle(pos.x - scroll_offset.x, pos.y - scroll_offset.y, 8, 8, Fade(BEIGE, fade));
+  DrawRectangle(pos.x - scroll_offset.x, pos.y - scroll_offset.y, 8, 8, Fade(color, fade));
 }
 
 void Sprinkler::update() {
