@@ -31,12 +31,6 @@ struct StageGame : IStage, JumperObserver {
   int wait_to_state_timeout;
   bool is_victory;
 
-  void update() override;
-  void draw() override;
-  void init() override;
-  void init_level();
-  std::optional<StageT> next_stage() override;
-
   GameConfig *game_config;
   Jumper jumper;
   Map map;
@@ -51,7 +45,15 @@ struct StageGame : IStage, JumperObserver {
   std::vector<std::string> map_file_paths;
   std::vector<std::unique_ptr<IParticle>> explosions{};
 
+  SimpleTimer timer{};
+
   void on_jumper_update(JumperEvent event, JumperEventData data) override;
+
+  void update() override;
+  void draw() override;
+  void init() override;
+  void init_level();
+  std::optional<StageT> next_stage() override;
 
   StageGame(GameConfig *game_config)
       : JumperObserver(),

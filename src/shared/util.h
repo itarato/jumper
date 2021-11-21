@@ -53,10 +53,10 @@ struct TileMeta {
 
 void merge_pattern(std::string& base, std::string new_part);
 
-struct Timer {
+struct DebugTimer {
   std::chrono::time_point<std::chrono::system_clock> _tick{};
 
-  Timer() = default;
+  DebugTimer() = default;
 
   void tick() {
     _tick = std::chrono::high_resolution_clock::now();
@@ -85,3 +85,16 @@ struct Ticker {
 };
 
 std::map<std::string, std::string> parse_args(int argc, char** argv);
+
+struct SimpleTimer {
+  double start_time{0.0f};
+  double end_time{0.0f};
+  bool stopped{false};
+
+  SimpleTimer() = default;
+
+  void start();
+  void stop();
+  [[nodiscard]] int minutes() const;
+  [[nodiscard]] int seconds() const;
+};

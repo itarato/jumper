@@ -72,6 +72,7 @@ void StageGame::update() {
             state = GAME_STATE_WAIT_TO_COMPLETE;
           }
           is_victory = true;
+          timer.stop();
         }
 
         for (Enemy& enemy : enemies) {
@@ -146,8 +147,16 @@ void StageGame::draw() {
 
   {// Overlay.
     DrawRectangle(0, GetScreenHeight() - 32, GetScreenWidth(), 32, Fade(BLACK, 0.7f));
-    //    DrawText(TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), 12, GetScreenHeight() - 26, 20, WHITE);
-    DrawTextEx(asset_manager.fonts[FONT_MEDIUM], TextFormat("Score: %d Regex: /^%s$/", score, jumper.regex_raw.c_str()), Vector2{12.0f, (float) GetScreenHeight() - 26.0f}, asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
+
+    DrawTextEx(asset_manager.fonts[FONT_MEDIUM], TextFormat("Score: %d", score), Vector2{12.0f, (float) GetScreenHeight() - 26.0f}, asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
+
+    const char* regex_text = TextFormat("/%s/", jumper.regex_raw.c_str());
+    Vector2 regex_text_size{MeasureTextEx(asset_manager.fonts[FONT_MEDIUM], regex_text, asset_manager.fonts[FONT_MEDIUM].baseSize, 0)};
+    DrawTextEx(asset_manager.fonts[FONT_MEDIUM], regex_text, Vector2{((float) GetScreenWidth() - regex_text_size.x) / 2.0f, (float) GetScreenHeight() - 26.0f}, asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
+
+    const char* time_text = TextFormat("%dm %ds", timer.minutes(), timer.seconds());
+    Vector2 time_text_size{MeasureTextEx(asset_manager.fonts[FONT_MEDIUM], time_text, asset_manager.fonts[FONT_MEDIUM].baseSize, 0)};
+    DrawTextEx(asset_manager.fonts[FONT_MEDIUM], time_text, Vector2{(float) GetScreenWidth() - time_text_size.x - 12.0f, (float) GetScreenHeight() - 26.0f}, asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
   }
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||
@@ -208,6 +217,8 @@ void StageGame::init_level() {
     coins.emplace_back(Vector2{(float) (coin_coord.x * BLOCK_SIZE),
                                (float) (coin_coord.y * BLOCK_SIZE)});
   }
+
+  timer.start();
 }
 
 std::optional<StageT> StageGame::next_stage() {
@@ -227,6 +238,8 @@ void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
     explosions.push_back(std::make_unique<Smoker>(data.frame, ORANGE));
   } else if (event == JumperEvent::StartDie) {
     explosions.push_back(std::make_unique<Repeater>(*data.frame, 1, 4, 48, [](Rectangle start_frame) { return (IParticle*) (new Explosion(start_frame, 8, RED)); }));
+
+    timer.stop();
   } else if (event == JumperEvent::DidOpenDoor) {
     explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.25f, 14)); }));
     explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.25f, 14)); }));

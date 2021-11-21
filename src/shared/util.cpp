@@ -192,3 +192,25 @@ std::map<std::string, std::string> parse_args(int argc, char** argv) {
 
   return out;
 }
+
+void SimpleTimer::start() {
+  start_time = GetTime();
+  stopped = false;
+}
+
+void SimpleTimer::stop() {
+  if (stopped) return;
+  
+  end_time = GetTime();
+  stopped = true;
+}
+
+int SimpleTimer::minutes() const {
+  double finish_time{stopped ? end_time : GetTime()};
+  return (int) (finish_time - start_time) / 60;
+}
+
+int SimpleTimer::seconds() const {
+  double finish_time{stopped ? end_time : GetTime()};
+  return (int) (finish_time - start_time) % 60;
+}

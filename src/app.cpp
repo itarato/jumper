@@ -62,7 +62,7 @@ void App::loop() {
   StageT current_stage = STAGE_MENU;
   stages[current_stage]->init();
 
-  Timer dbg_timer{};
+  DebugTimer dbg_timer{};
 
   while (!WindowShouldClose()) {
     auto stage = stages[current_stage];
@@ -73,7 +73,7 @@ void App::loop() {
     ClearBackground(RAYWHITE);
 
     stage->draw();
-    DrawFPS(GetScreenWidth() - 96, GetScreenHeight() - 26);
+    //    DrawFPS(GetScreenWidth() - 96, GetScreenHeight() - 26);
 
     auto next_stage = stage->next_stage();
     if (next_stage.has_value()) {
