@@ -16,25 +16,20 @@
 
 void StageGame::update() {
   if (state == GAME_STATE_PLAY) {
-    {// Reset stage.
-      if (IsKeyPressed(KEY_BACKSPACE)) {
-        init_level();
-        return;
-      }
+    // Reset stage.
+    if (IsKeyPressed(KEY_BACKSPACE)) {
+      init_level();
+      return;
     }
 
+    // Player update.
     jumper.update(&map);
 
-    {// Enemy movement.
-      for (Enemy& enemy : enemies) {
-        enemy.update(jumper.frame);
-      }
-    }
+    // Enemy movement.
+    for (Enemy& enemy : enemies) enemy.update(jumper.frame);
 
     {// Particles
-      for (auto& explosion : explosions) {
-        explosion->update();
-      }
+      for (auto& explosion : explosions) explosion->update();
 
       // Cleanup completed explosions.
       explosions.erase(std::remove_if(explosions.begin(), explosions.end(), [](const auto& e) { return e->is_completed(); }), explosions.end());
