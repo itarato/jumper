@@ -42,7 +42,6 @@ void StageGame::update() {
         coin.is_collected = true;
         score++;
 
-        //        explosions.push_back(std::make_unique<Circler>(jumper.frame, 16));
         explosions.push_back(std::make_unique<Explosion>(jumper.frame, 16, BEIGE));
       }
     }
