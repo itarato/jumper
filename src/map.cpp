@@ -36,7 +36,7 @@ void Map::draw(IntVector2D scroll_offset) {
 
         case TILE_END:
           DrawTexture(asset_manager.textures[IMG_END],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].fade));
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
           break;
 
         case TILE_DOOR:
@@ -46,17 +46,19 @@ void Map::draw(IntVector2D scroll_offset) {
             image = IMG_DOOR_OPEN;
           }
           DrawTexture(asset_manager.textures[image],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, BROWN);
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
           break;
 
         case TILE_REGEX:
-          DrawTexture(asset_manager.textures[IMG_REGEX],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].is_enabled ? 1.0f : 0.2f));
+          if (map[v][h].is_enabled) {
+            DrawTexture(asset_manager.textures[IMG_REGEX],
+                        h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
+          }
           break;
 
         case TILE_TRAP:
           DrawTexture(asset_manager.textures[IMG_SPIKE],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].is_enabled ? 1.0f : 0.2f));
+                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
           break;
 
         default:

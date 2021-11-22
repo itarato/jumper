@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -39,7 +40,7 @@ struct Tile {
   float fade;
 
   explicit Tile(TileType type) : type(type) {
-    fade = 0.67f + (float) (rand() % 100) / 300.0f;
+    fade = randf(0.6f, 1.0f);
   }
 
   [[nodiscard]] bool is_solid() const { return is_enabled && is_tile_type_solid(type); }
