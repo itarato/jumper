@@ -42,7 +42,8 @@ void StageGame::update() {
         coin.is_collected = true;
         score++;
 
-        explosions.push_back(std::make_unique<Circler>(jumper.frame, 16));
+        //        explosions.push_back(std::make_unique<Circler>(jumper.frame, 16));
+        explosions.push_back(std::make_unique<Explosion>(jumper.frame, 16, BEIGE));
       }
     }
 
@@ -233,18 +234,11 @@ void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
     explosions.push_back(std::make_unique<Smoker>(data.frame, ORANGE));
   } else if (event == JumperEvent::Die) {
     explosions.push_back(std::make_unique<Repeater>(*data.frame, 1, 4, 48, [](Rectangle start_frame) { return (IParticle*) (new Explosion(start_frame, 8, RED)); }));
-
     timer.stop();
   } else if (event == JumperEvent::OpenDoor) {
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.25f, 14, BEIGE)); }));
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.25f, 14, BEIGE)); }));
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * 0.75f, 14, BEIGE)); }));
-    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI * -0.75f, 14, BEIGE)); }));
+    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 6, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(position_of(start_frame), PI * -0.75f, 14, DARKPURPLE)); }));
   } else if (event == JumperEvent::FailedDoor) {
-    //    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 2, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, 0.0f, 14, RED)); }));
-    //    explosions.push_back(std::make_unique<Repeater>(data.subject, 1, 3, 2, [](Rectangle start_frame) { return (IParticle*) (new Sprinkler(start_frame, PI, 14, RED)); }));
-    //
-    explosions.push_back(std::make_unique<Sprinkler>(data.subject, 0.0f, 8, RED));
-    explosions.push_back(std::make_unique<Sprinkler>(data.subject, PI, 8, RED));
+    explosions.push_back(std::make_unique<Sprinkler>(absolute_midpoint(*data.frame, data.subject), 0.0f, 8, RED));
+    explosions.push_back(std::make_unique<Sprinkler>(absolute_midpoint(*data.frame, data.subject), PI, 8, RED));
   }
 }

@@ -83,6 +83,16 @@ Vector2 absolute_midpoint(Rectangle rec) {
   };
 }
 
+Vector2 absolute_midpoint(Rectangle lhs, Rectangle rhs) {
+  Vector2 lhs_mid{absolute_midpoint(lhs)};
+  Vector2 rhs_mid{absolute_midpoint(rhs)};
+  return absolute_midpoint(lhs_mid, rhs_mid);
+}
+
+Vector2 absolute_midpoint(Vector2 lhs, Vector2 rhs) {
+  return Vector2{(lhs.x + rhs.x) / 2.0f, (lhs.y + rhs.y) / 2.0f};
+}
+
 Vector2 position_of(Rectangle rec) {
   return Vector2{rec.x, rec.y};
 }
@@ -99,6 +109,12 @@ void mut_mul(Vector2& base, float m) {
 
 Vector2 mul(Vector2 base, float m) {
   return Vector2{base.x * m, base.y * m};
+}
+
+float gravity_pull(float vy, float acc) {
+  if (fabsf(vy) < 0.1f) return 1.0f;
+  if (vy <= 0.0f) return vy * acc;
+  return vy / acc;
 }
 
 std::vector<std::string> split(std::string word, char delim) {
@@ -200,7 +216,7 @@ void SimpleTimer::start() {
 
 void SimpleTimer::stop() {
   if (stopped) return;
-  
+
   end_time = GetTime();
   stopped = true;
 }

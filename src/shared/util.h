@@ -34,10 +34,14 @@ Rectangle rec_plus_vector2(Rectangle rec, Vector2 v);
 Rectangle shrink(Rectangle rec, float n);
 Vector2 relative_midpoint(Rectangle rec);
 Vector2 absolute_midpoint(Rectangle rec);
+Vector2 absolute_midpoint(Rectangle lhs, Rectangle rhs);
+Vector2 absolute_midpoint(Vector2 lhs, Vector2 rhs);
 Vector2 position_of(Rectangle rec);
 void mut_sum(Vector2& base, Vector2 offs);
 void mut_mul(Vector2& base, float m);
 Vector2 mul(Vector2 base, float m);
+
+float gravity_pull(float vy, float acc = 0.7f);
 
 std::vector<std::string> split(std::string word, char delim);
 
