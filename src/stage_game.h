@@ -17,13 +17,15 @@
 static const char *game_map_files[]{
         "./maps/1.jm",
         "./maps/2.jm",
+        "./maps/3.jm",
 };
 
 typedef enum {
   GAME_STATE_PLAY = 0,
   GAME_STATE_WAIT_TO_COMPLETE = 1,
   GAME_STATE_WAIT_TO_NEXT_LEVEL = 2,
-  GAME_STATE_COMPLETE = 3,
+  GAME_STATE_WAIT_TO_RESTART_LEVEL = 3,
+  GAME_STATE_COMPLETE = 4,
 } GameStateT;
 
 struct StageGame : IStage, JumperObserver {

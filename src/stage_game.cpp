@@ -54,7 +54,7 @@ void StageGame::update() {
   {// Completion checks.
     if (state == GAME_STATE_PLAY) {
       if (jumper.frame.y >= (float) map.pixel_height() || jumper.is_dead()) {
-        state = GAME_STATE_WAIT_TO_COMPLETE;
+        state = GAME_STATE_WAIT_TO_RESTART_LEVEL;
         is_victory = false;
       }
 
@@ -79,7 +79,8 @@ void StageGame::update() {
     }
 
     if (state == GAME_STATE_WAIT_TO_COMPLETE ||
-        state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
+        state == GAME_STATE_WAIT_TO_NEXT_LEVEL ||
+        state == GAME_STATE_WAIT_TO_RESTART_LEVEL) {
       wait_to_state_timeout++;
 
       if (wait_to_state_timeout >= WAIT_TO_COMPLETE_FRAMES ||
@@ -90,6 +91,9 @@ void StageGame::update() {
           // FIXME - encapsulate state changes with logic.
           state = GAME_STATE_PLAY;
           current_map_number++;
+          init_level();
+        } else if (state == GAME_STATE_WAIT_TO_RESTART_LEVEL) {
+          state = GAME_STATE_PLAY;
           init_level();
         }
       }
@@ -155,7 +159,8 @@ void StageGame::draw() {
   }
 
   if (state == GAME_STATE_WAIT_TO_COMPLETE ||
-      state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
+      state == GAME_STATE_WAIT_TO_NEXT_LEVEL ||
+      state == GAME_STATE_WAIT_TO_RESTART_LEVEL) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(RAYWHITE, 0.6));
     if (is_victory) {
       victory_text.draw();

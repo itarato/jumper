@@ -33,6 +33,10 @@ struct IMapStateUpdatable {
   virtual void set_map_state(MapObjectState mos) = 0;
 };
 
+struct ITextureProvider {
+  virtual Texture2D& texture();
+};
+
 struct Tile {
   TileType type = TILE_AIR;
   std::string value{};
