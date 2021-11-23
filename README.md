@@ -3,7 +3,8 @@ Lady-bux
 
 Nonsense ladybug regex builder game.
 
-[![Watch the video](misc/thumb.png)](misc/test_run.mp4)
+[![Watch the video](misc/thumb.png)](misc/test_run.webm)
+<small>[mp4 version](misc/test_run.mp4)</small>
 
 ## Install
 
