@@ -10,6 +10,22 @@
 
 static Tile null_tile{TILE_NULL};
 
+Texture2D *SingleTextureProvider::texture() const {
+  return enabled ? texture_enabled : texture_disabled;
+}
+
+void SingleTextureProvider::disable() {
+  enabled = false;
+}
+
+void SingleTextureProvider::set_fade(float v) {
+  _fade = v;
+}
+
+Color SingleTextureProvider::color() const {
+  return Fade(WHITE, _fade);
+}
+
 void Map::build(std::string map_file_path) { load_map(map_file_path); }
 
 void Map::draw(IntVector2D scroll_offset) {
@@ -27,42 +43,10 @@ void Map::draw(IntVector2D scroll_offset) {
         continue;
       }
 
-      std::string image;
-      switch (map[v][h].type) {
-        case TILE_GROUND:
-          DrawTexture(asset_manager.textures[IMG_GROUND],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, Fade(WHITE, map[v][h].fade));
-          break;
-
-        case TILE_END:
-          DrawTexture(asset_manager.textures[IMG_END],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
-          break;
-
-        case TILE_DOOR:
-          if (map[v][h].is_enabled) {
-            image = IMG_DOOR_CLOSE;
-          } else {
-            image = IMG_DOOR_OPEN;
-          }
-          DrawTexture(asset_manager.textures[image],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
-          break;
-
-        case TILE_REGEX:
-          if (map[v][h].is_enabled) {
-            DrawTexture(asset_manager.textures[IMG_REGEX],
-                        h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
-          }
-          break;
-
-        case TILE_TRAP:
-          DrawTexture(asset_manager.textures[IMG_SPIKE],
-                      h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, WHITE);
-          break;
-
-        default:
-          break;
+      Texture2D *texture{map[v][h].texture_provider->texture()};
+      if (texture) {
+        DrawTexture(*texture,
+                    h * BLOCK_SIZE - scroll_offset.x, v * BLOCK_SIZE - scroll_offset.y, map[v][h].texture_provider->color());
       }
 
       if (!map[v][h].value.empty() && map[v][h].is_enabled) {

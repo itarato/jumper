@@ -6,6 +6,8 @@
 #include <optional>
 #include <vector>
 
+#include "asset_manager.h"
+#include "defines.h"
 #include "raylib.h"
 #include "shared/shared_map_schema.h"
 #include "shared/types.h"
@@ -34,21 +36,70 @@ struct IMapStateUpdatable {
 };
 
 struct ITextureProvider {
-  virtual Texture2D& texture();
+  virtual Texture2D* texture() const = 0;
+  virtual void disable() = 0;
+  virtual Color color() const { return WHITE; }
+};
+
+struct NullTextureProvider : ITextureProvider {
+  Texture2D* texture() const override {
+    return nullptr;
+  }
+  void disable() override {}
+};
+
+struct SingleTextureProvider : ITextureProvider {
+  Texture2D* texture_enabled;
+  Texture2D* texture_disabled;
+  bool enabled;
+  float _fade{1.0};
+
+  SingleTextureProvider(Texture2D* texture_enabled) : ITextureProvider(),
+                                                      texture_enabled(texture_enabled),
+                                                      texture_disabled(nullptr),
+                                                      enabled(true) {}
+  SingleTextureProvider(Texture2D* texture_enabled, Texture2D* texture_disabled) : ITextureProvider(),
+                                                                                   texture_enabled(texture_enabled),
+                                                                                   texture_disabled(texture_disabled),
+                                                                                   enabled(true) {}
+
+  Texture2D* texture() const override;
+  void disable() override;
+  Color color() const override;
+
+  void set_fade(float v);
 };
 
 struct Tile {
   TileType type = TILE_AIR;
   std::string value{};
   bool is_enabled = true;
-  float fade;
+  std::shared_ptr<ITextureProvider> texture_provider;
 
   explicit Tile(TileType type) : type(type) {
-    fade = randf(0.6f, 1.0f);
+    if (type == TILE_GROUND) {
+      auto _texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_GROUND]);
+      _texture_provider->set_fade(randf(0.7f, 1.0f));
+
+      texture_provider = _texture_provider;
+    } else if (type == TILE_END) {
+      texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_END]);
+    } else if (type == TILE_DOOR) {
+      texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_DOOR_CLOSE], &asset_manager.textures[IMG_DOOR_OPEN]);
+    } else if (type == TILE_REGEX) {
+      texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_REGEX]);
+    } else if (type == TILE_TRAP) {
+      texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_SPIKE]);
+    } else {
+      texture_provider = std::make_shared<NullTextureProvider>();
+    }
   }
 
   [[nodiscard]] bool is_solid() const { return is_enabled && is_tile_type_solid(type); }
-  void disable() { is_enabled = false; }
+  void disable() {
+    is_enabled = false;
+    texture_provider->disable();
+  }
 };
 
 struct Map {
