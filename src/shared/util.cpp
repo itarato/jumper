@@ -42,7 +42,7 @@ bool in_range(int number, int min, int max) {
 }
 
 float randf() {
-  return (float) (rand() % 1000000) / 1000000.0f;
+  return (float) (rand() & 0xFFFF) / 0xFFFF;
 }
 
 float randf(float min, float max) {

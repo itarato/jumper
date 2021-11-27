@@ -45,6 +45,14 @@ void App::init() {
                                   IMG_LADYBUG_FLY_1,
                                   IMG_DOOR_OPEN,
                                   IMG_DOOR_CLOSE,
+                                  IMG_DOOR_CLOSE_0,
+                                  IMG_DOOR_CLOSE_1,
+                                  IMG_DOOR_CLOSE_2,
+                                  IMG_DOOR_CLOSE_3,
+                                  IMG_DOOR_CLOSE_4,
+                                  IMG_DOOR_CLOSE_5,
+                                  IMG_DOOR_CLOSE_6,
+                                  IMG_DOOR_CLOSE_7,
                                   IMG_REGEX,
                                   IMG_END,
                                   IMG_SPIKE};
@@ -73,7 +81,10 @@ void App::loop() {
     ClearBackground(RAYWHITE);
 
     stage->draw();
-    //    DrawFPS(GetScreenWidth() - 96, GetScreenHeight() - 26);
+
+#ifdef DEBUG
+    DrawFPS(GetScreenWidth() - 96, GetScreenHeight() - 26);
+#endif
 
     auto next_stage = stage->next_stage();
     if (next_stage.has_value()) {

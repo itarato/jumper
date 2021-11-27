@@ -10,7 +10,7 @@
 
 static Tile null_tile{TILE_NULL};
 
-Texture2D *SingleTextureProvider::texture() const {
+Texture2D *SingleTextureProvider::texture() {
   return enabled ? texture_enabled : texture_disabled;
 }
 
@@ -24,6 +24,27 @@ void SingleTextureProvider::set_fade(float v) {
 
 Color SingleTextureProvider::color() const {
   return Fade(WHITE, _fade);
+}
+
+Texture2D *DisableSpriteTextureProvider::texture() {
+  if (enabled) {
+    return texture_enabled;
+  } else if (disable_sequence_completed) {
+    return texture_disabled;
+  } else {
+    int idx = disable_step;
+
+    if (frame_counter % step_frame_count == 0) {
+      disable_step++;
+      if (disable_step >= disable_sprite.size()) {
+        disable_sequence_completed = true;
+      }
+    }
+
+    frame_counter++;
+
+    return disable_sprite[idx];
+  }
 }
 
 void Map::build(std::string map_file_path) { load_map(map_file_path); }
