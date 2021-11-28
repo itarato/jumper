@@ -13,7 +13,7 @@ struct ParticleFrameCapper {
   uint64_t frame_counter{0};
   uint64_t cap;
 
-  ParticleFrameCapper(uint64_t cap) : cap(cap) {}
+  explicit ParticleFrameCapper(uint64_t cap) : cap(cap) {}
 
   void tick() {
     frame_counter++;

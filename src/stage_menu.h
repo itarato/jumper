@@ -5,18 +5,19 @@
 #include "text.h"
 
 struct StageMenu : public IStage {
-  bool is_start;
+  bool is_start{false};
 
   GameConfig *game_config;
 
-  void update();
-  void draw();
-  void init();
-  std::optional<StageT> next_stage();
+  void update() override;
+  void draw() override;
+  void init() override;
+  std::optional<StageT> next_stage() override;
 
   Text start_text;
 
-  StageMenu(GameConfig *game_config)
-      : game_config(game_config), start_text("Start"){};
-  ~StageMenu(){};
+  explicit StageMenu(GameConfig *game_config)
+      : game_config(game_config),
+        start_text("Start"){};
+  ~StageMenu() override = default;
 };

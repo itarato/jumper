@@ -14,9 +14,9 @@ struct Text {
   Vector2 pos;
   bool is_hover_effect;
 
-  Text(const char* text) : text(text),
-                           color(DARKGRAY),
-                           font(nullptr) {}
+  explicit Text(const char* text) : text(text),
+                                    color(DARKGRAY),
+                                    font(nullptr) {}
 
   Text* with_color(Color new_color) {
     color = new_color;

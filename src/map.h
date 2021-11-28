@@ -65,7 +65,7 @@ struct SingleTextureProvider : ITextureProvider {
 
   Texture2D* texture() override;
   void disable() override;
-  Color color() const override;
+  [[nodiscard]] Color color() const override;
 
   void set_fade(float v);
 };

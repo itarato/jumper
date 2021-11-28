@@ -57,7 +57,7 @@ struct StageGame : IStage, JumperObserver {
   void init_level();
   std::optional<StageT> next_stage() override;
 
-  StageGame(GameConfig *game_config)
+  explicit StageGame(GameConfig *game_config)
       : JumperObserver(),
         game_config(game_config),
         victory_text("Victory"),
