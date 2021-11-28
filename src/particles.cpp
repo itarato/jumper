@@ -1,5 +1,7 @@
 #include "particles.h"
 
+#include <cmath>
+
 #define PARTICLE_FADE_STEP 0.03f
 #define PARTICLE_CIRCLER_ROT_STEP 0.1f
 
