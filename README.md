@@ -44,3 +44,7 @@ Keyboard:
 * ENTER : skip (works on specific screens)
 
 Or compatible gamepad controller (eg XBox).
+
+---
+
+Design credit to [Sandor Horvath](https://www.behance.net/lexdraw/appreciated)
