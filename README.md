@@ -15,6 +15,7 @@ Nonsense ladybug regex builder game.
 
 - `-width INT` window width
 - `-height INT` window height
+- `fullscreen` full screen (no dash)
 - `-map STRING` relative path to map file (to force one)
 
 ### Control
