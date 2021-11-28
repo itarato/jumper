@@ -38,7 +38,7 @@ struct IMapStateUpdatable {
 struct ITextureProvider {
   virtual Texture2D* texture() = 0;
   virtual void disable() = 0;
-  virtual Color color() const { return WHITE; }
+  [[nodiscard]] virtual Color color() const { return WHITE; }
 };
 
 struct NullTextureProvider : ITextureProvider {
@@ -54,16 +54,16 @@ struct SingleTextureProvider : ITextureProvider {
   bool enabled;
   float _fade{1.0};
 
-  SingleTextureProvider(Texture2D* texture_enabled) : ITextureProvider(),
-                                                      texture_enabled(texture_enabled),
-                                                      texture_disabled(nullptr),
-                                                      enabled(true) {}
+  explicit SingleTextureProvider(Texture2D* texture_enabled) : ITextureProvider(),
+                                                               texture_enabled(texture_enabled),
+                                                               texture_disabled(nullptr),
+                                                               enabled(true) {}
   SingleTextureProvider(Texture2D* texture_enabled, Texture2D* texture_disabled) : ITextureProvider(),
                                                                                    texture_enabled(texture_enabled),
                                                                                    texture_disabled(texture_disabled),
                                                                                    enabled(true) {}
 
-  virtual Texture2D* texture() override;
+  Texture2D* texture() override;
   void disable() override;
   Color color() const override;
 
@@ -134,7 +134,7 @@ struct Map {
   Vector2 start_pos;
   Vector2 end_pos;
 
-  void build(std::string map_file_path);
+  void build(const std::string& map_file_path);
   void draw(IntVector2D scroll_offset);
 
   std::optional<int> next_floor(Rectangle p);

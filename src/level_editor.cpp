@@ -98,7 +98,7 @@ struct Input {
   bool is_active;
   string label;
 
-  Input(string label)
+  explicit Input(string label)
       : frame({0.0f, 0.0f, 128, 18}),
         is_active(false),
         label(std::move(label)) {
@@ -157,7 +157,7 @@ struct Button {
   string label{};
   int font_size = 10;
 
-  Button(string label) : label(std::move(label)) {}
+  explicit Button(string label) : label(std::move(label)) {}
 
   bool is_clicked() {
     return (IsMouseButtonPressed(0) &&
@@ -257,7 +257,7 @@ struct App {
       getline(map_file, line);
 
       if (i == 0) {
-        map_width = line.size();
+        map_width = (int) line.size();
         input_window_width.set_value(to_string(map_width));
       }
 
@@ -444,7 +444,7 @@ struct App {
     }
   }
 
-  pair<int, int> tile_coord() const {
+  [[nodiscard]] pair<int, int> tile_coord() const {
     Vector2 mouse_pos{GetMousePosition()};
     int tile_x = (mouse_pos.x + offsx) / BLOCK_SIZE;
     int tile_y = (mouse_pos.y + offsy) / BLOCK_SIZE;
@@ -453,7 +453,7 @@ struct App {
     return pair<int, int>{tile_x, tile_y};
   }
 
-  bool mouse_in_max_frame() const {
+  [[nodiscard]] bool mouse_in_max_frame() const {
     pair<int, int> mouse_tile_coord = tile_coord();
 
     return mouse_tile_coord.first >= 0 && mouse_tile_coord.second >= 0 &&
@@ -461,7 +461,7 @@ struct App {
            mouse_tile_coord.second < map_height;
   }
 
-  void draw_tile(TileType type, Vector2 pos) const {
+  static void draw_tile(TileType type, Vector2 pos) {
     Rectangle frame{pos.x, pos.y, BLOCK_SIZE, BLOCK_SIZE};
     Color color;
 
@@ -505,7 +505,7 @@ struct App {
     DrawRectangleRec(frame, color);
   }
 
-  [[nodiscard]] int tile_count() const { return sizeof(tile_types) / sizeof(TileType); }
+  [[nodiscard]] static int tile_count() { return sizeof(tile_types) / sizeof(TileType); }
 
   void save_map() {
     ofstream map_file;

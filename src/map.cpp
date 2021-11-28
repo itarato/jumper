@@ -47,7 +47,7 @@ Texture2D *DisableSpriteTextureProvider::texture() {
   }
 }
 
-void Map::build(std::string map_file_path) { load_map(map_file_path); }
+void Map::build(const std::string &map_file_path) { load_map(map_file_path); }
 
 void Map::draw(IntVector2D scroll_offset) {
   for (int v = 0; v < (int) map.size(); v++) {
@@ -226,7 +226,7 @@ void Map::evaluate_map_object_state(IMapStateUpdatable *obj) {
 
     if (obj->get_frame().y + obj->get_v().y <= ceiling) {// Hit ceiling.
       mos.type = MAP_OBJECT_VERTICAL_STATE_HIT_CEILING;
-    } else if (fabs(obj->get_v().y) <
+    } else if (fabsf(obj->get_v().y) <
                VELOCITY_ZERO_THRESHOLD) {// Reaching top.
       mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
     } else {// Jump.
@@ -266,7 +266,7 @@ void Map::load_map(const std::string &file_path) {
     fprintf(stderr, "Cannot find height");
     exit(EXIT_FAILURE);
   }
-  block_height = atoi(line.c_str());
+  block_height = std::stoi(line.c_str());
 
   for (size_t i = 0; i < block_height; i++) {
     if (!getline(file, line)) {

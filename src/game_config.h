@@ -7,7 +7,7 @@
 struct GameConfig {
   std::map<std::string, std::string> argmap;
 
-  GameConfig(std::map<std::string, std::string> argmap) : argmap(argmap) {}
+  explicit GameConfig(std::map<std::string, std::string>&& argmap) : argmap(std::move(argmap)) {}
 
   int window_width();
   int window_height();

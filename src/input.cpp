@@ -38,7 +38,7 @@ bool is_key_down(int key) {
 }
 
 float get_horizontal_axis() {
-  if (IsKeyPressed(KEY_LEFT)) return -1.0f;
-  if (IsKeyPressed(KEY_RIGHT)) return 1.0f;
+  if (IsKeyDown(KEY_LEFT)) return -1.0f;
+  if (IsKeyDown(KEY_RIGHT)) return 1.0f;
   return GetGamepadAxisMovement(0, 0);
 }

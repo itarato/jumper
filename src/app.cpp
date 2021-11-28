@@ -8,7 +8,7 @@
 #include "stage_game.h"
 #include "stage_menu.h"
 
-App::App(std::map<std::string, std::string> argmap) : game_config(argmap) {}
+App::App(std::map<std::string, std::string> argmap) : game_config(std::move(argmap)) {}
 
 App::~App() {
   for (auto& stage : stages | std::views::values) {

@@ -12,7 +12,7 @@ struct App {
   std::map<StageT, IStage *> stages;
   GameConfig game_config;
 
-  App(std::map<std::string, std::string> argmap);
+  explicit App(std::map<std::string, std::string> argmap);
 
   ~App();
 

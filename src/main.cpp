@@ -2,7 +2,7 @@
  * Jumper
  *
  * Features:
- * - xbox controller
+ * - make pooping that attracts enemies for a bit
  *
  * Optional features:
  * - door animation
@@ -26,7 +26,7 @@
 int main(int argc, char** argv) {
   LOG_INFO("Start main");
 
-  srand(time(NULL));
+  srand(time(nullptr));
 
   App app{parse_args(argc, argv)};
   app.init();
