@@ -2,12 +2,13 @@
 
 #include "asset_manager.h"
 #include "defines.h"
+#include "input.h"
 #include "raylib.h"
 
 void StageMenu::update() {
   if ((IsMouseButtonPressed(0) &&
        CheckCollisionPointRec(GetMousePosition(), start_text.frame())) ||
-      IsKeyPressed(KEY_ENTER)) {
+      is_key_pressed(KEY_ENTER)) {
     is_start = true;
   }
 }

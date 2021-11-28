@@ -5,6 +5,7 @@
 
 #include "asset_manager.h"
 #include "defines.h"
+#include "input.h"
 #include "shared/util.h"
 
 #define JUMPER_WIDTH 28
@@ -25,18 +26,19 @@ Jumper::Jumper()
 void Jumper::update(Map *map) {
   if (state == JumperState::Normal) {
     {// Horizontal movement.
-      if (IsKeyDown(KEY_LEFT)) {
-        v.x = std::min(-JUMPER_HMOVE_V, v.x * FRICTION);
+      float h_force{get_horizontal_axis()};
+      if (h_force < 0.0f) {
+        v.x = std::min(JUMPER_HMOVE_V * h_force, v.x * FRICTION);
 
-        if (IsKeyPressed(KEY_LEFT_CONTROL)) {
-          v.x = -5 * JUMPER_HMOVE_V;
+        if (is_key_pressed(KEY_LEFT_CONTROL)) {
+          v.x = 4 * JUMPER_HMOVE_V * h_force;
           JumperSubject::notify_all(JumperEvent::Dash, JumperEventData{&frame});
         }
-      } else if (IsKeyDown(KEY_RIGHT)) {
-        v.x = std::max(JUMPER_HMOVE_V, v.x * FRICTION);
+      } else if (h_force > 0.0f) {
+        v.x = std::max(JUMPER_HMOVE_V * h_force, v.x * FRICTION);
 
-        if (IsKeyPressed(KEY_LEFT_CONTROL)) {
-          v.x = 5 * JUMPER_HMOVE_V;
+        if (is_key_pressed(KEY_LEFT_CONTROL)) {
+          v.x = 4 * JUMPER_HMOVE_V * h_force;
           JumperSubject::notify_all(JumperEvent::Dash, JumperEventData{&frame});
         }
       } else {
@@ -112,7 +114,7 @@ void Jumper::update(Map *map) {
           break;
 
         case MAP_OBJECT_VERTICAL_STATE_FALLING:
-          if (IsKeyDown(KEY_LEFT_ALT)) {
+          if (is_key_down(KEY_LEFT_ALT)) {
             v.y = PARACHUTE_V;
           } else {
             v.y = std::min(v.y * GRAVITY_ACC, JUMPER_MAX_VERTICAL_SPEED);
@@ -123,7 +125,7 @@ void Jumper::update(Map *map) {
     }
 
     {// Vertical movement.
-      if (IsKeyPressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
+      if (is_key_pressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
         v.y -= JUMP_FORCE;
         JumperSubject::notify_all(JumperEvent::Jump, JumperEventData{&frame});
       }
@@ -153,7 +155,7 @@ void Jumper::update(Map *map) {
 
 void Jumper::draw(IntVector2D scroll_offset) {
   std::string image_name;
-  if (map_state.type == MAP_OBJECT_VERTICAL_STATE_FALLING && IsKeyDown(KEY_LEFT_ALT)) {
+  if (map_state.type == MAP_OBJECT_VERTICAL_STATE_FALLING && is_key_down(KEY_LEFT_ALT)) {
     image_name = fly_sprite.current_img();
     fly_sprite.progress();
   } else if (v.x == 0.0) {

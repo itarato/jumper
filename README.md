@@ -19,9 +19,13 @@ Nonsense ladybug regex builder game.
 
 ### Control
 
+Keyboard:
+
 * ← / → : move
 * SPACE : jump / double jump
 * ALT   : parachute
 * CTRL  : dash
 * BACKPACE : restart level
 * ENTER : skip (works on specific screens)
+
+Or compatible gamepad controller (eg XBox).

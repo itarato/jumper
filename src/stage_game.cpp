@@ -5,6 +5,7 @@
 
 #include "asset_manager.h"
 #include "defines.h"
+#include "input.h"
 #include "shared/util.h"
 
 /**
@@ -17,7 +18,7 @@
 void StageGame::update() {
   if (state == GAME_STATE_PLAY) {
     // Reset stage.
-    if (IsKeyPressed(KEY_BACKSPACE)) {
+    if (is_key_pressed(KEY_BACKSPACE)) {
       init_level();
       return;
     }
@@ -84,7 +85,7 @@ void StageGame::update() {
       wait_to_state_timeout++;
 
       if (wait_to_state_timeout >= WAIT_TO_COMPLETE_FRAMES ||
-          IsKeyPressed(KEY_ENTER)) {
+          is_key_pressed(KEY_ENTER)) {
         if (state == GAME_STATE_WAIT_TO_COMPLETE) {
           state = GAME_STATE_COMPLETE;
         } else if (state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {

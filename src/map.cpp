@@ -36,7 +36,7 @@ Texture2D *DisableSpriteTextureProvider::texture() {
 
     if (frame_counter % step_frame_count == 0) {
       disable_step++;
-      if (disable_step >= disable_sprite.size()) {
+      if (disable_step >= (int) disable_sprite.size()) {
         disable_sequence_completed = true;
       }
     }
