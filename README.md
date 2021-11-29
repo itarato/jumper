@@ -26,6 +26,7 @@ Keyboard:
 * SPACE : jump / double jump
 * ALT   : parachute
 * CTRL  : dash
+* X     : poop (enemy paralyzer)
 * BACKPACE : restart level
 * ENTER : skip (works on specific screens)
 

@@ -8,13 +8,6 @@
 #include "input.h"
 #include "shared/util.h"
 
-/**
- * ← / → : move
- * SPACE : jump / double jump
- * ALT   : parachute
- * CTRL  : dash
- */
-
 void StageGame::update() {
   if (state == GAME_STATE_PLAY) {
     // Reset stage.
