@@ -27,7 +27,15 @@ void StageGame::update() {
     jumper.update(&map);
 
     // Enemy movement.
-    for (Enemy& enemy : enemies) enemy.update(jumper.frame);
+    for (Enemy& enemy : enemies) {
+      if (std::any_of(poops.begin(), poops.end(), [&](const Poop& poop) { return CheckCollisionRecs(poop.frame(), enemy.frame); })) {
+        continue;
+      }
+      enemy.update(jumper.frame);
+    }
+
+    for (auto& poop : poops) poop.update();
+    poops.erase(std::remove_if(poops.begin(), poops.end(), [](const auto& e) { return e.is_dead(); }), poops.end());
 
     {// Particles
       for (auto& explosion : explosions) explosion->update();
@@ -131,18 +139,12 @@ void StageGame::draw() {
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
 
-  for (Enemy const& enemy : enemies) {
-    enemy.draw(scroll_offset);
-  }
-
-  for (auto coin : coins) {
-    coin.draw(scroll_offset);
-  }
+  for (const auto& coin : coins) coin.draw(scroll_offset);
+  for (const auto& poop : poops) poop.draw(scroll_offset);
+  for (const auto& enemy : enemies) enemy.draw(scroll_offset);
 
   {// Particles
-    for (auto& explosion : explosions) {
-      explosion->draw(scroll_offset);
-    }
+    for (auto& explosion : explosions) explosion->draw(scroll_offset);
   }
 
   {// Overlay.
@@ -245,5 +247,10 @@ void StageGame::on_jumper_update(JumperEvent event, JumperEventData data) {
   } else if (event == JumperEvent::FailedDoor) {
     explosions.push_back(std::make_unique<Sprinkler>(absolute_midpoint(*data.frame, data.subject), 0.0f, 8, RED));
     explosions.push_back(std::make_unique<Sprinkler>(absolute_midpoint(*data.frame, data.subject), PI, 8, RED));
+  } else if (event == JumperEvent::Poop) {
+    poops.emplace_back(Vector2{
+            jumper.frame.x,
+            (float) ((int) (jumper.frame.y / BLOCK_SIZE) * BLOCK_SIZE),
+    });
   }
 }

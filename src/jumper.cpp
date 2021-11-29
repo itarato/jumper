@@ -142,6 +142,25 @@ void Jumper::update(Map *map) {
         }
       }
     }
+
+    {// Pooper checks.
+      if (is_key_down(KEY_X)) {
+        if (v.x == 0.0f && v.y == 0.0f) {
+          pooper.powerup();
+          LOG_INFO("Poop powerup");
+
+          if (pooper.is_ready()) {
+            LOG_INFO("Poop NOW");
+            JumperSubject::notify_all(JumperEvent::Poop, JumperEventData{&frame});
+            pooper.reset();
+          }
+        } else {
+          pooper.reset();
+        }
+      } else {
+        pooper.reset();
+      }
+    }
   } else if (state == JumperState::Dying) {
     dying_fade -= 0.01f;
     dying_rot += 8.0f;

@@ -39,6 +39,7 @@
 #define IMG_REGEX "assets/images/regex.png"
 #define IMG_END "assets/images/end.png"
 #define IMG_SPIKE "assets/images/spike.png"
+#define IMG_POOP "assets/images/poop.png"
 
 #define FONT_FIRA_SRC "assets/fonts/firacode.ttf"
 #define FONT_FIRA_BOLD_SRC "assets/fonts/firacode_bold.ttf"

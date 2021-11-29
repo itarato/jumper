@@ -9,6 +9,7 @@
 #include "jumper.h"
 #include "map.h"
 #include "particles.h"
+#include "poop.h"
 #include "shared/types.h"
 #include "text.h"
 
@@ -38,6 +39,7 @@ struct StageGame : IStage, JumperObserver {
   Map map;
   std::vector<Enemy> enemies;
   std::vector<Coin> coins;
+  std::vector<Poop> poops;
   int score;
 
   Text victory_text;

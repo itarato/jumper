@@ -14,6 +14,8 @@ int gamepad_button_for_key(int key) {
       return 5;
     case KEY_BACKSPACE:
       return 15;
+    case KEY_X:
+      return 11;
     default:
       return 0;
   }

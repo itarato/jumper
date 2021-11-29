@@ -36,6 +36,25 @@ struct DoubleJump {
   void reset() { air_jumps = 0; }
 };
 
+// Idea: we can add a delayer to it, so after a poop it cannot go immediately.
+//       With: .can_powerup():bool and maybe .next_poop_wait():float (for animation)
+struct Pooper {
+  int progress{0};
+  const int upto{42};
+
+  void powerup() {
+    progress++;
+  }
+
+  void reset() {
+    progress = 0;
+  }
+
+  bool is_ready() {
+    return progress >= upto;
+  }
+};
+
 enum class JumperEvent {
   CaptureRegex,
   Jump,
@@ -43,6 +62,7 @@ enum class JumperEvent {
   Die,
   OpenDoor,
   FailedDoor,
+  Poop,
 };
 
 struct JumperEventData {
@@ -87,6 +107,7 @@ struct Jumper : IMapStateUpdatable, JumperSubject {
   float dying_rot;
   float dying_fade;
   float dying_scale;
+  Pooper pooper{};
 
   void draw(IntVector2D scroll_offset);
   void update(Map *map);
