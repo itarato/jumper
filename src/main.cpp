@@ -3,16 +3,12 @@
  *
  * Features:
  * - make pooping that attracts enemies for a bit:
- *  - enemy animation when paralized by poop (shake or something)
- *  - jumper struggle animation when making poop
  *  - adding next-poop ability delay
  *  - visual feedback of when next pooping is available
  *  - visual feedback of when poop disappears
+ *  - score save (to file)
  *
  * Optional features:
- * - door animation
- * - regex catch animation
- * - score save (to file)
  * - limit dashes
  * - health
  * - teleport

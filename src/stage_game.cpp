@@ -22,7 +22,7 @@ void StageGame::update() {
     // Enemy movement.
     for (Enemy& enemy : enemies) {
       if (std::any_of(poops.begin(), poops.end(), [&](const Poop& poop) { return CheckCollisionRecs(poop.frame(), enemy.frame); })) {
-        enemy.paralyzed.set_true();
+        enemy.paralyzed.set();
         continue;
       }
       enemy.update(jumper.frame);

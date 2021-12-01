@@ -147,6 +147,7 @@ void Jumper::update(Map *map) {
       if (is_key_down(KEY_X)) {
         if (v.x == 0.0f && v.y == 0.0f) {
           pooper.powerup();
+          is_pooping.set();
 
           if (pooper.is_ready()) {
             JumperSubject::notify_all(JumperEvent::Poop, JumperEventData{&frame});
@@ -187,9 +188,14 @@ void Jumper::draw(IntVector2D scroll_offset) {
   Rectangle draw_frame{0.0f, 0.0f, is_facing_right ? -frame.width : frame.width, frame.height};
 
   if (state == JumperState::Normal) {
+    Color color{WHITE};
+    if (is_pooping.get()) {
+      color.r = (uint8_t) shade_phaser.value();
+      shade_phaser.step();
+    }
     DrawTextureRec(asset_manager.textures[image_name],
                    draw_frame,
-                   Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, WHITE);
+                   Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, color);
   } else if (state == JumperState::Dying) {
     DrawTextureEx(asset_manager.textures[image_name],
                   Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, dying_rot, dying_scale, Fade(WHITE, dying_fade));

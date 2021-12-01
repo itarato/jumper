@@ -105,12 +105,14 @@ struct SimpleTimer {
 
 struct Phaser {
   float phase{0.0f};
-  float speed{0.2f};
   float min{0.0f};
   float max{1.0f};
+  float speed{0.2f};
 
-  Phaser(float min, float max) : min(min),
-                                 max(max) {}
+  Phaser() = default;
+  Phaser(float min, float max, float speed = 0.2f) : min(min),
+                                                     max(max),
+                                                     speed(speed) {}
 
   void step() {
     phase += speed;
@@ -124,11 +126,11 @@ struct Phaser {
 struct OneTimeBool {
   bool b{false};
 
-  void set_true() {
+  void set() {
     b = true;
   }
 
-  bool is_true() {
+  bool get() {
     bool old{b};
     b = false;
     return old;

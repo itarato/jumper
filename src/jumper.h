@@ -108,6 +108,8 @@ struct Jumper : IMapStateUpdatable, JumperSubject {
   float dying_fade;
   float dying_scale;
   Pooper pooper{};
+  Phaser shade_phaser{0.0f, 255.0f, 0.5f};
+  OneTimeBool is_pooping{};
 
   void draw(IntVector2D scroll_offset);
   void update(Map *map);

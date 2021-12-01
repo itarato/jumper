@@ -11,7 +11,7 @@ void Enemy::update(const Rectangle &player) { walker->update(frame, player); }
 void Enemy::draw(IntVector2D scroll_offset) {
   Color color{WHITE};
 
-  if (paralyzed.is_true()) {
+  if (paralyzed.get()) {
     color = Fade(WHITE, paralyzed_phaser.value());
     paralyzed_phaser.step();
   }
