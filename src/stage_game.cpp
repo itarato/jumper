@@ -22,6 +22,7 @@ void StageGame::update() {
     // Enemy movement.
     for (Enemy& enemy : enemies) {
       if (std::any_of(poops.begin(), poops.end(), [&](const Poop& poop) { return CheckCollisionRecs(poop.frame(), enemy.frame); })) {
+        enemy.paralyzed.set_true();
         continue;
       }
       enemy.update(jumper.frame);
@@ -134,7 +135,7 @@ void StageGame::draw() {
 
   for (const auto& coin : coins) coin.draw(scroll_offset);
   for (const auto& poop : poops) poop.draw(scroll_offset);
-  for (const auto& enemy : enemies) enemy.draw(scroll_offset);
+  for (auto& enemy : enemies) enemy.draw(scroll_offset);
 
   {// Particles
     for (auto& explosion : explosions) explosion->draw(scroll_offset);

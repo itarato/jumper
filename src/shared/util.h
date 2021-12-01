@@ -102,3 +102,35 @@ struct SimpleTimer {
   [[nodiscard]] int minutes() const;
   [[nodiscard]] int seconds() const;
 };
+
+struct Phaser {
+  float phase{0.0f};
+  float speed{0.2f};
+  float min{0.0f};
+  float max{1.0f};
+
+  Phaser(float min, float max) : min(min),
+                                 max(max) {}
+
+  void step() {
+    phase += speed;
+  }
+
+  [[nodiscard]] float value() const {
+    return ((sinf(phase) + 1.0f) * (max - min)) / 2.0f + min;
+  }
+};
+
+struct OneTimeBool {
+  bool b{false};
+
+  void set_true() {
+    b = true;
+  }
+
+  bool is_true() {
+    bool old{b};
+    b = false;
+    return old;
+  }
+};
