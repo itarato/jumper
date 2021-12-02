@@ -5,8 +5,7 @@
  * - make pooping that attracts enemies for a bit:
  *  - adding next-poop ability delay
  *  - visual feedback of when next pooping is available
- *  - visual feedback of when poop disappears
- *  - score save (to file)
+ * - score save (to file)
  *
  * Optional features:
  * - limit dashes
