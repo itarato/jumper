@@ -15,7 +15,8 @@
  * - destroyable map type
  *
  * Bug:
- * - sometimes fall through the floor when jumping (limited falling velocity, lets see now)
+ * - sometimes fall through the floor when jumping (limited falling velocity,
+ * lets see now)
  */
 
 #include <cstdlib>

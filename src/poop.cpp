@@ -10,7 +10,8 @@ void Poop::update() {
 }
 
 void Poop::draw(IntVector2D screen_offset) const {
-  DrawTexture(asset_manager.textures[IMG_POOP], pos.x - screen_offset.x, pos.y - screen_offset.y, WHITE);
+  DrawTexture(asset_manager.textures[IMG_POOP], pos.x - screen_offset.x,
+              pos.y - screen_offset.y, WHITE);
 }
 
 bool Poop::is_dead() const {
@@ -19,9 +20,9 @@ bool Poop::is_dead() const {
 
 Rectangle Poop::frame() const {
   return Rectangle{
-          pos.x,
-          pos.y,
-          BLOCK_SIZE,
-          BLOCK_SIZE,
+      pos.x,
+      pos.y,
+      BLOCK_SIZE,
+      BLOCK_SIZE,
   };
 }

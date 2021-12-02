@@ -2,10 +2,11 @@
 
 #include "shared/types.h"
 
-// Idea: poop could be as strong as the struggle -- so tiny poops are quicker but less potent.
+// Idea: poop could be as strong as the struggle -- so tiny poops are quicker
+// but less potent.
 
 struct Poop {
-  int timer{120};
+  int timer{180};
   Vector2 pos;
 
   Poop(Vector2 pos);
