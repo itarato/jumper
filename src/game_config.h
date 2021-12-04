@@ -7,7 +7,8 @@
 struct GameConfig {
   std::map<std::string, std::string> argmap;
 
-  explicit GameConfig(std::map<std::string, std::string>&& argmap) : argmap(std::move(argmap)) {}
+  explicit GameConfig(std::map<std::string, std::string>&& argmap)
+      : argmap(std::move(argmap)) {}
 
   int window_width();
   int window_height();
@@ -15,7 +16,7 @@ struct GameConfig {
 
   std::optional<std::string> selected_map();
 
-  private:
-  template<class Out>
+ private:
+  template <class Out>
   Out arg_val_or_default(const char* key, Out def, Out (*conv)(std::string));
 };
