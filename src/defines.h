@@ -12,7 +12,6 @@
 #define FRICTION 0.9f
 
 #define IMG_GROUND "/images/ground.png"
-#define IMG_GROUND_TOP "/images/ground_top.png"
 #define IMG_BACKGROUND "/images/background.png"
 #define IMG_ENEMY "/images/enemy.png"
 #define IMG_COIN "/images/coin.png"
@@ -40,7 +39,6 @@
 #define IMG_END "/images/end.png"
 #define IMG_SPIKE "/images/spike.png"
 #define IMG_POOP "/images/poop.png"
-#define IMG_BACKGROUND "/images/background.png"
 
 #define FONT_FIRA_SRC "/fonts/firacode.ttf"
 #define FONT_FIRA_BOLD_SRC "/fonts/firacode_bold.ttf"

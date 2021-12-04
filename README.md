@@ -11,7 +11,7 @@ Nonsense ladybug regex builder game.
 ### Linux
 
 - compile Raylib dynamically: https://github.com/raysan5/raylib#build-and-installation
-- make
+- `make`
 
 ### OS-X
 
@@ -22,8 +22,7 @@ Nonsense ladybug regex builder game.
 - `brew install gcc`
 - `export CXX=/usr/local/Cellar/gcc/<INSTALLED_VERSION>/bin/g++`
 - `cd jumper`
-- `make -f MakefileOSX`
-((( TODO: script to build bundle )))
+- `make -f MakefileOSX bundle`
 
 ### Runtime options
 

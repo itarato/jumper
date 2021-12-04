@@ -29,8 +29,6 @@ void App::init() {
   SetTargetFPS(60);
 
   std::vector<std::string> images{IMG_GROUND,
-                                  IMG_GROUND_TOP,
-                                  IMG_BACKGROUND,
                                   IMG_ENEMY,
                                   IMG_COIN,
                                   IMG_LADYBUG_STAND_0,
