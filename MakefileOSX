@@ -32,9 +32,17 @@ le_executable: $(LE_OBJ)
 
 le: le_executable
 
+bundle:
+	rm -rf ./build
+	mkdir -p ./build/jumper.app/Contents/{MacOS,Resources}
+	cp ./misc/osx_bundle/Info.plist ./build/jumper.app/Contents/
+	cp ./jumper ./build/jumper.app/Contents/MacOS
+	cp -rf ./assets ./build/jumper.app/Contents/Resources/
+
 clean:
 	rm -f ./src/*.o
 	rm -f ./src/*.out
 	rm -f ./src/shared/*.o
 	rm -f ./$(BIN)
 	rm -f ./$(LE_BIN)
+	rm -rf ./build
