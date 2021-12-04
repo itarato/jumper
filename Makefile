@@ -14,9 +14,6 @@ all: executable
 debug: CXXFLAGS += -DDEBUG -g
 debug: executable
 
-fs: CXXFLAGS += -DFULLSCREEN
-fs: executable
-
 executable: $(OBJ)
 	$(CXX) -o $(BIN) $^ $(CXXFLAGS) $(LIBS)
 

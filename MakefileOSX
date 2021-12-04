@@ -14,9 +14,6 @@ all: executable
 debug: CXXFLAGS += -DDEBUG -g
 debug: executable
 
-fs: CXXFLAGS += -DFULLSCREEN
-fs: executable
-
 executable: $(OBJ)
 	$(CXX) -o $(BIN) $^ $(CXXFLAGS) $(LIBS)
 
@@ -32,7 +29,7 @@ le_executable: $(LE_OBJ)
 
 le: le_executable
 
-bundle: fs
+bundle: all
 	rm -rf ./build
 	mkdir -p ./build/jumper.app/Contents/{MacOS,Resources}
 	cp ./misc/osx_bundle/Info.plist ./build/jumper.app/Contents/
