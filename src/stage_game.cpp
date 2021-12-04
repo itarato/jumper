@@ -32,6 +32,7 @@ void StageGame::update() {
 
     for (auto& poop : poops)
       poop.update();
+
     poops.erase(std::remove_if(poops.begin(), poops.end(),
                                [](const auto& e) { return e.is_dead(); }),
                 poops.end());
@@ -138,8 +139,6 @@ void StageGame::draw() {
   }
 
   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKGRAY);
-  // DrawRectangle(-scroll_offset.x, -scroll_offset.y, (int) map.pixel_width(),
-  // (int) map.pixel_height(), RAYWHITE);
   DrawTextureTiled(
       asset_manager.textures[IMG_BACKGROUND],
       Rectangle{0.0f, 0.0f, 76.0f, 52.0f},
@@ -228,6 +227,7 @@ void StageGame::init_level() {
   enemies.clear();
   coins.clear();
   explosions.clear();
+  poops.clear();
 
   auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
   for (auto enemy_block_coord : random_enemies) {
