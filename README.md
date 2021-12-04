@@ -8,8 +8,18 @@ Nonsense ladybug regex builder game.
 
 ## Install
 
+### Linux
+
 - compile Raylib dynamically: https://github.com/raysan5/raylib#build-and-installation
 - make
+
+### OS-X
+
+- `brew install raylib`
+- `brew install gcc`
+- `export CXX=/usr/local/Cellar/gcc/<INSTALLED_VERSION>/bin/g++`
+- `make -f MakefileOSX`
+((( TODO: script to build bundle )))
 
 ### Runtime options
 
