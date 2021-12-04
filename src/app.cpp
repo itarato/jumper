@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <ranges>
+#include <string>
 
 #include "asset_manager.h"
 #include "defines.h"
@@ -59,22 +60,29 @@ void App::init() {
                                   IMG_BACKGROUND};
 
   for (auto& image : images) {
-    asset_manager.textures.insert({image, LoadTexture(image.c_str())});
+    asset_manager.textures.insert(
+        {image,
+         LoadTexture(append(game_config.resource_dir(), image).c_str())});
   }
 
   asset_manager.fonts.insert(
-      {FONT_SMALL, LoadFontEx(FONT_FIRA_BOLD_SRC, 12, nullptr, 255)});
+      {FONT_SMALL,
+       LoadFontEx(
+           append(game_config.resource_dir(), FONT_FIRA_BOLD_SRC).c_str(), 12,
+           nullptr, 255)});
   asset_manager.fonts.insert(
-      {FONT_MEDIUM, LoadFontEx(FONT_FIRA_SRC, 20, nullptr, 255)});
+      {FONT_MEDIUM,
+       LoadFontEx(append(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 20,
+                  nullptr, 255)});
   asset_manager.fonts.insert(
-      {FONT_LARGE, LoadFontEx(FONT_FIRA_SRC, 64, nullptr, 255)});
+      {FONT_LARGE,
+       LoadFontEx(append(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 64,
+                  nullptr, 255)});
 }
 
 void App::loop() {
   StageT current_stage = STAGE_MENU;
   stages[current_stage]->init();
-
-  DebugTimer dbg_timer{};
 
   while (!WindowShouldClose()) {
     auto stage = stages[current_stage];

@@ -62,19 +62,19 @@ struct DebugTimer {
 
   DebugTimer() = default;
 
-  void tick() {
-    _tick = std::chrono::high_resolution_clock::now();
-  }
+  void tick() { _tick = std::chrono::high_resolution_clock::now(); }
 
   [[nodiscard]] double tock() const {
     auto old_tick = _tick;
     auto new_tick = std::chrono::high_resolution_clock::now();
 
-    return std::chrono::duration<double, std::milli>(new_tick - old_tick).count();
+    return std::chrono::duration<double, std::milli>(new_tick - old_tick)
+        .count();
   }
 
   void tock_and_dump(std::string msg = "") const {
-    std::cout << msg << ": " << std::fixed << std::setprecision(4) << tock() << "ms" << std::endl;
+    std::cout << msg << ": " << std::fixed << std::setprecision(4) << tock()
+              << "ms" << std::endl;
   }
 };
 
@@ -110,13 +110,10 @@ struct Phaser {
   float speed{0.2f};
 
   Phaser() = default;
-  Phaser(float min, float max, float speed = 0.2f) : min(min),
-                                                     max(max),
-                                                     speed(speed) {}
+  Phaser(float min, float max, float speed = 0.2f)
+      : min(min), max(max), speed(speed) {}
 
-  void step() {
-    phase += speed;
-  }
+  void step() { phase += speed; }
 
   [[nodiscard]] float value() const {
     return ((sinf(phase) + 1.0f) * (max - min)) / 2.0f + min;
@@ -126,9 +123,7 @@ struct Phaser {
 struct OneTimeBool {
   bool b{false};
 
-  void set() {
-    b = true;
-  }
+  void set() { b = true; }
 
   bool get() {
     bool old{b};
@@ -136,3 +131,5 @@ struct OneTimeBool {
     return old;
   }
 };
+
+std::string append(std::string lhs, std::string rhs);

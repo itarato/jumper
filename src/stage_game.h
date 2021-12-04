@@ -11,14 +11,15 @@
 #include "particles.h"
 #include "poop.h"
 #include "shared/types.h"
+#include "shared/util.h"
 #include "text.h"
 
 #define WAIT_TO_COMPLETE_FRAMES 180
 
-static const char *game_map_files[]{
-        "./maps/1.jm",
-        "./maps/2.jm",
-        "./maps/3.jm",
+static const char* game_map_files[]{
+    "/maps/1.jm",
+    "/maps/2.jm",
+    "/maps/3.jm",
 };
 
 typedef enum {
@@ -34,7 +35,7 @@ struct StageGame : IStage, JumperObserver {
   int wait_to_state_timeout;
   bool is_victory;
 
-  GameConfig *game_config;
+  GameConfig* game_config;
   Jumper jumper;
   Map map;
   std::vector<Enemy> enemies;
@@ -59,7 +60,7 @@ struct StageGame : IStage, JumperObserver {
   void init_level();
   std::optional<StageT> next_stage() override;
 
-  explicit StageGame(GameConfig *game_config)
+  explicit StageGame(GameConfig* game_config)
       : JumperObserver(),
         game_config(game_config),
         victory_text("Victory"),
@@ -71,8 +72,8 @@ struct StageGame : IStage, JumperObserver {
     if (pre_selected_map.has_value()) {
       map_file_paths.push_back(pre_selected_map.value());
     } else {
-      for (const auto &file : game_map_files) {
-        map_file_paths.emplace_back(file);
+      for (const auto& file : game_map_files) {
+        map_file_paths.emplace_back(append(game_config->resource_dir(), file));
       }
     }
   };

@@ -15,9 +15,13 @@ Nonsense ladybug regex builder game.
 
 ### OS-X
 
+- clone into same folder:
+  - `git clone git@github.com:itarato/jumper.git`
+  - `git clone git@github.com:raysan5/raylib.git`
 - `brew install raylib`
 - `brew install gcc`
 - `export CXX=/usr/local/Cellar/gcc/<INSTALLED_VERSION>/bin/g++`
+- `cd jumper`
 - `make -f MakefileOSX`
 ((( TODO: script to build bundle )))
 

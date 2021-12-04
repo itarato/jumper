@@ -13,6 +13,7 @@ struct GameConfig {
   int window_width();
   int window_height();
   bool is_fullscreen();
+  std::string resource_dir();
 
   std::optional<std::string> selected_map();
 
