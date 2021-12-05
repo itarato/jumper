@@ -23,9 +23,9 @@ Jumper::Jumper()
                    JUMPER_STAND_SLOWNESS),
       fly_sprite({IMG_LADYBUG_FLY_0, IMG_LADYBUG_FLY_1}, JUMPER_FLY_SLOWNESS) {}
 
-void Jumper::update(Map *map) {
+void Jumper::update(Map* map) {
   if (state == JumperState::Normal) {
-    {// Horizontal movement.
+    {  // Horizontal movement.
       float h_force{get_horizontal_axis()};
       if (h_force < 0.0f) {
         v.x = std::min(JUMPER_HMOVE_V * h_force, v.x * FRICTION);
@@ -48,24 +48,27 @@ void Jumper::update(Map *map) {
         }
       }
 
-      {// Door check.
+      {  // Door check.
         Rectangle planned_next_frame{rec_plus_vector2(frame, v)};
-        for (auto &corner : corner_block_coords(shrink(planned_next_frame, 2.0f))) {
-          Tile &tile = map->get_tile(corner);
+        for (auto& corner :
+             corner_block_coords(shrink(planned_next_frame, 2.0f))) {
+          Tile& tile = map->get_tile(corner);
           if (tile.type == TILE_DOOR && tile.is_enabled) {
             try {
               Rectangle door_frame{
-                      (float) (corner.x * BLOCK_SIZE),
-                      (float) (corner.y * BLOCK_SIZE),
-                      BLOCK_SIZE,
-                      BLOCK_SIZE,
+                  (float)(corner.x * BLOCK_SIZE),
+                  (float)(corner.y * BLOCK_SIZE),
+                  BLOCK_SIZE,
+                  BLOCK_SIZE,
               };
 
               if (std::regex_search(tile.value, get_regex())) {
                 tile.disable();
-                JumperSubject::notify_all(JumperEvent::OpenDoor, JumperEventData{&frame, door_frame});
+                JumperSubject::notify_all(JumperEvent::OpenDoor,
+                                          JumperEventData{&frame, door_frame});
               } else {
-                JumperSubject::notify_all(JumperEvent::FailedDoor, JumperEventData{&frame, door_frame});
+                JumperSubject::notify_all(JumperEvent::FailedDoor,
+                                          JumperEventData{&frame, door_frame});
               }
             } catch (...) {
               // Incorrect regex.
@@ -78,18 +81,18 @@ void Jumper::update(Map *map) {
         }
       }
 
-      if (v.x < 0.0f) {// Going left.
+      if (v.x < 0.0f) {  // Going left.
         int left_wall_x = map->next_left(frame).value_or(0);
-        frame.x = std::max((int) (frame.x + v.x), left_wall_x);
-      } else if (v.x > 0.0f) {// Going right.
+        frame.x = std::max((int)(frame.x + v.x), left_wall_x);
+      } else if (v.x > 0.0f) {  // Going right.
         int right_wall_x =
-                map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
-                frame.width;
-        frame.x = std::min((int) (frame.x + v.x), right_wall_x);
+            map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
+            frame.width;
+        frame.x = std::min((int)(frame.x + v.x), right_wall_x);
       }
     }
 
-    {// Vertical movement.
+    {  // Vertical movement.
       map->evaluate_map_object_state(this);
 
       switch (map_state.type) {
@@ -124,33 +127,35 @@ void Jumper::update(Map *map) {
       }
     }
 
-    {// Vertical movement.
+    {  // Vertical movement.
       if (is_key_pressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
         v.y -= JUMP_FORCE;
         JumperSubject::notify_all(JumperEvent::Jump, JumperEventData{&frame});
       }
     }
 
-    {// Regex collision check.
+    {  // Regex collision check.
       auto tile_coords = corner_block_coords(frame);
-      for (const auto &tile_coord : tile_coords) {
-        Tile &tile = map->get_tile(tile_coord);
+      for (const auto& tile_coord : tile_coords) {
+        Tile& tile = map->get_tile(tile_coord);
         if (tile.type == TILE_REGEX && tile.is_enabled) {
           merge_pattern(regex_raw, tile.value);
           tile.disable();
-          JumperSubject::notify_all(JumperEvent::CaptureRegex, JumperEventData{&frame});
+          JumperSubject::notify_all(JumperEvent::CaptureRegex,
+                                    JumperEventData{&frame});
         }
       }
     }
 
-    {// Pooper checks.
+    {  // Pooper checks.
       if (is_key_down(KEY_X)) {
         if (v.x == 0.0f && v.y == 0.0f) {
           pooper.powerup();
           is_pooping.set();
 
           if (pooper.is_ready()) {
-            JumperSubject::notify_all(JumperEvent::Poop, JumperEventData{&frame});
+            JumperSubject::notify_all(JumperEvent::Poop,
+                                      JumperEventData{&frame});
             pooper.reset();
           }
         } else {
@@ -173,7 +178,8 @@ void Jumper::update(Map *map) {
 
 void Jumper::draw(IntVector2D scroll_offset) {
   std::string image_name;
-  if (map_state.type == MAP_OBJECT_VERTICAL_STATE_FALLING && is_key_down(KEY_LEFT_ALT)) {
+  if (map_state.type == MAP_OBJECT_VERTICAL_STATE_FALLING &&
+      is_key_down(KEY_LEFT_ALT)) {
     image_name = fly_sprite.current_img();
     fly_sprite.progress();
   } else if (v.x == 0.0) {
@@ -185,20 +191,22 @@ void Jumper::draw(IntVector2D scroll_offset) {
   }
 
   is_facing_right = v.x >= 0.0f;
-  Rectangle draw_frame{0.0f, 0.0f, is_facing_right ? -frame.width : frame.width, frame.height};
+  Rectangle draw_frame{0.0f, 0.0f, is_facing_right ? -frame.width : frame.width,
+                       frame.height};
 
   if (state == JumperState::Normal) {
     Color color{WHITE};
     if (is_pooping.get()) {
-      color.r = (uint8_t) shade_phaser.value();
+      color.r = (uint8_t)shade_phaser.value();
       shade_phaser.step();
     }
-    DrawTextureRec(asset_manager.textures[image_name],
-                   draw_frame,
-                   Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, color);
+    DrawTextureRec(
+        asset_manager.textures[image_name], draw_frame,
+        Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, color);
   } else if (state == JumperState::Dying) {
     DrawTextureEx(asset_manager.textures[image_name],
-                  Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, dying_rot, dying_scale, Fade(WHITE, dying_fade));
+                  Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y},
+                  dying_rot, dying_scale, Fade(WHITE, dying_fade));
   }
 }
 
@@ -222,9 +230,15 @@ void Jumper::init(Vector2 start_pos) {
   dying_scale = 1.0f;
 }
 
-Rectangle Jumper::get_frame() const { return frame; }
-Vector2 Jumper::get_v() const { return v; }
-void Jumper::set_map_state(MapObjectState mos) { map_state = mos; }
+Rectangle Jumper::get_frame() const {
+  return frame;
+}
+Vector2 Jumper::get_v() const {
+  return v;
+}
+void Jumper::set_map_state(MapObjectState mos) {
+  map_state = mos;
+}
 
 std::regex Jumper::get_regex() const {
   std::string raw{regex_raw};

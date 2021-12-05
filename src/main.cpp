@@ -2,7 +2,7 @@
  * Jumper
  *
  * Features:
- * - upside down trap
+ * - sensitive jumping
  * - make pooping that attracts enemies for a bit:
  *  - adding next-poop ability delay
  *  - visual feedback of when next pooping is available
