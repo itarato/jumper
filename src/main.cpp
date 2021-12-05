@@ -2,21 +2,16 @@
  * Jumper
  *
  * Features:
- * - sensitive jumping
- * - make pooping that attracts enemies for a bit:
- *  - adding next-poop ability delay
- *  - visual feedback of when next pooping is available
  * - score save (to file)
  *
  * Optional features:
+ * - make pooping that attracts enemies for a bit:
+ *  - adding next-poop ability delay
+ *  - visual feedback of when next pooping is available
  * - limit dashes
  * - health
  * - teleport
  * - destroyable map type
- *
- * Bug:
- * - sometimes fall through the floor when jumping (limited falling velocity,
- * lets see now)
  */
 
 #include <cstdlib>
