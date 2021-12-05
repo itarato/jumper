@@ -132,4 +132,4 @@ struct OneTimeBool {
   }
 };
 
-std::string append(std::string lhs, std::string rhs);
+std::string concat(std::string lhs, std::string rhs);

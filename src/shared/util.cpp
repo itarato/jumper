@@ -257,7 +257,7 @@ int SimpleTimer::seconds() const {
   return (int)(finish_time - start_time) % 60;
 }
 
-std::string append(std::string lhs, std::string rhs) {
+std::string concat(std::string lhs, std::string rhs) {
   std::string out{lhs};
   out.append(rhs);
   return out;

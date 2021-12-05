@@ -55,26 +55,29 @@ void App::init() {
                                   IMG_END,
                                   IMG_SPIKE,
                                   IMG_POOP,
-                                  IMG_BACKGROUND};
+                                  IMG_BACKGROUND,
+                                  IMG_DECORATION_0,
+                                  IMG_DECORATION_1,
+                                  IMG_DECORATION_2};
 
   for (auto& image : images) {
     asset_manager.textures.insert(
         {image,
-         LoadTexture(append(game_config.resource_dir(), image).c_str())});
+         LoadTexture(concat(game_config.resource_dir(), image).c_str())});
   }
 
   asset_manager.fonts.insert(
       {FONT_SMALL,
        LoadFontEx(
-           append(game_config.resource_dir(), FONT_FIRA_BOLD_SRC).c_str(), 12,
+           concat(game_config.resource_dir(), FONT_FIRA_BOLD_SRC).c_str(), 12,
            nullptr, 255)});
   asset_manager.fonts.insert(
       {FONT_MEDIUM,
-       LoadFontEx(append(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 20,
+       LoadFontEx(concat(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 20,
                   nullptr, 255)});
   asset_manager.fonts.insert(
       {FONT_LARGE,
-       LoadFontEx(append(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 64,
+       LoadFontEx(concat(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 64,
                   nullptr, 255)});
 }
 
