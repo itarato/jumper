@@ -139,11 +139,18 @@ void StageGame::draw() {
   }
 
   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKGRAY);
+  DrawRectangle(-scroll_offset.x, -scroll_offset.y, map.pixel_width(),
+                map.pixel_height(), GetColor(0xC4BEB6FF));
   DrawTextureTiled(
       asset_manager.textures[IMG_BACKGROUND],
-      Rectangle{0.0f, 0.0f, 76.0f, 52.0f},
-      Rectangle{(float)-scroll_offset.x, (float)-scroll_offset.y,
-                (float)map.pixel_width(), (float)map.pixel_height()},
+      Rectangle{0.0f, 0.0f, (float)asset_manager.textures[IMG_BACKGROUND].width,
+                (float)asset_manager.textures[IMG_BACKGROUND].height},
+      Rectangle{(float)-scroll_offset.x,
+                (float)(GetScreenHeight() -
+                        asset_manager.textures[IMG_BACKGROUND].height -
+                        scroll_offset.y),
+                (float)map.pixel_width(),
+                (float)asset_manager.textures[IMG_BACKGROUND].height},
       Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
 
   map.draw(scroll_offset);
