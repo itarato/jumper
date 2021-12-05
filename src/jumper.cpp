@@ -93,20 +93,41 @@ void Jumper::update(Map* map) {
       }
     }
 
-    {  // Vertical movement.
-      map->evaluate_map_object_state(this);
+    float ceiling{(float)map->next_ceiling(frame).value_or(0)};
+    float floor{(float)map->next_floor(frame).value_or(GetScreenHeight() +
+                                                       frame.height * 2) -
+                frame.height};
 
-      switch (map_state.type) {
-        case MAP_OBJECT_VERTICAL_STATE_HIT_CEILING:
+    if (v.y < 0.0f) {
+      if (frame.y + v.y <= ceiling) {
+        vstate = VerticalState::HIT_CEILING;
+      } else if (fabsf(v.y) < VELOCITY_ZERO_THRESHOLD) {
+        vstate = VerticalState::REACHING_TOP;
+      } else {
+        vstate = VerticalState::JUMP;
+      }
+    } else {
+      if (frame.y + v.y + PROXIMITY_THRESHOLD >= floor) {
+        vstate = VerticalState::ON_FLOOR;
+      } else if (fabsf(v.y) < VELOCITY_ZERO_THRESHOLD) {
+        vstate = VerticalState::REACHING_TOP;
+      } else {
+        vstate = VerticalState::FALLING;
+      }
+    }
+
+    {  // Vertical movement.
+      switch (vstate) {
+        case VerticalState::HIT_CEILING:
           v.y = 0.0f;
-          frame.y = map_state.ceiling;
+          frame.y = ceiling;
           break;
 
-        case MAP_OBJECT_VERTICAL_STATE_REACHING_TOP:
+        case VerticalState::REACHING_TOP:
           v.y = VELOCITY_ZERO_THRESHOLD;
           break;
 
-        case MAP_OBJECT_VERTICAL_STATE_JUMP:
+        case VerticalState::JUMP:
           if (is_key_down(KEY_SPACE)) {
             v.y *= 1.0f / GRAVITY_ACC;
           } else {
@@ -115,13 +136,13 @@ void Jumper::update(Map* map) {
           frame.y += v.y;
           break;
 
-        case MAP_OBJECT_VERTICAL_STATE_ON_FLOOR:
+        case VerticalState::ON_FLOOR:
           v.y = 0.0f;
-          frame.y = map_state.floor;
+          frame.y = floor;
           double_jump.reset();
           break;
 
-        case MAP_OBJECT_VERTICAL_STATE_FALLING:
+        case VerticalState::FALLING:
           if (is_key_down(KEY_LEFT_ALT)) {
             v.y = PARACHUTE_V;
           } else {
@@ -133,7 +154,7 @@ void Jumper::update(Map* map) {
     }
 
     {  // Vertical movement.
-      if (is_key_pressed(KEY_SPACE) && double_jump.can_jump(map_state.type)) {
+      if (is_key_pressed(KEY_SPACE) && double_jump.can_jump(vstate)) {
         v.y -= JUMP_FORCE;
         JumperSubject::notify_all(JumperEvent::Jump, JumperEventData{&frame});
       }
@@ -183,8 +204,7 @@ void Jumper::update(Map* map) {
 
 void Jumper::draw(IntVector2D scroll_offset) {
   std::string image_name;
-  if (map_state.type == MAP_OBJECT_VERTICAL_STATE_FALLING &&
-      is_key_down(KEY_LEFT_ALT)) {
+  if (vstate == VerticalState::FALLING && is_key_down(KEY_LEFT_ALT)) {
     image_name = fly_sprite.current_img();
     fly_sprite.progress();
   } else if (v.x == 0.0) {
@@ -233,16 +253,6 @@ void Jumper::init(Vector2 start_pos) {
   dying_rot = 0.0f;
   dying_fade = 1.0f;
   dying_scale = 1.0f;
-}
-
-Rectangle Jumper::get_frame() const {
-  return frame;
-}
-Vector2 Jumper::get_v() const {
-  return v;
-}
-void Jumper::set_map_state(MapObjectState mos) {
-  map_state = mos;
 }
 
 std::regex Jumper::get_regex() const {

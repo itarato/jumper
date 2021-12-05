@@ -13,28 +13,6 @@
 #include "shared/types.h"
 #include "shared/util.h"
 
-typedef enum {
-  MAP_OBJECT_VERTICAL_STATE_HIT_CEILING = 0,
-  MAP_OBJECT_VERTICAL_STATE_REACHING_TOP = 1,
-  MAP_OBJECT_VERTICAL_STATE_JUMP = 2,
-  MAP_OBJECT_VERTICAL_STATE_ON_FLOOR = 3,
-  MAP_OBJECT_VERTICAL_STATE_FALLING = 4,
-} MapObjectVerticalState;
-
-struct MapObjectState {
-  union {
-    int floor;
-    int ceiling;
-  };
-  MapObjectVerticalState type;
-};
-
-struct IMapStateUpdatable {
-  [[nodiscard]] virtual Rectangle get_frame() const = 0;
-  [[nodiscard]] virtual Vector2 get_v() const = 0;
-  virtual void set_map_state(MapObjectState mos) = 0;
-};
-
 struct ITextureProvider {
   virtual Texture2D* texture() = 0;
   virtual void disable() = 0;
@@ -159,7 +137,6 @@ struct Map {
   std::optional<int> next_left(Rectangle p);
   std::optional<int> next_right(Rectangle p);
 
-  void evaluate_map_object_state(IMapStateUpdatable* obj);
   void load_map(const std::string& file_path);
   [[nodiscard]] bool is_solid_tile(IntVector2D coord) const;
   [[nodiscard]] Tile& get_tile(IntVector2D coord);

@@ -233,40 +233,6 @@ std::optional<int> Map::next_right(Rectangle p) {
   return right;
 }
 
-void Map::evaluate_map_object_state(IMapStateUpdatable* obj) {
-  MapObjectState mos{};
-
-  if (obj->get_v().y < 0.0f) {  // Going up.
-    int ceiling = next_ceiling(obj->get_frame()).value_or(0);
-    mos.ceiling = ceiling;
-
-    if (obj->get_frame().y + obj->get_v().y <= ceiling) {  // Hit ceiling.
-      mos.type = MAP_OBJECT_VERTICAL_STATE_HIT_CEILING;
-    } else if (fabsf(obj->get_v().y) <
-               VELOCITY_ZERO_THRESHOLD) {  // Reaching top.
-      mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
-    } else {  // Jump.
-      mos.type = MAP_OBJECT_VERTICAL_STATE_JUMP;
-    }
-  } else {  // Going down.
-    int floor = next_floor(obj->get_frame()).value_or(2 * GetScreenHeight()) -
-                obj->get_frame().height;
-    mos.floor = floor;
-
-    if (obj->get_frame().y + obj->get_v().y + PROXIMITY_THRESHOLD >=
-        floor) {  // On floor.
-      mos.type = MAP_OBJECT_VERTICAL_STATE_ON_FLOOR;
-    } else if (fabsf(obj->get_v().y) <
-               VELOCITY_ZERO_THRESHOLD) {  // Reaching top.
-      mos.type = MAP_OBJECT_VERTICAL_STATE_REACHING_TOP;
-    } else {  // Falling down.
-      mos.type = MAP_OBJECT_VERTICAL_STATE_FALLING;
-    }
-  }
-
-  obj->set_map_state(mos);
-}
-
 void Map::load_map(const std::string& file_path) {
   std::ifstream file{file_path};
   std::string line;

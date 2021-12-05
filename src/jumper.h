@@ -8,6 +8,14 @@
 #include "shared/types.h"
 #include "sprite.h"
 
+enum class VerticalState {
+  HIT_CEILING = 0,
+  REACHING_TOP = 1,
+  JUMP = 2,
+  ON_FLOOR = 3,
+  FALLING = 4,
+};
+
 enum class JumperState {
   Normal = 0,
   Dying = 1,
@@ -19,8 +27,8 @@ struct DoubleJump {
 
   DoubleJump() : air_jumps(0) {}
 
-  bool can_jump(MapObjectVerticalState vertical_state) {
-    if (vertical_state == MAP_OBJECT_VERTICAL_STATE_ON_FLOOR) {
+  bool can_jump(VerticalState vertical_state) {
+    if (vertical_state == VerticalState::ON_FLOOR) {
       air_jumps = 0;
       return true;
     }
@@ -37,22 +45,17 @@ struct DoubleJump {
 };
 
 // Idea: we can add a delayer to it, so after a poop it cannot go immediately.
-//       With: .can_powerup():bool and maybe .next_poop_wait():float (for animation)
+//       With: .can_powerup():bool and maybe .next_poop_wait():float (for
+//       animation)
 struct Pooper {
   int progress{0};
   const int upto{42};
 
-  void powerup() {
-    progress++;
-  }
+  void powerup() { progress++; }
 
-  void reset() {
-    progress = 0;
-  }
+  void reset() { progress = 0; }
 
-  bool is_ready() {
-    return progress >= upto;
-  }
+  bool is_ready() { return progress >= upto; }
 };
 
 enum class JumperEvent {
@@ -66,13 +69,12 @@ enum class JumperEvent {
 };
 
 struct JumperEventData {
-  Rectangle *frame;
+  Rectangle* frame;
   Rectangle subject;
 
-  explicit JumperEventData(Rectangle *frame) : frame(frame),
-                                               subject(*frame) {}
-  explicit JumperEventData(Rectangle *frame, Rectangle subject) : frame(frame),
-                                                                  subject(subject) {}
+  explicit JumperEventData(Rectangle* frame) : frame(frame), subject(*frame) {}
+  explicit JumperEventData(Rectangle* frame, Rectangle subject)
+      : frame(frame), subject(subject) {}
 };
 
 struct JumperObserver {
@@ -80,23 +82,21 @@ struct JumperObserver {
 };
 
 struct JumperSubject {
-  std::vector<JumperObserver *> observers;
+  std::vector<JumperObserver*> observers;
 
-  void subscribe(JumperObserver *observer) {
-    observers.push_back(observer);
-  }
+  void subscribe(JumperObserver* observer) { observers.push_back(observer); }
 
   void notify_all(JumperEvent event, JumperEventData data) {
-    for (auto &observer : observers) {
+    for (auto& observer : observers) {
       observer->on_jumper_update(event, data);
     }
   }
 };
 
-struct Jumper : IMapStateUpdatable, JumperSubject {
+struct Jumper : JumperSubject {
   Rectangle frame;
   Vector2 v;
-  MapObjectState map_state;
+  VerticalState vstate;
   bool is_facing_right;
   Sprite move_sprite;
   Sprite stand_sprite;
@@ -112,12 +112,9 @@ struct Jumper : IMapStateUpdatable, JumperSubject {
   OneTimeBool is_pooping{};
 
   void draw(IntVector2D scroll_offset);
-  void update(Map *map);
+  void update(Map* map);
   void init(Vector2 start_pos);
 
-  [[nodiscard]] Rectangle get_frame() const override;
-  [[nodiscard]] Vector2 get_v() const override;
-  void set_map_state(MapObjectState mos) override;
   [[nodiscard]] std::regex get_regex() const;
 
   [[nodiscard]] bool is_dead() const;
