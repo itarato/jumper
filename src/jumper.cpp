@@ -1,5 +1,6 @@
 #include "jumper.h"
 
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -106,7 +107,11 @@ void Jumper::update(Map* map) {
           break;
 
         case MAP_OBJECT_VERTICAL_STATE_JUMP:
-          v.y *= 1.0f / GRAVITY_ACC;
+          if (is_key_down(KEY_SPACE)) {
+            v.y *= 1.0f / GRAVITY_ACC;
+          } else {
+            v.y *= 1.0f / GRAVITY_ACC_FASTER;
+          }
           frame.y += v.y;
           break;
 
