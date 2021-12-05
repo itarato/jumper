@@ -42,9 +42,7 @@ struct ITextureProvider {
 };
 
 struct NullTextureProvider : ITextureProvider {
-  Texture2D* texture() override {
-    return nullptr;
-  }
+  Texture2D* texture() override { return nullptr; }
   void disable() override {}
 };
 
@@ -54,14 +52,16 @@ struct SingleTextureProvider : ITextureProvider {
   bool enabled;
   float _fade{1.0};
 
-  explicit SingleTextureProvider(Texture2D* texture_enabled) : ITextureProvider(),
-                                                               texture_enabled(texture_enabled),
-                                                               texture_disabled(nullptr),
-                                                               enabled(true) {}
-  SingleTextureProvider(Texture2D* texture_enabled, Texture2D* texture_disabled) : ITextureProvider(),
-                                                                                   texture_enabled(texture_enabled),
-                                                                                   texture_disabled(texture_disabled),
-                                                                                   enabled(true) {}
+  explicit SingleTextureProvider(Texture2D* texture_enabled)
+      : ITextureProvider(),
+        texture_enabled(texture_enabled),
+        texture_disabled(nullptr),
+        enabled(true) {}
+  SingleTextureProvider(Texture2D* texture_enabled, Texture2D* texture_disabled)
+      : ITextureProvider(),
+        texture_enabled(texture_enabled),
+        texture_disabled(texture_disabled),
+        enabled(true) {}
 
   Texture2D* texture() override;
   void disable() override;
@@ -77,9 +77,13 @@ struct DisableSpriteTextureProvider : SingleTextureProvider {
   int frame_counter{0};
   int step_frame_count;
 
-  DisableSpriteTextureProvider(Texture2D* texture_enabled, Texture2D* texture_disabled, std::vector<Texture2D*>&& disable_sprite, int step_frame_count) : SingleTextureProvider(texture_enabled, texture_disabled),
-                                                                                                                                                          disable_sprite(std::move(disable_sprite)),
-                                                                                                                                                          step_frame_count(step_frame_count) {}
+  DisableSpriteTextureProvider(Texture2D* texture_enabled,
+                               Texture2D* texture_disabled,
+                               std::vector<Texture2D*>&& disable_sprite,
+                               int step_frame_count)
+      : SingleTextureProvider(texture_enabled, texture_disabled),
+        disable_sprite(std::move(disable_sprite)),
+        step_frame_count(step_frame_count) {}
 
   Texture2D* texture() override;
 };
@@ -89,41 +93,54 @@ struct Tile {
   std::string value{};
   bool is_enabled = true;
   std::shared_ptr<ITextureProvider> texture_provider;
+  Rectangle draw_frame;
 
-  explicit Tile(TileType type) : type(type) {
+  explicit Tile(TileType type)
+      : type(type),
+        draw_frame({0.0f, 0.0f, (float)BLOCK_SIZE, (float)BLOCK_SIZE}) {
     if (type == TILE_GROUND) {
-      auto _texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_GROUND]);
+      auto _texture_provider = std::make_shared<SingleTextureProvider>(
+          &asset_manager.textures[IMG_GROUND]);
       _texture_provider->set_fade(randf(0.7f, 1.0f));
 
       texture_provider = _texture_provider;
     } else if (type == TILE_END) {
-      texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_END]);
+      texture_provider = std::make_shared<SingleTextureProvider>(
+          &asset_manager.textures[IMG_END]);
     } else if (type == TILE_DOOR) {
       std::vector<Texture2D*> texture_list{
-              &asset_manager.textures[IMG_DOOR_CLOSE_0],
-              &asset_manager.textures[IMG_DOOR_CLOSE_1],
-              &asset_manager.textures[IMG_DOOR_CLOSE_2],
-              &asset_manager.textures[IMG_DOOR_CLOSE_3],
-              &asset_manager.textures[IMG_DOOR_CLOSE_4],
-              &asset_manager.textures[IMG_DOOR_CLOSE_5],
-              &asset_manager.textures[IMG_DOOR_CLOSE_6],
-              &asset_manager.textures[IMG_DOOR_CLOSE_7],
+          &asset_manager.textures[IMG_DOOR_CLOSE_0],
+          &asset_manager.textures[IMG_DOOR_CLOSE_1],
+          &asset_manager.textures[IMG_DOOR_CLOSE_2],
+          &asset_manager.textures[IMG_DOOR_CLOSE_3],
+          &asset_manager.textures[IMG_DOOR_CLOSE_4],
+          &asset_manager.textures[IMG_DOOR_CLOSE_5],
+          &asset_manager.textures[IMG_DOOR_CLOSE_6],
+          &asset_manager.textures[IMG_DOOR_CLOSE_7],
       };
-      texture_provider = std::make_shared<DisableSpriteTextureProvider>(&asset_manager.textures[IMG_DOOR_CLOSE], &asset_manager.textures[IMG_DOOR_OPEN], std::move(texture_list), 4);
+      texture_provider = std::make_shared<DisableSpriteTextureProvider>(
+          &asset_manager.textures[IMG_DOOR_CLOSE],
+          &asset_manager.textures[IMG_DOOR_OPEN], std::move(texture_list), 4);
     } else if (type == TILE_REGEX) {
-      texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_REGEX]);
+      texture_provider = std::make_shared<SingleTextureProvider>(
+          &asset_manager.textures[IMG_REGEX]);
     } else if (type == TILE_TRAP) {
-      texture_provider = std::make_shared<SingleTextureProvider>(&asset_manager.textures[IMG_SPIKE]);
+      texture_provider = std::make_shared<SingleTextureProvider>(
+          &asset_manager.textures[IMG_SPIKE]);
     } else {
       texture_provider = std::make_shared<NullTextureProvider>();
     }
   }
 
-  [[nodiscard]] bool is_solid() const { return is_enabled && is_tile_type_solid(type); }
+  [[nodiscard]] bool is_solid() const {
+    return is_enabled && is_tile_type_solid(type);
+  }
   void disable() {
     is_enabled = false;
     texture_provider->disable();
   }
+
+  void vertical_flip() { draw_frame.height *= -1; }
 };
 
 struct Map {

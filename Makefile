@@ -33,5 +33,10 @@ clean:
 	rm -f ./src/*.o
 	rm -f ./src/*.out
 	rm -f ./src/shared/*.o
+
+clean_all:
+	rm -f ./src/*.o
+	rm -f ./src/*.out
+	rm -f ./src/shared/*.o
 	rm -f ./$(BIN)
 	rm -f ./$(LE_BIN)

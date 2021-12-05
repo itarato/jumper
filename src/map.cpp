@@ -61,6 +61,8 @@ void Map::draw(IntVector2D scroll_offset) {
     }
 
     for (int h = 0; h < (int)map[v].size(); h++) {
+      Tile* tile = &map[v][h];
+
       int block_lhs_x = h * BLOCK_SIZE - scroll_offset.x;
       int block_rhs_x = block_lhs_x + BLOCK_SIZE;
       if (block_rhs_x <= 0 ||
@@ -68,20 +70,21 @@ void Map::draw(IntVector2D scroll_offset) {
         continue;
       }
 
-      Texture2D* texture{map[v][h].texture_provider->texture()};
+      Texture2D* texture{tile->texture_provider->texture()};
       if (texture) {
-        DrawTexture(*texture, h * BLOCK_SIZE - scroll_offset.x,
-                    v * BLOCK_SIZE - scroll_offset.y,
-                    map[v][h].texture_provider->color());
+        DrawTextureRec(*texture, tile->draw_frame,
+                       Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
+                               (float)(v * BLOCK_SIZE - scroll_offset.y)},
+                       tile->texture_provider->color());
       }
 
-      if (!map[v][h].value.empty() && map[v][h].is_enabled) {
-        Vector2 text_frame = MeasureTextEx(
-            asset_manager.fonts[FONT_SMALL], map[v][h].value.c_str(),
-            asset_manager.fonts[FONT_SMALL].baseSize, 0);
+      if (!tile->value.empty() && tile->is_enabled) {
+        Vector2 text_frame =
+            MeasureTextEx(asset_manager.fonts[FONT_SMALL], tile->value.c_str(),
+                          asset_manager.fonts[FONT_SMALL].baseSize, 0);
 
         Color text_bubble_color;
-        if (map[v][h].type == TILE_REGEX) {
+        if (tile->type == TILE_REGEX) {
           text_bubble_color = LIME;
         } else {
           text_bubble_color = DARKPURPLE;
@@ -95,7 +98,7 @@ void Map::draw(IntVector2D scroll_offset) {
                 text_frame.y + 4.0f,
             },
             2.0f, 2, text_bubble_color);
-        DrawTextEx(asset_manager.fonts[FONT_SMALL], map[v][h].value.c_str(),
+        DrawTextEx(asset_manager.fonts[FONT_SMALL], tile->value.c_str(),
                    Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
                            (float)(v * BLOCK_SIZE - scroll_offset.y)},
                    asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
@@ -313,6 +316,19 @@ void Map::load_map(const std::string& file_path) {
   file.close();
 
   block_width = (int)map[0].size();
+
+  // Post process.
+  for (size_t y = 0; y < block_height; y++) {
+    for (size_t x = 0; x < block_width; x++) {
+      Tile* tile = &map[y][x];
+
+      if (tile->type == TILE_TRAP) {
+        if (y > 0 && map[y - 1][x].is_solid()) {
+          tile->vertical_flip();
+        }
+      }
+    }
+  }
 }
 
 bool Map::is_solid_tile(IntVector2D coord) const {
