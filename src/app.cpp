@@ -57,7 +57,8 @@ void App::init() {
                                   IMG_POOP,
                                   IMG_BACKGROUND,
                                   IMG_DECORATION_0,
-                                  IMG_DECORATION_1};
+                                  IMG_DECORATION_1,
+                                  IMG_DECORATION_2};
 
   for (auto& image : images) {
     asset_manager.textures.insert(

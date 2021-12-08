@@ -42,6 +42,7 @@
 #define IMG_POOP "/images/poop.png"
 #define IMG_DECORATION_0 "/images/decoration_0.png"
 #define IMG_DECORATION_1 "/images/decoration_1.png"
+#define IMG_DECORATION_2 "/images/decoration_2.png"
 
 #define IMG_FORMAT_DECORATION "/images/decoration_%d.png"
 
