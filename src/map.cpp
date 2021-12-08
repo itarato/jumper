@@ -78,10 +78,10 @@ void Map::draw(IntVector2D scroll_offset) {
                        tile->texture_provider->color());
       }
 
-      if (!tile->value.empty() && tile->is_enabled) {
-        Vector2 text_frame =
-            MeasureTextEx(asset_manager.fonts[FONT_SMALL], tile->value.c_str(),
-                          asset_manager.fonts[FONT_SMALL].baseSize, 0);
+      if (!tile->pattern.empty() && tile->is_enabled) {
+        Vector2 text_frame = MeasureTextEx(
+            asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
+            asset_manager.fonts[FONT_SMALL].baseSize, 0);
 
         Color text_bubble_color;
         if (tile->type == TILE_REGEX) {
@@ -98,7 +98,7 @@ void Map::draw(IntVector2D scroll_offset) {
                 text_frame.y + 4.0f,
             },
             2.0f, 2, text_bubble_color);
-        DrawTextEx(asset_manager.fonts[FONT_SMALL], tile->value.c_str(),
+        DrawTextEx(asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
                    Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
                            (float)(v * BLOCK_SIZE - scroll_offset.y)},
                    asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
@@ -276,7 +276,7 @@ void Map::load_map(const std::string& file_path) {
 
   while (getline(file, line)) {
     TileMeta tile_meta{line};
-    map[tile_meta.y][tile_meta.x].value = tile_meta.value;
+    map[tile_meta.y][tile_meta.x].pattern = tile_meta.pattern;
   }
 
   file.close();

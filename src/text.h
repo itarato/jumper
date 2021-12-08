@@ -14,9 +14,8 @@ struct Text {
   Vector2 pos;
   bool is_hover_effect;
 
-  explicit Text(const char* text) : text(text),
-                                    color(DARKGRAY),
-                                    font(nullptr) {}
+  explicit Text(const char* text)
+      : text(text), color(DARKGRAY), font(nullptr) {}
 
   Text* with_color(Color new_color) {
     color = new_color;
@@ -34,8 +33,8 @@ struct Text {
   }
 
   Text* with_aligned_center() {
-    pos.x = (float) ((float) GetScreenWidth() - bounds().x) / 2.0f;
-    pos.y = (float) ((float) GetScreenHeight() - bounds().y) / 2.0f;
+    pos.x = (float)((float)GetScreenWidth() - bounds().x) / 2.0f;
+    pos.y = (float)((float)GetScreenHeight() - bounds().y) / 2.0f;
     return this;
   }
 
@@ -46,10 +45,10 @@ struct Text {
 
   Rectangle frame() {
     return Rectangle{
-            pos.x,
-            pos.y,
-            (float) bounds().x,
-            (float) bounds().y,
+        pos.x,
+        pos.y,
+        (float)bounds().x,
+        (float)bounds().y,
     };
   }
 
@@ -62,8 +61,11 @@ struct Text {
       draw_color = color;
     }
 
-    DrawTextEx(*font, text, Vector2{pos.x, pos.y}, (float) font->baseSize, 0, draw_color);
+    DrawTextEx(*font, text, Vector2{pos.x, pos.y}, (float)font->baseSize, 0,
+               draw_color);
   }
 
-  [[nodiscard]] Vector2 bounds() const { return MeasureTextEx(*font, text, (float) font->baseSize, 0); }
+  [[nodiscard]] Vector2 bounds() const {
+    return MeasureTextEx(*font, text, (float)font->baseSize, 0);
+  }
 };

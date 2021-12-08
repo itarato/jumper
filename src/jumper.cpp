@@ -63,7 +63,7 @@ void Jumper::update(Map* map) {
                   BLOCK_SIZE,
               };
 
-              if (std::regex_search(tile.value, get_regex())) {
+              if (std::regex_search(tile.pattern, get_regex())) {
                 tile.disable();
                 JumperSubject::notify_all(JumperEvent::OpenDoor,
                                           JumperEventData{&frame, door_frame});
@@ -165,7 +165,7 @@ void Jumper::update(Map* map) {
       for (const auto& tile_coord : tile_coords) {
         Tile& tile = map->get_tile(tile_coord);
         if (tile.type == TILE_REGEX && tile.is_enabled) {
-          merge_pattern(regex_raw, tile.value);
+          merge_pattern(regex_raw, tile.pattern);
           tile.disable();
           JumperSubject::notify_all(JumperEvent::CaptureRegex,
                                     JumperEventData{&frame});

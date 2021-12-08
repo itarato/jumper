@@ -68,7 +68,7 @@ struct DisableSpriteTextureProvider : SingleTextureProvider {
 
 struct Tile {
   TileType type = TILE_AIR;
-  std::string value{};
+  std::string pattern{""};
   bool is_enabled = true;
   std::shared_ptr<ITextureProvider> texture_provider;
   Rectangle draw_frame;
