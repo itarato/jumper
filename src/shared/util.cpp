@@ -159,9 +159,15 @@ std::vector<IntVector2D> corner_block_coords(Rectangle frame) {
 
 TileMeta::TileMeta(std::string raw) {
   std::vector<std::string> parts{split(std::move(raw), ',')};
-  x = std::stoi(parts[0]);
-  y = std::stoi(parts[1]);
-  value.swap(parts[2]);
+
+  x = std::stoi(parts[1]);
+  y = std::stoi(parts[2]);
+
+  if (parts[0] == "pattern") {
+    pattern.swap(parts[3]);
+  } else if (parts[0] == "decoration") {
+    decoration = std::stoi(parts[3]);
+  }
 }
 
 void merge_pattern(std::string& base, std::string new_part) {

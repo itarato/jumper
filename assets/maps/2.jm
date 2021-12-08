@@ -19,8 +19,8 @@ g..............rg...........*.
 s.........................d..e
 gtttttgggttttttttttttttggggggg
 gggggggggggggggggggggggggggggg
-16,0,A
-2,4,/A
-28,6,/A
-15,8,/A
-26,17,AA
+pattern,16,0,A
+pattern,2,4,/A
+pattern,28,6,/A
+pattern,15,8,/A
+pattern,26,17,AA

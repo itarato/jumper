@@ -23,32 +23,20 @@
 
 using namespace std;
 
+static const char* decoration_images[] = {
+    "assets/images/decoration_0.png",
+    "assets/images/decoration_1.png",
+};
+
 static const TileType tile_types[] = {
-        TILE_NULL,
-        TILE_AIR,
-        TILE_GROUND,
-        TILE_START,
-        TILE_END,
-        TILE_ENEMY_RANDOM,
-        TILE_ENEMY_CHASER,
-        TILE_COIN,
-        TILE_REGEX,
-        TILE_DOOR,
-        TILE_TRAP,
+    TILE_NULL,  TILE_AIR,          TILE_GROUND,       TILE_START,
+    TILE_END,   TILE_ENEMY_RANDOM, TILE_ENEMY_CHASER, TILE_COIN,
+    TILE_REGEX, TILE_DOOR,         TILE_TRAP,
 };
 
 static const char* tile_type_names[] = {
-        "NULL",
-        "Air",
-        "Ground",
-        "Start",
-        "End",
-        "EnemyRnd",
-        "EnemyCsr",
-        "Coin",
-        "Regex",
-        "Door",
-        "Trap",
+    "NULL",     "Air",  "Ground", "Start", "End",  "EnemyRnd",
+    "EnemyCsr", "Coin", "Regex",  "Door",  "Trap",
 };
 
 char char_shift_version(char ch) {
@@ -82,11 +70,13 @@ char char_shift_version(char ch) {
 
 struct Tile {
   TileType type = TILE_NULL;
-  string value;
+  string pattern;
+  int decoration;
 
   void reset() {
     type = TILE_NULL;
-    value = "";
+    pattern = "";
+    decoration = -1;
   }
 };
 
@@ -98,8 +88,8 @@ struct Input {
   bool is_active;
   string label;
 
-  explicit Input(string label)
-      : frame({0.0f, 0.0f, 128, 18}),
+  explicit Input(string label, float width = 128.0f)
+      : frame({0.0f, 0.0f, width, 18.0f}),
         is_active(false),
         label(std::move(label)) {
     Input::inputs.push_back(this);
@@ -122,29 +112,34 @@ struct Input {
       is_active = true;
     }
 
-    if (is_active && IsKeyPressed(KEY_TAB)) is_active = false;
+    if (is_active && IsKeyPressed(KEY_TAB))
+      is_active = false;
 
     if (is_active) {
       int ch;
       while ((ch = GetKeyPressed())) {
         if (ch >= 32 && ch <= 126) {
           if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
-            value.push_back(char_shift_version((char) ch));
+            value.push_back(char_shift_version((char)ch));
           } else {
-            value.push_back((char) ch);
+            value.push_back((char)ch);
           }
         } else if (ch == KEY_BACKSPACE) {
-          if (!value.empty()) value.pop_back();
+          if (!value.empty())
+            value.pop_back();
         }
       }
     }
   }
 
-  [[nodiscard]] bool has_changed() const { return is_active && IsKeyPressed(KEY_ENTER); }
+  [[nodiscard]] bool has_changed() const {
+    return is_active && IsKeyPressed(KEY_ENTER);
+  }
 
   void draw() const {
     DrawRectangleRec(frame, WHITE);
-    if (is_active) DrawRectangleLinesEx(frame, 2, BLUE);
+    if (is_active)
+      DrawRectangleLinesEx(frame, 2, BLUE);
     DrawText(value.c_str(), frame.x + 4, frame.y + 4, 10, BLACK);
     DrawText(label.c_str(), frame.x + 4, frame.y + 22, 8, WHITE);
   }
@@ -152,27 +147,42 @@ struct Input {
 
 vector<Input*> Input::inputs{};
 
-struct Button {
+struct IButton {
+  virtual Rectangle frame() = 0;
+
+  bool is_clicked() {
+    return IsMouseButtonPressed(0) &&
+           CheckCollisionPointRec(GetMousePosition(), frame());
+  }
+
+  virtual void draw() {
+    if (CheckCollisionPointRec(GetMousePosition(), frame())) {
+      if (IsMouseButtonDown(0)) {
+        DrawRectangleLinesEx(frame(), 2.0f, RED);
+      } else {
+        DrawRectangleLinesEx(frame(), 2.0f, BLUE);
+      }
+    }
+  }
+};
+
+struct Button : IButton {
   Vector2 pos{};
   string label{};
   int font_size = 10;
 
   explicit Button(string label) : label(std::move(label)) {}
 
-  bool is_clicked() {
-    return (IsMouseButtonPressed(0) &&
-            CheckCollisionPointRec(GetMousePosition(), frame()));
-  }
-
-  Rectangle frame() {
+  Rectangle frame() override {
     return Rectangle{pos.x, pos.y,
-                     (float) (MeasureText(label.c_str(), font_size) + 8),
-                     (float) (font_size + 8)};
+                     (float)(MeasureText(label.c_str(), font_size) + 8),
+                     (float)(font_size + 8)};
   }
 
-  void draw() {
-    DrawRectangleRec(frame(), BLUE);
+  void draw() override {
     DrawText(label.c_str(), pos.x + 4, pos.y + 4, font_size, WHITE);
+
+    IButton::draw();
   }
 };
 
@@ -194,6 +204,7 @@ struct App {
   Input input_window_height;
   Input input_map_file_name;
   Input input_tile_value;
+  Input input_decoration_index;
 
   int map_width = DEFAULT_WINDOW_BLOCK_WIDTH;
   int map_height = DEFAULT_WINDOW_BLOCK_HEIGHT;
@@ -203,32 +214,36 @@ struct App {
   Tile* selected_tile;
 
   App()
-      : input_window_width("Width"),
-        input_window_height("Height"),
+      : input_window_width("Width", 64.0f),
+        input_window_height("Height", 64.0f),
         input_map_file_name("Map file"),
         input_tile_value("Tile value"),
+        input_decoration_index("Decor idx", 48.0f),
         save_button("Save"),
         selected_tile(nullptr) {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
-    input_window_width.set_pos(Vector2{(float) (GetScreenWidth() - 232),
-                                       (float) (GetScreenHeight() - 90)});
+    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 140),
+                                       (float)(GetScreenHeight() - 90)});
     input_window_width.set_value(to_string(DEFAULT_WINDOW_BLOCK_WIDTH));
 
-    input_window_height.set_pos(Vector2{(float) (GetScreenWidth() - 232),
-                                        (float) (GetScreenHeight() - 50)});
+    input_window_height.set_pos(Vector2{(float)(GetScreenWidth() - 140),
+                                        (float)(GetScreenHeight() - 50)});
     input_window_height.set_value(to_string(DEFAULT_WINDOW_BLOCK_HEIGHT));
 
-    input_map_file_name.set_pos(Vector2{(float) (GetScreenWidth() - 432),
-                                        (float) (GetScreenHeight() - 50)});
+    input_map_file_name.set_pos(Vector2{(float)(GetScreenWidth() - 280),
+                                        (float)(GetScreenHeight() - 50)});
     input_map_file_name.set_value("maps/untitled.jm");
 
-    input_tile_value.set_pos(Vector2{(float) (GetScreenWidth() - 432),
-                                     (float) (GetScreenHeight() - 90)});
+    input_tile_value.set_pos(Vector2{(float)(GetScreenWidth() - 280),
+                                     (float)(GetScreenHeight() - 90)});
+
+    input_decoration_index.set_pos(Vector2{(float)(GetScreenWidth() - 60),
+                                           (float)(GetScreenHeight() - 90)});
 
     save_button.pos.x = GetScreenWidth() - 42;
-    save_button.pos.y = GetScreenHeight() - 58;
+    save_button.pos.y = GetScreenHeight() - 28;
   }
 
   void load_map_file(const char* file_name) {
@@ -257,18 +272,19 @@ struct App {
       getline(map_file, line);
 
       if (i == 0) {
-        map_width = (int) line.size();
+        map_width = (int)line.size();
         input_window_width.set_value(to_string(map_width));
       }
 
-      for (int j = 0; j < (int) line.size(); j++) {
+      for (int j = 0; j < (int)line.size(); j++) {
         map[i][j].type = char_to_tile_type(line.at(j));
       }
     }
 
     while (getline(map_file, line)) {
       TileMeta tile_meta{line};
-      map[tile_meta.y][tile_meta.x].value = tile_meta.value;
+      map[tile_meta.y][tile_meta.x].pattern = tile_meta.pattern;
+      map[tile_meta.y][tile_meta.x].decoration = tile_meta.decoration;
     }
   }
 
@@ -285,7 +301,7 @@ struct App {
   }
 
   void update() {
-    {// Input fields.
+    {  // Input fields.
       if (input_window_width.has_changed()) {
         int new_width = stoi(input_window_width.value);
         if (new_width > MAX_WINDOW_BLOCK_WIDTH) {
@@ -313,11 +329,15 @@ struct App {
       }
 
       if (input_tile_value.has_changed() && selected_tile) {
-        selected_tile->value = input_tile_value.value;
+        selected_tile->pattern = input_tile_value.value;
+      }
+
+      if (input_decoration_index.has_changed() && selected_tile) {
+        selected_tile->decoration = stoi(input_decoration_index.value);
       }
     }
 
-    {// Drag space.
+    {  // Drag space.
       if (IsKeyPressed(KEY_LEFT_ALT)) {
         prev_offsx = offsx;
         prev_offsy = offsy;
@@ -340,45 +360,47 @@ struct App {
         if (IsMouseButtonDown(0)) {
           if (is_bulk_creation) {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                    tile_types[selected_tile_idx];
+                tile_types[selected_tile_idx];
           } else {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                    TILE_NULL;
+                TILE_NULL;
           }
         }
       }
     }
 
-    {// Tile type switch.
+    {  // Tile type switch.
       if (IsKeyPressed(KEY_PAGE_DOWN)) {
         selected_tile_idx =
-                (selected_tile_idx + tile_count() - 1) % tile_count();
+            (selected_tile_idx + tile_count() - 1) % tile_count();
       }
       if (IsKeyPressed(KEY_PAGE_UP)) {
         selected_tile_idx = (selected_tile_idx + 1) % tile_count();
       }
     }
 
-    {// Input fields.
+    {  // Input fields.
       input_window_width.update();
       input_window_height.update();
       input_map_file_name.update();
       input_tile_value.update();
+      input_decoration_index.update();
     }
 
-    {// Button.
+    {  // Button.
       if (save_button.is_clicked()) {
         save_map();
-        // cout << "Map saved: " << ;
+        cout << "Map saved.\n";
       }
     }
 
-    {// Tile selection.
+    {  // Tile selection.
       if (IsMouseButtonPressed(1) && mouse_in_max_frame()) {
         auto selected_tile_coord = tile_coord();
         selected_tile =
-                &map[selected_tile_coord.second][selected_tile_coord.first];
-        input_tile_value.value = selected_tile->value;
+            &map[selected_tile_coord.second][selected_tile_coord.first];
+        input_tile_value.value = selected_tile->pattern;
+        input_decoration_index.value = to_string(selected_tile->decoration);
       }
     }
   }
@@ -389,8 +411,8 @@ struct App {
     // Map.
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
-        Vector2 tile_pos{(float) (x * BLOCK_SIZE - offsx),
-                         (float) (y * BLOCK_SIZE - offsy)};
+        Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
+                         (float)(y * BLOCK_SIZE - offsy)};
         draw_tile(map[y][x].type, tile_pos);
 
         if (selected_tile == &map[y][x]) {
@@ -398,9 +420,15 @@ struct App {
                              BLOCK_SIZE, BLOCK_SIZE, BLACK);
         }
 
-        if (!map[y][x].value.empty()) {
-          DrawText(map[y][x].value.c_str(), x * BLOCK_SIZE - offsx + 2,
+        if (!map[y][x].pattern.empty()) {
+          DrawText(map[y][x].pattern.c_str(), x * BLOCK_SIZE - offsx + 2,
                    y * BLOCK_SIZE - offsy + 2, 6, BLACK);
+        }
+
+        if (map[y][x].decoration >= 0) {
+          DrawText(to_string(map[y][x].decoration).c_str(),
+                   x * BLOCK_SIZE - offsx + 2, y * BLOCK_SIZE - offsy + 22, 6,
+                   BLACK);
         }
       }
     }
@@ -412,26 +440,26 @@ struct App {
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
       draw_tile(tile_types[selected_tile_idx],
-                Vector2{(float) (mouse_tile_coord.first * BLOCK_SIZE - offsx),
-                        (float) (mouse_tile_coord.second * BLOCK_SIZE - offsy)});
+                Vector2{(float)(mouse_tile_coord.first * BLOCK_SIZE - offsx),
+                        (float)(mouse_tile_coord.second * BLOCK_SIZE - offsy)});
       DrawRectangleLines(mouse_tile_coord.first * BLOCK_SIZE - offsx,
                          mouse_tile_coord.second * BLOCK_SIZE - offsy,
                          BLOCK_SIZE, BLOCK_SIZE, BLACK);
     }
 
-    {// Overlay
+    {  // Overlay
       DrawRectangle(0, GetScreenHeight() - 96, GetScreenWidth(), 96,
                     Fade(BLACK, 0.7f));
 
       for (int i = 0; i < tile_count(); i++) {
         if (selected_tile_idx == i) {
-          DrawRectangleLines(26 + i * 96, GetScreenHeight() - 82, 94, 76,
+          DrawRectangleLines(26 + i * 64, GetScreenHeight() - 82, 64, 76,
                              WHITE);
         }
 
-        draw_tile(tile_types[i], Vector2{(float) (32 + i * 96),
-                                         (float) (GetScreenHeight() - 76)});
-        DrawText(tile_type_names[i], i * 96 + 32, GetScreenHeight() - 30, 20,
+        draw_tile(tile_types[i], Vector2{(float)(32 + i * 64),
+                                         (float)(GetScreenHeight() - 76)});
+        DrawText(tile_type_names[i], i * 64 + 32, GetScreenHeight() - 30, 10,
                  WHITE);
       }
 
@@ -439,6 +467,7 @@ struct App {
       input_window_height.draw();
       input_map_file_name.draw();
       input_tile_value.draw();
+      input_decoration_index.draw();
 
       save_button.draw();
     }
@@ -448,8 +477,10 @@ struct App {
     Vector2 mouse_pos{GetMousePosition()};
     int tile_x = (mouse_pos.x + offsx) / BLOCK_SIZE;
     int tile_y = (mouse_pos.y + offsy) / BLOCK_SIZE;
-    if (mouse_pos.x + (float) offsx < 0.0f) tile_x--;
-    if (mouse_pos.y + (float) offsy < 0.0f) tile_y--;
+    if (mouse_pos.x + (float)offsx < 0.0f)
+      tile_x--;
+    if (mouse_pos.y + (float)offsy < 0.0f)
+      tile_y--;
     return pair<int, int>{tile_x, tile_y};
   }
 
@@ -505,7 +536,9 @@ struct App {
     DrawRectangleRec(frame, color);
   }
 
-  [[nodiscard]] static int tile_count() { return sizeof(tile_types) / sizeof(TileType); }
+  [[nodiscard]] static int tile_count() {
+    return sizeof(tile_types) / sizeof(TileType);
+  }
 
   void save_map() {
     ofstream map_file;
@@ -522,7 +555,9 @@ struct App {
     // Tiles.
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
-        map_file.put((char) (map[y][x].type == TileType::TILE_NULL ? TileType::TILE_AIR : map[y][x].type));
+        map_file.put((char)(map[y][x].type == TileType::TILE_NULL
+                                ? TileType::TILE_AIR
+                                : map[y][x].type));
       }
       map_file.put('\n');
     }
@@ -530,9 +565,14 @@ struct App {
     // Values.
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
-        if (map[y][x].value.empty()) continue;
-
-        map_file << x << "," << y << "," << map[y][x].value << endl;
+        if (!map[y][x].pattern.empty()) {
+          map_file << "pattern," << x << "," << y << "," << map[y][x].pattern
+                   << endl;
+        }
+        if (map[y][x].decoration >= 0) {
+          map_file << "decoration," << x << "," << y << ","
+                   << map[y][x].decoration << endl;
+        }
       }
     }
   }

@@ -50,7 +50,8 @@ std::vector<std::string> split(std::string word, char delim);
 struct TileMeta {
   int x;
   int y;
-  std::string value;
+  std::string pattern{""};
+  int decoration{-1};
 
   explicit TileMeta(std::string raw);
 };

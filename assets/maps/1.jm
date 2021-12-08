@@ -5,5 +5,5 @@
 s.....d...
 gggggggggg
 gggggggggg
-3,1,/HELLO/
-6,3,HELLO
+pattern,3,1,/HELLO/
+pattern,6,3,HELLO
