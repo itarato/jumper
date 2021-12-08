@@ -283,8 +283,14 @@ struct App {
 
     while (getline(map_file, line)) {
       TileMeta tile_meta{line};
-      map[tile_meta.y][tile_meta.x].pattern = tile_meta.pattern;
-      map[tile_meta.y][tile_meta.x].decoration = tile_meta.decoration;
+
+      if (tile_meta.has_pattern()) {
+        map[tile_meta.y][tile_meta.x].pattern = tile_meta.pattern;
+      }
+
+      if (tile_meta.has_decoration()) {
+        map[tile_meta.y][tile_meta.x].decoration = tile_meta.decoration;
+      }
     }
   }
 

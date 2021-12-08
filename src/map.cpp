@@ -103,6 +103,18 @@ void Map::draw(IntVector2D scroll_offset) {
                            (float)(v * BLOCK_SIZE - scroll_offset.y)},
                    asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
       }
+
+      if (tile->decoration >= 0) {
+        std::string image_name{
+            TextFormat(IMG_FORMAT_DECORATION, tile->decoration)};
+        Texture2D* texture = &asset_manager.textures[image_name];
+
+        DrawTexture(*texture,
+                    h * BLOCK_SIZE - scroll_offset.x + (BLOCK_SIZE / 2) -
+                        (texture->width / 2),
+                    (v + 1) * BLOCK_SIZE - scroll_offset.y - texture->height,
+                    WHITE);
+      }
     }
   }
 }
@@ -276,7 +288,14 @@ void Map::load_map(const std::string& file_path) {
 
   while (getline(file, line)) {
     TileMeta tile_meta{line};
-    map[tile_meta.y][tile_meta.x].pattern = tile_meta.pattern;
+
+    if (tile_meta.has_pattern()) {
+      map[tile_meta.y][tile_meta.x].pattern = tile_meta.pattern;
+    }
+
+    if (tile_meta.has_decoration()) {
+      map[tile_meta.y][tile_meta.x].decoration = tile_meta.decoration;
+    }
   }
 
   file.close();

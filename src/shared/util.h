@@ -54,6 +54,9 @@ struct TileMeta {
   int decoration{-1};
 
   explicit TileMeta(std::string raw);
+
+  bool has_pattern() { return !pattern.empty(); }
+  bool has_decoration() { return decoration >= 0; }
 };
 
 void merge_pattern(std::string& base, std::string new_part);
