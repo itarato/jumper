@@ -146,7 +146,7 @@ void StageGame::draw() {
       Rectangle{0.0f, 0.0f, (float)asset_manager.textures[IMG_BACKGROUND].width,
                 (float)asset_manager.textures[IMG_BACKGROUND].height},
       Rectangle{(float)-scroll_offset.x,
-                (float)(GetScreenHeight() -
+                (float)(map.pixel_height() -
                         asset_manager.textures[IMG_BACKGROUND].height -
                         scroll_offset.y),
                 (float)map.pixel_width(),
