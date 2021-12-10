@@ -263,8 +263,20 @@ int SimpleTimer::seconds() const {
   return (int)(finish_time - start_time) % 60;
 }
 
-std::string concat(std::string lhs, std::string rhs) {
-  std::string out{lhs};
-  out.append(rhs);
+std::string concat(const char* s, ...) {
+  std::string out{s};
+
+  va_list args;
+  va_start(args, s);
+
+  for (;;) {
+    std::string next{va_arg(args, const char*)};
+    if (next.empty())
+      break;
+
+    out.append(next);
+  }
+  va_end(args);
+
   return out;
 }

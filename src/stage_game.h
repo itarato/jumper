@@ -73,7 +73,8 @@ struct StageGame : IStage, JumperObserver {
       map_file_paths.push_back(pre_selected_map.value());
     } else {
       for (const auto& file : game_map_files) {
-        map_file_paths.emplace_back(concat(game_config->resource_dir(), file));
+        map_file_paths.emplace_back(
+            concat(game_config->resource_dir().c_str(), file, CONCAT_END));
       }
     }
   };

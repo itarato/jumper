@@ -63,22 +63,27 @@ void App::init() {
   for (auto& image : images) {
     asset_manager.textures.insert(
         {image,
-         LoadTexture(concat(game_config.resource_dir(), image).c_str())});
+         LoadTexture(concat(game_config.resource_dir().c_str(), "/images/",
+                            game_config.image_theme().c_str(), "/",
+                            image.c_str(), CONCAT_END)
+                         .c_str())});
   }
 
   asset_manager.fonts.insert(
-      {FONT_SMALL,
-       LoadFontEx(
-           concat(game_config.resource_dir(), FONT_FIRA_BOLD_SRC).c_str(), 12,
-           nullptr, 255)});
+      {FONT_SMALL, LoadFontEx(concat(game_config.resource_dir().c_str(),
+                                     FONT_FIRA_BOLD_SRC, CONCAT_END)
+                                  .c_str(),
+                              12, nullptr, 255)});
   asset_manager.fonts.insert(
-      {FONT_MEDIUM,
-       LoadFontEx(concat(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 20,
-                  nullptr, 255)});
+      {FONT_MEDIUM, LoadFontEx(concat(game_config.resource_dir().c_str(),
+                                      FONT_FIRA_SRC, CONCAT_END)
+                                   .c_str(),
+                               20, nullptr, 255)});
   asset_manager.fonts.insert(
-      {FONT_LARGE,
-       LoadFontEx(concat(game_config.resource_dir(), FONT_FIRA_SRC).c_str(), 64,
-                  nullptr, 255)});
+      {FONT_LARGE, LoadFontEx(concat(game_config.resource_dir().c_str(),
+                                     FONT_FIRA_SRC, CONCAT_END)
+                                  .c_str(),
+                              64, nullptr, 255)});
 }
 
 void App::loop() {

@@ -14,6 +14,7 @@ struct GameConfig {
   int window_height();
   bool is_fullscreen();
   std::string resource_dir();
+  std::string image_theme();
 
   std::optional<std::string> selected_map();
 

@@ -16,6 +16,8 @@
 #define LOG_WARN(...) log(LOG_LEVEL_WARNING, __VA_ARGS__)
 #define LOG_ERR(...) log(LOG_LEVEL_ERROR, __VA_ARGS__)
 
+#define CONCAT_END ""
+
 typedef enum {
   LOG_LEVEL_INFO = 0,
   LOG_LEVEL_WARNING = 1,
@@ -136,4 +138,4 @@ struct OneTimeBool {
   }
 };
 
-std::string concat(std::string lhs, std::string rhs);
+std::string concat(const char* s, ...);

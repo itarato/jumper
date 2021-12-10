@@ -21,6 +21,10 @@ std::string GameConfig::resource_dir() {
   return argmap[ASSETS_PATH_KEY];
 }
 
+std::string GameConfig::image_theme() {
+  return "default";
+}
+
 template <class Out>
 Out GameConfig::arg_val_or_default(const char* key,
                                    Out def,
