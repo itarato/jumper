@@ -229,8 +229,7 @@ std::map<std::string, std::string> parse_args(int argc, char** argv) {
       prepare_key.erase(0, 1);
       key_is_prepared = true;
     } else {
-      fprintf(stderr, "Unsupported argument format");
-      exit(EXIT_FAILURE);
+      PANIC("Unsupported argument format");
     }
   }
 

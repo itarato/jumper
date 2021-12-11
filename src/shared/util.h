@@ -18,10 +18,10 @@
 
 #define CONCAT_END ""
 
-#define PANIC(str)        \
-  {                       \
-    fprintf(stderr, str); \
-    exit(EXIT_FAILURE);   \
+#define PANIC(...)                \
+  {                               \
+    fprintf(stderr, __VA_ARGS__); \
+    exit(EXIT_FAILURE);           \
   }
 
 typedef enum {

@@ -252,8 +252,7 @@ void Map::load_map(const std::string& file_path) {
   map.clear();
 
   if (!file.is_open()) {
-    fprintf(stderr, "Failed opening map file %s", file_path.c_str());
-    exit(EXIT_FAILURE);
+    PANIC("Failed opening map file %s", file_path.c_str());
   }
 
   if (!getline(file, line)) {
