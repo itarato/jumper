@@ -304,6 +304,11 @@ std::map<std::string, std::string> read_conf(std::string file_name) {
   std::string line{};
 
   while (getline(file, line)) {
+    // If comment line or empty - skip.
+    if (line[0] == '#' && line.empty()) {
+      continue;
+    }
+
     std::vector<std::string> parts{split(std::move(line), ' ')};
 
     if (parts.size() != 2 && parts[0].empty()) {

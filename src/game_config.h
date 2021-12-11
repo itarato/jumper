@@ -4,6 +4,8 @@
 #include <optional>
 #include <string>
 
+// Fixme: setup instance vars instead of a map lookup in each iteration.
+
 struct GameConfig {
   std::map<std::string, std::string> argmap;
 
