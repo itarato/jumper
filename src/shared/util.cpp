@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <filesystem>
+#include <fstream>
 
 #include "shared_defines.h"
 
@@ -197,28 +198,32 @@ void merge_pattern(std::string& base, std::string new_part) {
 
 /**
  * Expected argument format:
- * ./binary -value_argument value flagargument ...
- *
- * @param argc
- * @param argv
- * @return
+ * ./binary -value_argument value
+ * or
+ * ./binary conf_file
  */
 std::map<std::string, std::string> parse_args(int argc, char** argv) {
   std::map<std::string, std::string> out{};
 
-  std::string prepare_key;
-  bool key_is_prepared = false;
-  for (int i = 1; i < argc; i++) {
-    if (key_is_prepared) {
-      std::string val{argv[i]};
-      out.insert({prepare_key, val});
-      key_is_prepared = false;
-    } else if (argv[i][0] == '-') {
-      prepare_key = argv[i];
-      prepare_key.erase(0, 1);
-      key_is_prepared = true;
-    } else {
-      out.insert({argv[i], ""});
+  if (argc == 2) {
+    // One argument means a config file.
+    out = read_conf(argv[1]);
+  } else {
+    std::string prepare_key;
+    bool key_is_prepared = false;
+    for (int i = 1; i < argc; i++) {
+      if (key_is_prepared) {
+        std::string val{argv[i]};
+        out.insert({prepare_key, val});
+        key_is_prepared = false;
+      } else if (argv[i][0] == '-') {
+        prepare_key = argv[i];
+        prepare_key.erase(0, 1);
+        key_is_prepared = true;
+      } else {
+        fprintf(stderr, "Unsupported argument format");
+        exit(EXIT_FAILURE);
+      }
     }
   }
 
@@ -277,6 +282,31 @@ std::string concat(const char* s, ...) {
     out.append(next);
   }
   va_end(args);
+
+  return out;
+}
+
+std::map<std::string, std::string> read_conf(const char* file_name) {
+  std::map<std::string, std::string> out{};
+
+  std::ifstream file{file_name};
+  if (!file.is_open()) {
+    PANIC("Cannot open conf file\n");
+  }
+
+  std::string line{};
+
+  while (getline(file, line)) {
+    std::vector<std::string> parts{split(std::move(line), ' ')};
+
+    if (parts.size() != 2 && parts[0].empty()) {
+      PANIC("Invalid setting in conf file\n");
+    }
+
+    out.insert({parts[0], parts[1]});
+  }
+
+  file.close();
 
   return out;
 }

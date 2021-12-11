@@ -18,6 +18,12 @@
 
 #define CONCAT_END ""
 
+#define PANIC(str)        \
+  {                       \
+    fprintf(stderr, str); \
+    exit(EXIT_FAILURE);   \
+  }
+
 typedef enum {
   LOG_LEVEL_INFO = 0,
   LOG_LEVEL_WARNING = 1,
@@ -142,3 +148,5 @@ struct OneTimeBool {
  * Must end with empty string ("").
  */
 std::string concat(const char* s, ...);
+
+std::map<std::string, std::string> read_conf(const char* file_name);
