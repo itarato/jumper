@@ -47,4 +47,4 @@ Or compatible gamepad controller (eg XBox).
 
 ---
 
-Design credit to [Sandor Horvath](https://www.behance.net/lexdraw/appreciated)
+Wild west theme design credit to [Sandor Horvath](https://www.behance.net/lexdraw/appreciated)
