@@ -19,6 +19,7 @@ void Enemy::draw(IntVector2D scroll_offset) {
     color = Fade(WHITE, paralyzed_phaser.value());
   }
 
+  // Todo: Use the chaser enemy texture.
   DrawTexture(asset_manager.textures[IMG_ENEMY], (int)frame.x - scroll_offset.x,
               (int)frame.y - scroll_offset.y, color);
 }
