@@ -138,4 +138,7 @@ struct OneTimeBool {
   }
 };
 
+/**
+ * Must end with empty string ("").
+ */
 std::string concat(const char* s, ...);
