@@ -73,7 +73,7 @@ void StageGame::update() {
         jumper.activate_shield();
 
         explosions.push_back(
-            std::make_unique<Explosion>(jumper.frame, 8, GREEN));
+            std::make_unique<Explosion>(jumper.frame, 8, MAGENTA));
       }
     }
 
