@@ -29,6 +29,8 @@ void Jumper::update(Map* map) {
     {  // Horizontal movement.
       float h_force{get_horizontal_axis()};
       if (h_force < 0.0f) {
+        is_facing_right = false;
+
         v.x = std::min(JUMPER_HMOVE_V * h_force, v.x * FRICTION);
 
         if (is_key_pressed(KEY_LEFT_CONTROL)) {
@@ -36,6 +38,8 @@ void Jumper::update(Map* map) {
           JumperSubject::notify_all(JumperEvent::Dash, JumperEventData{&frame});
         }
       } else if (h_force > 0.0f) {
+        is_facing_right = true;
+
         v.x = std::max(JUMPER_HMOVE_V * h_force, v.x * FRICTION);
 
         if (is_key_pressed(KEY_LEFT_CONTROL)) {
@@ -215,7 +219,6 @@ void Jumper::draw(IntVector2D scroll_offset) {
     move_sprite.progress();
   }
 
-  is_facing_right = v.x >= 0.0f;
   Rectangle draw_frame{0.0f, 0.0f, is_facing_right ? -frame.width : frame.width,
                        frame.height};
 
@@ -242,6 +245,7 @@ void Jumper::init(Vector2 start_pos) {
   frame.height = JUMPER_HEIGHT;
 
   is_facing_right = true;
+  is_pooping.reset();
 
   v.x = 0.0f;
   v.y = 0.0f;

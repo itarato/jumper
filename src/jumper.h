@@ -97,7 +97,7 @@ struct Jumper : JumperSubject {
   Rectangle frame;
   Vector2 v;
   VerticalState vstate;
-  bool is_facing_right;
+  bool is_facing_right{true};
   Sprite move_sprite;
   Sprite stand_sprite;
   Sprite fly_sprite;

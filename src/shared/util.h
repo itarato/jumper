@@ -143,6 +143,8 @@ struct OneTimeBool {
     b = false;
     return old;
   }
+
+  void reset() { b = false; }
 };
 
 /**
