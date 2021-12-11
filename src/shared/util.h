@@ -31,6 +31,7 @@ typedef enum {
 } LogLevelT;
 
 int convert_string_to_int(std::string s);
+unsigned long convert_string_to_ulong(std::string s);
 
 void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
@@ -149,4 +150,4 @@ struct OneTimeBool {
  */
 std::string concat(const char* s, ...);
 
-std::map<std::string, std::string> read_conf(const char* file_name);
+std::map<std::string, std::string> read_conf(std::string file_name);

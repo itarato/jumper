@@ -39,6 +39,10 @@ int convert_string_to_int(std::string s) {
   return std::stoi(s);
 }
 
+unsigned long convert_string_to_ulong(std::string s) {
+  return std::stoul(s);
+}
+
 bool in_range(int number, int min, int max) {
   return number >= min && number <= max;
 }
@@ -205,25 +209,28 @@ void merge_pattern(std::string& base, std::string new_part) {
 std::map<std::string, std::string> parse_args(int argc, char** argv) {
   std::map<std::string, std::string> out{};
 
-  if (argc == 2) {
-    // One argument means a config file.
-    out = read_conf(argv[1]);
-  } else {
-    std::string prepare_key;
-    bool key_is_prepared = false;
-    for (int i = 1; i < argc; i++) {
-      if (key_is_prepared) {
-        std::string val{argv[i]};
-        out.insert({prepare_key, val});
-        key_is_prepared = false;
-      } else if (argv[i][0] == '-') {
-        prepare_key = argv[i];
-        prepare_key.erase(0, 1);
-        key_is_prepared = true;
+  std::string prepare_key;
+  bool key_is_prepared = false;
+  for (int i = 1; i < argc; i++) {
+    if (key_is_prepared) {
+      std::string val{argv[i]};
+
+      if (prepare_key == "conf") {
+        auto configuration = read_conf(val);
+        for (auto [k, v] : configuration) {
+          out.insert_or_assign(k, v);
+        }
       } else {
-        fprintf(stderr, "Unsupported argument format");
-        exit(EXIT_FAILURE);
+        out.insert({prepare_key, val});
       }
+      key_is_prepared = false;
+    } else if (argv[i][0] == '-') {
+      prepare_key = argv[i];
+      prepare_key.erase(0, 1);
+      key_is_prepared = true;
+    } else {
+      fprintf(stderr, "Unsupported argument format");
+      exit(EXIT_FAILURE);
     }
   }
 
@@ -286,7 +293,7 @@ std::string concat(const char* s, ...) {
   return out;
 }
 
-std::map<std::string, std::string> read_conf(const char* file_name) {
+std::map<std::string, std::string> read_conf(std::string file_name) {
   std::map<std::string, std::string> out{};
 
   std::ifstream file{file_name};

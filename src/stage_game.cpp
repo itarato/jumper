@@ -1,5 +1,6 @@
 #include "stage_game.h"
 
+#include <algorithm>
 #include <cmath>
 #include <memory>
 
@@ -138,20 +139,30 @@ void StageGame::draw() {
                                (int)jumper.frame.y - v_offs_padding);
   }
 
+  // Full background color.
   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKGRAY);
+  // Play area background color.
   DrawRectangle(-scroll_offset.x, -scroll_offset.y, map.pixel_width(),
-                map.pixel_height(), GetColor(0xC4BEB6FF));
-  DrawTextureTiled(
-      asset_manager.textures[IMG_BACKGROUND],
-      Rectangle{0.0f, 0.0f, (float)asset_manager.textures[IMG_BACKGROUND].width,
-                (float)asset_manager.textures[IMG_BACKGROUND].height},
-      Rectangle{(float)-scroll_offset.x,
-                (float)(map.pixel_height() -
-                        asset_manager.textures[IMG_BACKGROUND].height -
-                        scroll_offset.y),
-                (float)map.pixel_width(),
-                (float)asset_manager.textures[IMG_BACKGROUND].height},
-      Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+                map.pixel_height(), GetColor(game_config->background_color()));
+  if (game_config->is_background_image()) {
+    // Play area tile.
+    DrawTextureTiled(
+        asset_manager.textures[IMG_BACKGROUND],
+        Rectangle{0.0f, 0.0f,
+                  (float)asset_manager.textures[IMG_BACKGROUND].width,
+                  (float)asset_manager.textures[IMG_BACKGROUND].height},
+        Rectangle{
+            (float)-scroll_offset.x,
+            (float)(map.pixel_height() -
+                    std::min(
+                        (float)map.pixel_height(),
+                        (float)asset_manager.textures[IMG_BACKGROUND].height) -
+                    scroll_offset.y),
+            (float)map.pixel_width(),
+            std::min((float)map.pixel_height(),
+                     (float)asset_manager.textures[IMG_BACKGROUND].height)},
+        Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+  }
 
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);

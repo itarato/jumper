@@ -15,6 +15,10 @@ struct GameConfig {
   bool is_fullscreen();
   std::string resource_dir();
   std::string image_theme();
+  unsigned long background_color();
+  bool is_background_image();
+  bool is_background_horizontal_tile();
+  bool is_background_full_tile();
 
   std::optional<std::string> selected_map();
 

@@ -29,6 +29,29 @@ std::string GameConfig::image_theme() {
   return "default";
 }
 
+unsigned long GameConfig::background_color() {
+  return arg_val_or_default("background_color", (unsigned long)0xFAFAFAFF,
+                            convert_string_to_ulong);
+}
+
+bool GameConfig::is_background_image() {
+  return argmap.contains("background_image");
+}
+
+bool GameConfig::is_background_horizontal_tile() {
+  if (!argmap.contains("background_tile")) {
+    return false;
+  }
+  return argmap["background_tile"] == "horizontal";
+}
+
+bool GameConfig::is_background_full_tile() {
+  if (!argmap.contains("background_tile")) {
+    return false;
+  }
+  return argmap["background_tile"] == "full";
+}
+
 template <class Out>
 Out GameConfig::arg_val_or_default(const char* key,
                                    Out def,
