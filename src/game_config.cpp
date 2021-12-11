@@ -22,6 +22,10 @@ std::string GameConfig::resource_dir() {
 }
 
 std::string GameConfig::image_theme() {
+  auto it = argmap.find("theme");
+  if (it != argmap.end())
+    return it->second;
+
   return "default";
 }
 
