@@ -110,6 +110,8 @@ struct Jumper : JumperSubject {
   Pooper pooper{};
   Phaser shade_phaser{0.0f, 255.0f, 0.5f};
   OneTimeBool is_pooping{};
+  Countdown shield_countdown{180};
+  Phaser shield_phaser{0.2f, 0.6f, 0.8f};
 
   void draw(IntVector2D scroll_offset);
   void update(Map* map);
@@ -120,6 +122,8 @@ struct Jumper : JumperSubject {
   [[nodiscard]] bool is_dead() const;
   [[nodiscard]] bool is_alive() const;
   void kill();
+  void activate_shield();
+  bool is_shielded();
 
   Jumper();
 };

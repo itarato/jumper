@@ -66,6 +66,23 @@ void StageGame::update() {
                 coins.end());
   }
 
+  {  // Shield collection.
+    for (auto& shield : shields) {
+      if (CheckCollisionRecs(shield.frame, jumper.frame)) {
+        shield.is_collected = true;
+        jumper.activate_shield();
+
+        explosions.push_back(
+            std::make_unique<Explosion>(jumper.frame, 8, GREEN));
+      }
+    }
+
+    // Fixme: delegate these to a helper.
+    shields.erase(std::remove_if(shields.begin(), shields.end(),
+                                 [](const auto& e) { return e.is_collected; }),
+                  shields.end());
+  }
+
   {  // Completion checks.
     if (state == GAME_STATE_PLAY) {
       if (jumper.frame.y >= (float)map.pixel_height() || jumper.is_dead()) {
@@ -85,9 +102,11 @@ void StageGame::update() {
           timer.stop();
         }
 
-        for (Enemy& enemy : enemies) {
-          if (CheckCollisionRecs(jumper.frame, enemy.frame)) {
-            jumper.kill();
+        if (!jumper.is_shielded()) {
+          for (Enemy& enemy : enemies) {
+            if (CheckCollisionRecs(jumper.frame, enemy.frame)) {
+              jumper.kill();
+            }
           }
         }
       }
@@ -173,6 +192,8 @@ void StageGame::draw() {
     poop.draw(scroll_offset);
   for (auto& enemy : enemies)
     enemy.draw(scroll_offset);
+  for (auto& shield : shields)
+    shield.draw(scroll_offset);
 
   {  // Particles
     for (auto& explosion : explosions)
@@ -246,6 +267,7 @@ void StageGame::init_level() {
   coins.clear();
   explosions.clear();
   poops.clear();
+  shields.clear();
 
   auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
   for (auto enemy_block_coord : random_enemies) {
@@ -270,6 +292,12 @@ void StageGame::init_level() {
   for (auto coin_coord : coin_coords) {
     coins.emplace_back(Vector2{(float)(coin_coord.x * BLOCK_SIZE),
                                (float)(coin_coord.y * BLOCK_SIZE)});
+  }
+
+  auto shield_coords = map.coords_of_tile_type(TILE_SHIELD);
+  for (auto shield_coord : shield_coords) {
+    shields.emplace_back(Vector2{(float)(shield_coord.x * BLOCK_SIZE),
+                                 (float)(shield_coord.y * BLOCK_SIZE)});
   }
 
   timer.start();

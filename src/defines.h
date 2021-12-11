@@ -43,6 +43,7 @@
 #define IMG_DECORATION_0 "decoration_0.png"
 #define IMG_DECORATION_1 "decoration_1.png"
 #define IMG_DECORATION_2 "decoration_2.png"
+#define IMG_SHIELD "shield.png"
 
 #define IMG_FORMAT_DECORATION "decoration_%d.png"
 

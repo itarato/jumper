@@ -195,6 +195,8 @@ void Jumper::update(Map* map) {
         pooper.reset();
       }
     }
+
+    shield_countdown.tick();
   } else if (state == JumperState::Dying) {
     dying_fade -= 0.01f;
     dying_rot += 8.0f;
@@ -224,13 +226,20 @@ void Jumper::draw(IntVector2D scroll_offset) {
 
   if (state == JumperState::Normal) {
     Color color{WHITE};
+    float fade{1.0f};
+
     if (is_pooping.get()) {
       color.r = (uint8_t)shade_phaser.value();
-      shade_phaser.step();
     }
+
+    if (!shield_countdown.is_completed()) {
+      fade = shield_countdown.get() < 90 ? shield_phaser.value() : 0.2f;
+    }
+
     DrawTextureRec(
         asset_manager.textures[image_name], draw_frame,
-        Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y}, color);
+        Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y},
+        Fade(color, fade));
   } else if (state == JumperState::Dying) {
     DrawTextureEx(asset_manager.textures[image_name],
                   Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y},
@@ -279,4 +288,12 @@ bool Jumper::is_alive() const {
 void Jumper::kill() {
   state = JumperState::Dying;
   JumperSubject::notify_all(JumperEvent::Die, JumperEventData{&frame});
+}
+
+void Jumper::activate_shield() {
+  shield_countdown.reset();
+}
+
+bool Jumper::is_shielded() {
+  return !shield_countdown.is_completed();
 }

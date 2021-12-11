@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "asset_manager.h"
-#include "coin.h"
+#include "collectible.h"
 #include "enemy.h"
 #include "game_config.h"
 #include "jumper.h"
@@ -41,6 +41,7 @@ struct StageGame : IStage, JumperObserver {
   std::vector<Enemy> enemies;
   std::vector<Coin> coins;
   std::vector<Poop> poops;
+  std::vector<Shield> shields;
   int score;
 
   Text victory_text;

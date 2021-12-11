@@ -70,6 +70,10 @@ struct TileMeta {
 
 void merge_pattern(std::string& base, std::string new_part);
 
+/**
+ * High precision timer to measure time spent on execution.
+ * Used for debugging.
+ */
 struct DebugTimer {
   std::chrono::time_point<std::chrono::system_clock> _tick{};
 
@@ -91,6 +95,9 @@ struct DebugTimer {
   }
 };
 
+/**
+ * Debugger ticker that can count occurrances of events.
+ */
 struct Ticker {
   uint64_t _tick{0};
 
@@ -103,6 +110,9 @@ struct Ticker {
 
 std::map<std::string, std::string> parse_args(int argc, char** argv);
 
+/**
+ * Simple minute + second timer.
+ */
 struct SimpleTimer {
   double start_time{0.0f};
   double end_time{0.0f};
@@ -116,6 +126,9 @@ struct SimpleTimer {
   [[nodiscard]] int seconds() const;
 };
 
+/**
+ * Provides a sin-modulated value in a range without an end.
+ */
 struct Phaser {
   float phase{0.0f};
   float min{0.0f};
@@ -126,13 +139,17 @@ struct Phaser {
   Phaser(float min, float max, float speed = 0.2f)
       : min(min), max(max), speed(speed) {}
 
-  void step() { phase += speed; }
-
-  [[nodiscard]] float value() const {
-    return ((sinf(phase) + 1.0f) * (max - min)) / 2.0f + min;
+  [[nodiscard]] float value() {
+    float out{((sinf(phase) + 1.0f) * (max - min)) / 2.0f + min};
+    phase += speed;
+    return out;
   }
 };
 
+/**
+ * A boolean that can be read as true only once - and then it immediately turns
+ * to false.
+ */
 struct OneTimeBool {
   bool b{false};
 
@@ -145,6 +162,26 @@ struct OneTimeBool {
   }
 
   void reset() { b = false; }
+};
+
+/**
+ * Provides a countdown feature.
+ */
+struct Countdown {
+  const uint32_t frames;
+  uint32_t counter{0};
+
+  Countdown(uint32_t frames) : frames(frames) {}
+
+  void reset() { counter = frames; }
+  bool is_completed() const { return counter == 0; }
+  void tick() {
+    if (is_completed())
+      return;
+
+    counter--;
+  }
+  uint32_t get() const { return counter; }
 };
 
 /**

@@ -28,6 +28,7 @@ void App::init() {
              is_fullscreen ? 0 : game_config.window_height(), "Jumper");
   SetTargetFPS(60);
 
+  // Fixme: autodiscovery for all images.
   std::vector<std::string> images{IMG_GROUND,
                                   IMG_ENEMY,
                                   IMG_COIN,
@@ -58,7 +59,8 @@ void App::init() {
                                   IMG_BACKGROUND,
                                   IMG_DECORATION_0,
                                   IMG_DECORATION_1,
-                                  IMG_DECORATION_2};
+                                  IMG_DECORATION_2,
+                                  IMG_SHIELD};
 
   for (auto& image : images) {
     asset_manager.textures.insert(

@@ -11,8 +11,8 @@ gg.ggg..gg..ggg..gggg..*..ggg.*.gg.g....
 ......gggg..ggg...........g.gg*.g.gggg..
 ........g..*gs......*...rgg.g.*.g..g....
 g.......g...gggggggggggggg..g.*.gg.g.g..
-gggggg..g...*grg...*...*....g.*gg..g.g..
-........g.gggg.g.gggggggggg.g.*.g.gg.g..
+gggggg..g...*grg...*...*.o..g.*gg..g.g..
+........g.ggggmg.gggggggggg.g.*.g.gg.g..
 ........g....g...gt......tg.g.*.g..g.g..
 ...gggg.g.g..ggggg........gtgg*.gg.g.g..
 ..ggttggggg..gr.r.........ggg.*.g..grg..
@@ -29,5 +29,6 @@ decoration,18,10,1
 decoration,22,10,2
 pattern,24,10,/AB
 pattern,14,12,BA/
+pattern,16,16,[CLR]
 decoration,17,18,2
 decoration,25,18,2

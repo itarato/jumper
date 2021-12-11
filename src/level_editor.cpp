@@ -23,21 +23,14 @@
 
 using namespace std;
 
-static const char* decoration_images[] = {
-    "assets/images/decoration_0.png",
-    "assets/images/decoration_1.png",
-};
-
 static const TileType tile_types[] = {
     TILE_NULL,  TILE_AIR,          TILE_GROUND,       TILE_START,
     TILE_END,   TILE_ENEMY_RANDOM, TILE_ENEMY_CHASER, TILE_COIN,
-    TILE_REGEX, TILE_DOOR,         TILE_TRAP,
-};
+    TILE_REGEX, TILE_DOOR,         TILE_TRAP,         TILE_SHIELD};
 
 static const char* tile_type_names[] = {
     "NULL",     "Air",  "Ground", "Start", "End",  "EnemyRnd",
-    "EnemyCsr", "Coin", "Regex",  "Door",  "Trap",
-};
+    "EnemyCsr", "Coin", "Regex",  "Door",  "Trap", "Shield"};
 
 char char_shift_version(char ch) {
   switch (ch) {
@@ -535,6 +528,9 @@ struct App {
         break;
       case TILE_TRAP:
         color = PURPLE;
+        break;
+      case TILE_SHIELD:
+        color = VIOLET;
         break;
       default:
         break;

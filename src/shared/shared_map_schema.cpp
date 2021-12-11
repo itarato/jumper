@@ -33,6 +33,8 @@ TileType char_to_tile_type(char ch) {
       return TILE_DOOR;
     case 't':
       return TILE_TRAP;
+    case 'o':
+      return TILE_SHIELD;
     default:
       return TILE_NULL;
   }
