@@ -257,15 +257,13 @@ void Map::load_map(const std::string& file_path) {
   }
 
   if (!getline(file, line)) {
-    fprintf(stderr, "Cannot find height");
-    exit(EXIT_FAILURE);
+    PANIC("Cannot find height");
   }
   block_height = std::stoi(line.c_str());
 
   for (size_t i = 0; i < block_height; i++) {
     if (!getline(file, line)) {
-      fprintf(stderr, "Incomplete map");
-      exit(EXIT_FAILURE);
+      PANIC("Incomplete map");
     }
 
     printf("Read map: %s\n", line.c_str());
@@ -318,8 +316,7 @@ void Map::load_map(const std::string& file_path) {
 
 bool Map::is_solid_tile(IntVector2D coord) const {
   if (!is_inside_map(coord)) {
-    fprintf(stderr, "Map::is_solid_tile out of bounds");
-    exit(EXIT_FAILURE);
+    PANIC("Map::is_solid_tile out of bounds");
   }
 
   return map[coord.y][coord.x].is_solid();
