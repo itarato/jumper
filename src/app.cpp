@@ -1,6 +1,5 @@
 #include "app.h"
 
-#include <ranges>
 #include <string>
 
 #include "asset_manager.h"
@@ -13,9 +12,9 @@ App::App(std::map<std::string, std::string> argmap)
     : game_config(std::move(argmap)) {}
 
 App::~App() {
-  for (auto& stage : stages | std::views::values) {
-    delete stage;
-    stage = nullptr;
+  for (auto& stage_pair : stages) {
+    delete stage_pair.second;
+    stage_pair.second = nullptr;
   }
 }
 

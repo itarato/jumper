@@ -4,15 +4,14 @@
 #include <cstring>
 #include <filesystem>
 #include <iostream>
-#include <ranges>
 
 AssetManager::~AssetManager() {
-  for (auto& texture : textures | std::views::values)
-    UnloadTexture(texture);
+  for (auto& texture_pair : textures)
+    UnloadTexture(texture_pair.second);
   textures.clear();
 
-  for (auto& font : fonts | std::views::values)
-    UnloadFont(font);
+  for (auto& font_pair : fonts)
+    UnloadFont(font_pair.second);
   fonts.clear();
 }
 
