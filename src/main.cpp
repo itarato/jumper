@@ -3,8 +3,6 @@
  *
  * Features:
  * - score save (to file)
- * - add sprite lenght discovery
- *   - after this add auto load images
  *
  * Optional features:
  * - make pooping that attracts enemies for a bit:

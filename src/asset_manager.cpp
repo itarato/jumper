@@ -26,14 +26,23 @@ std::vector<Texture2D*> AssetManager::texture_list(
 
     sprintf(file_name, file_name_format, i);
 
-    if (!textures.contains(file_name)) {
+    if (!textures.contains(file_name))
       break;
-    }
 
     out.emplace_back(&textures[file_name]);
   }
 
   return out;
+}
+
+void AssetManager::preload_textures(std::string folder) {
+  for (auto const& file_path : std::filesystem::directory_iterator{folder}) {
+    if (file_path.path().extension() != ".png")
+      continue;
+
+    textures.insert({file_path.path().filename(),
+                     LoadTexture(file_path.path().string().c_str())});
+  }
 }
 
 AssetManager asset_manager = AssetManager();

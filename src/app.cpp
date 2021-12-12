@@ -28,33 +28,9 @@ void App::init() {
              is_fullscreen ? 0 : game_config.window_height(), "Jumper");
   SetTargetFPS(60);
 
-  // Fixme: autodiscovery for all images.
-  std::vector<std::string> images{IMG_GROUND,          IMG_ENEMY,
-                                  IMG_ENEMY_CHASER,    IMG_COIN,
-                                  IMG_LADYBUG_STAND_0, IMG_LADYBUG_STAND_1,
-                                  IMG_LADYBUG_STAND_2, IMG_LADYBUG_STAND_3,
-                                  IMG_LADYBUG_MOVE_0,  IMG_LADYBUG_MOVE_1,
-                                  IMG_LADYBUG_MOVE_2,  IMG_LADYBUG_MOVE_3,
-                                  IMG_LADYBUG_FLY_0,   IMG_LADYBUG_FLY_1,
-                                  IMG_DOOR_OPEN,       IMG_DOOR_CLOSE,
-                                  IMG_DOOR_CLOSE_0,    IMG_DOOR_CLOSE_1,
-                                  IMG_DOOR_CLOSE_2,    IMG_DOOR_CLOSE_3,
-                                  IMG_DOOR_CLOSE_4,    IMG_DOOR_CLOSE_5,
-                                  IMG_DOOR_CLOSE_6,    IMG_DOOR_CLOSE_7,
-                                  IMG_REGEX,           IMG_END,
-                                  IMG_SPIKE,           IMG_POOP,
-                                  IMG_BACKGROUND,      IMG_DECORATION_0,
-                                  IMG_DECORATION_1,    IMG_DECORATION_2,
-                                  IMG_SHIELD};
-
-  for (auto& image : images) {
-    asset_manager.textures.insert(
-        {image,
-         LoadTexture(concat(game_config.resource_dir().c_str(), "/images/",
-                            game_config.image_theme().c_str(), "/",
-                            image.c_str(), CONCAT_END)
-                         .c_str())});
-  }
+  asset_manager.preload_textures(
+      concat(game_config.resource_dir().c_str(), "/images/",
+             game_config.image_theme().c_str(), "/", CONCAT_END));
 
   asset_manager.fonts.insert(
       {FONT_SMALL, LoadFontEx(concat(game_config.resource_dir().c_str(),
