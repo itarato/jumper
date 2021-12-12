@@ -15,6 +15,7 @@
 #define IMG_GROUND "ground.png"
 #define IMG_BACKGROUND "background.png"
 #define IMG_ENEMY "enemy.png"
+#define IMG_ENEMY_CHASER "enemy_chaser.png"
 #define IMG_COIN "coin.png"
 #define IMG_LADYBUG_STAND_0 "ladybug_stand_0.png"
 #define IMG_LADYBUG_STAND_1 "ladybug_stand_1.png"

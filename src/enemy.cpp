@@ -1,6 +1,5 @@
 #include "enemy.h"
 
-#include "asset_manager.h"
 #include "defines.h"
 #include "shared/util.h"
 
@@ -20,9 +19,11 @@ void Enemy::draw(IntVector2D scroll_offset) {
   }
 
   // Todo: Use the chaser enemy texture.
-  DrawTexture(asset_manager.textures[IMG_ENEMY], (int)frame.x - scroll_offset.x,
+  DrawTexture(*texture, (int)frame.x - scroll_offset.x,
               (int)frame.y - scroll_offset.y, color);
 }
 
-Enemy::Enemy(Rectangle frame, std::unique_ptr<IWalker> walker)
-    : frame(frame), walker(std::move(walker)) {}
+Enemy::Enemy(Rectangle frame,
+             std::unique_ptr<IWalker> walker,
+             Texture2D* texture)
+    : frame(frame), walker(std::move(walker)), texture(texture) {}

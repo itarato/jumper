@@ -274,7 +274,8 @@ void StageGame::init_level() {
     enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
                                    (float)(enemy_block_coord.y * BLOCK_SIZE),
                                    (float)BLOCK_SIZE, (float)BLOCK_SIZE},
-                         std::make_unique<RandomWalker>(&map));
+                         std::make_unique<RandomWalker>(&map),
+                         &asset_manager.textures[IMG_ENEMY]);
   }
 
   auto chaser_enemies = map.coords_of_tile_type(TILE_ENEMY_CHASER);
@@ -282,7 +283,8 @@ void StageGame::init_level() {
     enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
                                    (float)(enemy_block_coord.y * BLOCK_SIZE),
                                    (float)BLOCK_SIZE, (float)BLOCK_SIZE},
-                         std::make_unique<StrictPathChaseWalker>(&map));
+                         std::make_unique<StrictPathChaseWalker>(&map),
+                         &asset_manager.textures[IMG_ENEMY_CHASER]);
   }
 
   for (Enemy& enemy : enemies)
