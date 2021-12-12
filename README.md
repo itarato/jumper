@@ -26,10 +26,13 @@ Nonsense ladybug regex builder game.
 
 ### Runtime options
 
-- `-width INT` window width
-- `-height INT` window height
-- `fullscreen` full screen (no dash)
-- `-map STRING` relative path to map file (to force one)
+Configuration can be either added as command line arguments or a configuration file - or mixed (last one overrides).
+
+```bash
+$> ./jumper -conf default.conf -width 1280
+```
+
+For configuration options see [example.conf](./example.conf).
 
 ### Control
 

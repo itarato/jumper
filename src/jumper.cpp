@@ -260,6 +260,7 @@ void Jumper::init(Vector2 start_pos) {
   v.y = 0.0f;
 
   regex_raw.clear();
+  shield_countdown.cancel();
 
   state = JumperState::Normal;
 

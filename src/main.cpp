@@ -2,7 +2,6 @@
  * Jumper
  *
  * Features:
- * - invisibility - that saves from enemy
  * - score save (to file)
  * - add sprite lenght discovery
  *

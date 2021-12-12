@@ -174,6 +174,7 @@ struct Countdown {
   Countdown(uint32_t frames) : frames(frames) {}
 
   void reset() { counter = frames; }
+  void cancel() { counter = 0; }
   bool is_completed() const { return counter == 0; }
   void tick() {
     if (is_completed())

@@ -80,7 +80,7 @@ struct Tile {
     if (type == TILE_GROUND) {
       auto _texture_provider = std::make_shared<SingleTextureProvider>(
           &asset_manager.textures[IMG_GROUND]);
-      _texture_provider->set_fade(randf(0.7f, 1.0f));
+      _texture_provider->set_fade(randf(0.8f, 1.0f));
 
       texture_provider = _texture_provider;
     } else if (type == TILE_END) {

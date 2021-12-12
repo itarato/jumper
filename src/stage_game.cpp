@@ -163,24 +163,35 @@ void StageGame::draw() {
   // Play area background color.
   DrawRectangle(-scroll_offset.x, -scroll_offset.y, map.pixel_width(),
                 map.pixel_height(), GetColor(game_config->background_color()));
+  // Play area tile.
   if (game_config->is_background_image()) {
-    // Play area tile.
-    DrawTextureTiled(
-        asset_manager.textures[IMG_BACKGROUND],
-        Rectangle{0.0f, 0.0f,
-                  (float)asset_manager.textures[IMG_BACKGROUND].width,
-                  (float)asset_manager.textures[IMG_BACKGROUND].height},
-        Rectangle{
-            (float)-scroll_offset.x,
-            (float)(map.pixel_height() -
-                    std::min(
-                        (float)map.pixel_height(),
-                        (float)asset_manager.textures[IMG_BACKGROUND].height) -
-                    scroll_offset.y),
-            (float)map.pixel_width(),
-            std::min((float)map.pixel_height(),
-                     (float)asset_manager.textures[IMG_BACKGROUND].height)},
-        Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+    if (game_config->is_background_horizontal_tile()) {
+      DrawTextureTiled(
+          asset_manager.textures[IMG_BACKGROUND],
+          Rectangle{0.0f, 0.0f,
+                    (float)asset_manager.textures[IMG_BACKGROUND].width,
+                    (float)asset_manager.textures[IMG_BACKGROUND].height},
+          Rectangle{
+              (float)-scroll_offset.x,
+              (float)(map.pixel_height() -
+                      std::min((float)map.pixel_height(),
+                               (float)asset_manager.textures[IMG_BACKGROUND]
+                                   .height) -
+                      scroll_offset.y),
+              (float)map.pixel_width(),
+              std::min((float)map.pixel_height(),
+                       (float)asset_manager.textures[IMG_BACKGROUND].height)},
+          Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+    } else if (game_config->is_background_full_tile()) {
+      DrawTextureTiled(
+          asset_manager.textures[IMG_BACKGROUND],
+          Rectangle{0.0f, 0.0f,
+                    (float)asset_manager.textures[IMG_BACKGROUND].width,
+                    (float)asset_manager.textures[IMG_BACKGROUND].height},
+          Rectangle{(float)-scroll_offset.x, (float)-scroll_offset.y,
+                    (float)map.pixel_width(), (float)map.pixel_height()},
+          Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+    }
   }
 
   map.draw(scroll_offset);
