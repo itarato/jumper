@@ -46,6 +46,7 @@
 #define IMG_DECORATION_2 "decoration_2.png"
 #define IMG_SHIELD "shield.png"
 
+#define IMG_FORMAT_DOOR_CLOSE "door_close_%d.png"
 #define IMG_FORMAT_DECORATION "decoration_%d.png"
 
 #define FONT_FIRA_SRC "/fonts/firacode.ttf"

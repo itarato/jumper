@@ -87,19 +87,10 @@ struct Tile {
       texture_provider = std::make_shared<SingleTextureProvider>(
           &asset_manager.textures[IMG_END]);
     } else if (type == TILE_DOOR) {
-      std::vector<Texture2D*> texture_list{
-          &asset_manager.textures[IMG_DOOR_CLOSE_0],
-          &asset_manager.textures[IMG_DOOR_CLOSE_1],
-          &asset_manager.textures[IMG_DOOR_CLOSE_2],
-          &asset_manager.textures[IMG_DOOR_CLOSE_3],
-          &asset_manager.textures[IMG_DOOR_CLOSE_4],
-          &asset_manager.textures[IMG_DOOR_CLOSE_5],
-          &asset_manager.textures[IMG_DOOR_CLOSE_6],
-          &asset_manager.textures[IMG_DOOR_CLOSE_7],
-      };
       texture_provider = std::make_shared<DisableSpriteTextureProvider>(
           &asset_manager.textures[IMG_DOOR_CLOSE],
-          &asset_manager.textures[IMG_DOOR_OPEN], std::move(texture_list), 4);
+          &asset_manager.textures[IMG_DOOR_OPEN],
+          asset_manager.texture_list(IMG_FORMAT_DOOR_CLOSE), 4);
     } else if (type == TILE_REGEX) {
       texture_provider = std::make_shared<SingleTextureProvider>(
           &asset_manager.textures[IMG_REGEX]);
