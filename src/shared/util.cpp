@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <filesystem>
 #include <fstream>
 
 #include "shared_defines.h"
@@ -35,29 +34,19 @@ void log(LogLevelT level, std::string msg, ...) {
   printf("\n");
 }
 
-int convert_string_to_int(std::string s) {
-  return std::stoi(s);
-}
+int convert_string_to_int(std::string s) { return std::stoi(s); }
 
-unsigned long convert_string_to_ulong(std::string s) {
-  return std::stoul(s);
-}
+unsigned long convert_string_to_ulong(std::string s) { return std::stoul(s); }
 
 bool in_range(int number, int min, int max) {
   return number >= min && number <= max;
 }
 
-float randf() {
-  return (float)(rand() & 0xFFFF) / 0xFFFF;
-}
+float randf() { return (float)(rand() & 0xFFFF) / 0xFFFF; }
 
-float randf(float min, float max) {
-  return randf() * (max - min) + min;
-}
+float randf(float min, float max) { return randf() * (max - min) + min; }
 
-int rand_range(int min, int max) {
-  return (rand() % (max - min + 1)) + min;
-}
+int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
   return Rectangle{
@@ -101,9 +90,7 @@ Vector2 absolute_midpoint(Vector2 lhs, Vector2 rhs) {
   return Vector2{(lhs.x + rhs.x) / 2.0f, (lhs.y + rhs.y) / 2.0f};
 }
 
-Vector2 position_of(Rectangle rec) {
-  return Vector2{rec.x, rec.y};
-}
+Vector2 position_of(Rectangle rec) { return Vector2{rec.x, rec.y}; }
 
 void mut_sum(Vector2& base, Vector2 offs) {
   base.x += offs.x;
@@ -115,15 +102,11 @@ void mut_mul(Vector2& base, float m) {
   base.y *= m;
 }
 
-Vector2 mul(Vector2 base, float m) {
-  return Vector2{base.x * m, base.y * m};
-}
+Vector2 mul(Vector2 base, float m) { return Vector2{base.x * m, base.y * m}; }
 
 float gravity_pull(float vy, float acc) {
-  if (fabsf(vy) < 0.1f)
-    return 1.0f;
-  if (vy <= 0.0f)
-    return vy * acc;
+  if (fabsf(vy) < 0.1f) return 1.0f;
+  if (vy <= 0.0f) return vy * acc;
   return vy / acc;
 }
 
@@ -233,20 +216,19 @@ std::map<std::string, std::string> parse_args(int argc, char** argv) {
     }
   }
 
-  std::filesystem::path exec_path{argv[0]};
-  std::filesystem::path exec_dir{exec_path.parent_path()};
+  std::string exec_dir{GetDirectoryPath(argv[0])};
 #if __APPLE__
   exec_dir.append("..");
-  exec_dir.append("Resources");
-  exec_dir.append("assets");
+  exec_dir.append("/Resources");
+  exec_dir.append("/assets");
 #elif __linux__
-  exec_dir.append("assets");
+  exec_dir.append("/assets");
 #else
   LOG_ERR("System not supported");
   exit(EXIT_FAILURE);
 #endif
 
-  out.insert({"assets_dir", exec_dir.string()});
+  out.insert({"assets_dir", exec_dir});
 
   return out;
 }
@@ -257,8 +239,7 @@ void SimpleTimer::start() {
 }
 
 void SimpleTimer::stop() {
-  if (stopped)
-    return;
+  if (stopped) return;
 
   end_time = GetTime();
   stopped = true;
@@ -282,8 +263,7 @@ std::string concat(const char* s, ...) {
 
   for (;;) {
     std::string next{va_arg(args, const char*)};
-    if (next.empty())
-      break;
+    if (next.empty()) break;
 
     out.append(next);
   }

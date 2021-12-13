@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <cstring>
-#include <filesystem>
 #include <iostream>
 
 AssetManager::~AssetManager() {
@@ -32,12 +31,18 @@ std::vector<Texture2D*> AssetManager::texture_list(
 }
 
 void AssetManager::preload_textures(std::string folder) {
-  for (auto const& file_path : std::filesystem::directory_iterator{folder}) {
-    if (file_path.path().extension() != ".png") continue;
+  int file_count;
+  char** files = GetDirectoryFiles(folder.c_str(), &file_count);
 
-    textures.insert({file_path.path().filename(),
-                     LoadTexture(file_path.path().string().c_str())});
+  for (int i = 0; i < file_count; i++) {
+    if (!IsFileExtension(files[i], ".png")) continue;
+
+    textures.insert(
+        {files[i],
+         LoadTexture(concat(folder.c_str(), files[i], CONCAT_END).c_str())});
   }
+
+  ClearDirectoryFiles();
 }
 
 AssetManager asset_manager = AssetManager();
