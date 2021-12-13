@@ -31,16 +31,14 @@ void StageGame::update() {
       enemy.update(jumper.frame);
     }
 
-    for (auto& poop : poops)
-      poop.update();
+    for (auto& poop : poops) poop.update();
 
     poops.erase(std::remove_if(poops.begin(), poops.end(),
                                [](const auto& e) { return e.is_dead(); }),
                 poops.end());
 
     {  // Particles
-      for (auto& explosion : explosions)
-        explosion->update();
+      for (auto& explosion : explosions) explosion->update();
 
       // Cleanup completed explosions.
       explosions.erase(
@@ -162,10 +160,10 @@ void StageGame::draw() {
   DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), DARKGRAY);
   // Play area background color.
   DrawRectangle(-scroll_offset.x, -scroll_offset.y, map.pixel_width(),
-                map.pixel_height(), GetColor(game_config->background_color()));
+                map.pixel_height(), GetColor(game_config->background_color));
   // Play area tile.
-  if (game_config->is_background_image()) {
-    if (game_config->is_background_horizontal_tile()) {
+  if (game_config->is_background_image) {
+    if (game_config->is_background_horizontal_tile) {
       DrawTextureTiled(
           asset_manager.textures[IMG_BACKGROUND],
           Rectangle{0.0f, 0.0f,
@@ -182,7 +180,7 @@ void StageGame::draw() {
               std::min((float)map.pixel_height(),
                        (float)asset_manager.textures[IMG_BACKGROUND].height)},
           Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
-    } else if (game_config->is_background_full_tile()) {
+    } else if (game_config->is_background_full_tile) {
       DrawTextureTiled(
           asset_manager.textures[IMG_BACKGROUND],
           Rectangle{0.0f, 0.0f,
@@ -197,18 +195,13 @@ void StageGame::draw() {
   map.draw(scroll_offset);
   jumper.draw(scroll_offset);
 
-  for (const auto& coin : coins)
-    coin.draw(scroll_offset);
-  for (const auto& poop : poops)
-    poop.draw(scroll_offset);
-  for (auto& enemy : enemies)
-    enemy.draw(scroll_offset);
-  for (auto& shield : shields)
-    shield.draw(scroll_offset);
+  for (const auto& coin : coins) coin.draw(scroll_offset);
+  for (const auto& poop : poops) poop.draw(scroll_offset);
+  for (auto& enemy : enemies) enemy.draw(scroll_offset);
+  for (auto& shield : shields) shield.draw(scroll_offset);
 
   {  // Particles
-    for (auto& explosion : explosions)
-      explosion->draw(scroll_offset);
+    for (auto& explosion : explosions) explosion->draw(scroll_offset);
   }
 
   {  // Overlay.
@@ -298,8 +291,7 @@ void StageGame::init_level() {
                          &asset_manager.textures[IMG_ENEMY_CHASER]);
   }
 
-  for (Enemy& enemy : enemies)
-    enemy.init();
+  for (Enemy& enemy : enemies) enemy.init();
 
   auto coin_coords = map.coords_of_tile_type(TILE_COIN);
   for (auto coin_coord : coin_coords) {

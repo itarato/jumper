@@ -5,68 +5,42 @@
 #include "defines.h"
 #include "shared/util.h"
 
-int GameConfig::window_width() {
-  return arg_val_or_default("width", 960, convert_string_to_int);
-}
+GameConfig::GameConfig(std::map<std::string, std::string>&& argmap) {
+  window_width =
+      arg_val_or_default(argmap, "width", 960, convert_string_to_int);
+  window_height =
+      arg_val_or_default(argmap, "height", 640, convert_string_to_int);
 
-int GameConfig::window_height() {
-  return arg_val_or_default("height", 640, convert_string_to_int);
-}
+  is_fullscreen = argmap.contains("fullscreen");
 
-bool GameConfig::is_fullscreen() {
-  return argmap.contains("fullscreen");
-}
+  resource_dir = argmap[ASSETS_PATH_KEY];
 
-std::string GameConfig::resource_dir() {
-  return argmap[ASSETS_PATH_KEY];
-}
+  auto theme_it = argmap.find("theme");
+  image_theme = (theme_it != argmap.end()) ? theme_it->second : "default";
 
-std::string GameConfig::image_theme() {
-  auto it = argmap.find("theme");
-  if (it != argmap.end())
-    return it->second;
+  background_color =
+      arg_val_or_default(argmap, "background_color", (unsigned long)0xFAFAFAFF,
+                         convert_string_to_ulong);
 
-  return "default";
-}
+  is_background_image = argmap.contains("background_image");
 
-unsigned long GameConfig::background_color() {
-  return arg_val_or_default("background_color", (unsigned long)0xFAFAFAFF,
-                            convert_string_to_ulong);
-}
+  is_background_horizontal_tile = argmap.count("background_tile") > 0 &&
+                                  argmap["background_tile"] == "horizontal";
 
-bool GameConfig::is_background_image() {
-  return argmap.contains("background_image");
-}
+  is_background_full_tile = argmap.count("background_tile") > 0 &&
+                            argmap["background_tile"] == "full";
 
-bool GameConfig::is_background_horizontal_tile() {
-  if (!argmap.contains("background_tile")) {
-    return false;
-  }
-  return argmap["background_tile"] == "horizontal";
-}
-
-bool GameConfig::is_background_full_tile() {
-  if (!argmap.contains("background_tile")) {
-    return false;
-  }
-  return argmap["background_tile"] == "full";
+  auto map_it = argmap.find("map");
+  if (map_it != argmap.end())
+    selected_map = std::optional<std::string>{map_it->second};
 }
 
 template <class Out>
-Out GameConfig::arg_val_or_default(const char* key,
-                                   Out def,
+Out GameConfig::arg_val_or_default(std::map<std::string, std::string>& argmap,
+                                   const char* key, Out def,
                                    Out (*conv)(std::string)) {
   auto it = argmap.find(key);
-  if (it != argmap.end())
-    return conv(it->second);
+  if (it != argmap.end()) return conv(it->second);
 
   return def;
-}
-
-std::optional<std::string> GameConfig::selected_map() {
-  auto it = argmap.find("map");
-  if (it != argmap.end())
-    return std::optional<std::string>{it->second};
-
-  return std::nullopt;
 }

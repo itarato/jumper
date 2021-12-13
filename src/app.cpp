@@ -22,27 +22,27 @@ void App::init() {
   stages.insert({STAGE_MENU, new StageMenu(&game_config)});
   stages.insert({STAGE_GAME, new StageGame(&game_config)});
 
-  bool is_fullscreen = game_config.is_fullscreen();
-  InitWindow(is_fullscreen ? 0 : game_config.window_width(),
-             is_fullscreen ? 0 : game_config.window_height(), "Jumper");
+  bool is_fullscreen = game_config.is_fullscreen;
+  InitWindow(is_fullscreen ? 0 : game_config.window_width,
+             is_fullscreen ? 0 : game_config.window_height, "Jumper");
   SetTargetFPS(60);
 
   asset_manager.preload_textures(
-      concat(game_config.resource_dir().c_str(), "/images/",
-             game_config.image_theme().c_str(), "/", CONCAT_END));
+      concat(game_config.resource_dir.c_str(), "/images/",
+             game_config.image_theme.c_str(), "/", CONCAT_END));
 
   asset_manager.fonts.insert(
-      {FONT_SMALL, LoadFontEx(concat(game_config.resource_dir().c_str(),
+      {FONT_SMALL, LoadFontEx(concat(game_config.resource_dir.c_str(),
                                      FONT_FIRA_BOLD_SRC, CONCAT_END)
                                   .c_str(),
                               12, nullptr, 255)});
   asset_manager.fonts.insert(
-      {FONT_MEDIUM, LoadFontEx(concat(game_config.resource_dir().c_str(),
+      {FONT_MEDIUM, LoadFontEx(concat(game_config.resource_dir.c_str(),
                                       FONT_FIRA_SRC, CONCAT_END)
                                    .c_str(),
                                20, nullptr, 255)});
   asset_manager.fonts.insert(
-      {FONT_LARGE, LoadFontEx(concat(game_config.resource_dir().c_str(),
+      {FONT_LARGE, LoadFontEx(concat(game_config.resource_dir.c_str(),
                                      FONT_FIRA_SRC, CONCAT_END)
                                   .c_str(),
                               64, nullptr, 255)});
