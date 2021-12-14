@@ -2,7 +2,7 @@
 .........*.*..g.d..*...*...*..
 .......*......g*gggggggggggg..
 ........ggggg.g.g.............
-.....*..g..*..g.g..*.*.*......
+.....*..g..*..g.g.c*.*.*......
 ..r.....g*ggggg*g........ggggg
 ****....g..*.*..g..*..........
 ........ggggggggg...........r.
@@ -21,6 +21,10 @@ gtttttgggttttttttttttttggggggg
 gggggggggggggggggggggggggggggg
 pattern,16,0,A
 pattern,2,4,/A
+decoration,1,6,1
 pattern,28,6,/A
 pattern,15,8,/A
+decoration,17,8,1
+decoration,27,15,0
+decoration,7,17,0
 pattern,26,17,AA

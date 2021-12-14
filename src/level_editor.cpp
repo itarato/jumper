@@ -23,14 +23,19 @@
 
 using namespace std;
 
-static const TileType tile_types[] = {
-    TILE_NULL,  TILE_AIR,          TILE_GROUND,       TILE_START,
-    TILE_END,   TILE_ENEMY_RANDOM, TILE_ENEMY_CHASER, TILE_COIN,
-    TILE_REGEX, TILE_DOOR,         TILE_TRAP,         TILE_SHIELD};
-
-static const char* tile_type_names[] = {
-    "NULL",     "Air",  "Ground", "Start", "End",  "EnemyRnd",
-    "EnemyCsr", "Coin", "Regex",  "Door",  "Trap", "Shield"};
+static const pair<TileType, const char*> tiles[]{
+    {TILE_AIR, "Air"},
+    {TILE_GROUND, "Ground"},
+    {TILE_START, "Start"},
+    {TILE_END, "End"},
+    {TILE_ENEMY_RANDOM, "EnemyRnd"},
+    {TILE_ENEMY_CHASER, "EnemyCsr"},
+    {TILE_COIN, "Coin"},
+    {TILE_REGEX, "Regex"},
+    {TILE_DOOR, "Door"},
+    {TILE_TRAP, "Trap"},
+    {TILE_SHIELD, "Shield"},
+};
 
 char char_shift_version(char ch) {
   switch (ch) {
@@ -105,8 +110,7 @@ struct Input {
       is_active = true;
     }
 
-    if (is_active && IsKeyPressed(KEY_TAB))
-      is_active = false;
+    if (is_active && IsKeyPressed(KEY_TAB)) is_active = false;
 
     if (is_active) {
       int ch;
@@ -118,8 +122,7 @@ struct Input {
             value.push_back((char)ch);
           }
         } else if (ch == KEY_BACKSPACE) {
-          if (!value.empty())
-            value.pop_back();
+          if (!value.empty()) value.pop_back();
         }
       }
     }
@@ -131,8 +134,7 @@ struct Input {
 
   void draw() const {
     DrawRectangleRec(frame, WHITE);
-    if (is_active)
-      DrawRectangleLinesEx(frame, 2, BLUE);
+    if (is_active) DrawRectangleLinesEx(frame, 2, BLUE);
     DrawText(value.c_str(), frame.x + 4, frame.y + 4, 10, BLACK);
     DrawText(label.c_str(), frame.x + 4, frame.y + 22, 8, WHITE);
   }
@@ -332,7 +334,9 @@ struct App {
       }
 
       if (input_decoration_index.has_changed() && selected_tile) {
-        selected_tile->decoration = stoi(input_decoration_index.value);
+        selected_tile->decoration = input_decoration_index.value.empty()
+                                        ? -1
+                                        : stoi(input_decoration_index.value);
       }
     }
 
@@ -353,13 +357,13 @@ struct App {
         Tile* tile = &map[mouse_tile_coord.second][mouse_tile_coord.first];
 
         if (IsMouseButtonPressed(0)) {
-          is_bulk_creation = tile->type != tile_types[selected_tile_idx];
+          is_bulk_creation = tile->type != tiles[selected_tile_idx].first;
         }
 
         if (IsMouseButtonDown(0)) {
           if (is_bulk_creation) {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                tile_types[selected_tile_idx];
+                tiles[selected_tile_idx].first;
           } else {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
                 TILE_NULL;
@@ -369,11 +373,11 @@ struct App {
     }
 
     {  // Tile type switch.
-      if (IsKeyPressed(KEY_PAGE_DOWN)) {
+      if (IsKeyPressed(KEY_PAGE_DOWN) || GetMouseWheelMove() == 1.0f) {
         selected_tile_idx =
             (selected_tile_idx + tile_count() - 1) % tile_count();
       }
-      if (IsKeyPressed(KEY_PAGE_UP)) {
+      if (IsKeyPressed(KEY_PAGE_UP) || GetMouseWheelMove() == -1.0f) {
         selected_tile_idx = (selected_tile_idx + 1) % tile_count();
       }
     }
@@ -399,7 +403,10 @@ struct App {
         selected_tile =
             &map[selected_tile_coord.second][selected_tile_coord.first];
         input_tile_value.value = selected_tile->pattern;
-        input_decoration_index.value = to_string(selected_tile->decoration);
+        input_decoration_index.value =
+            selected_tile->decoration >= 0
+                ? to_string(selected_tile->decoration)
+                : "";
       }
     }
   }
@@ -438,7 +445,7 @@ struct App {
 
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
-      draw_tile(tile_types[selected_tile_idx],
+      draw_tile(tiles[selected_tile_idx].first,
                 Vector2{(float)(mouse_tile_coord.first * BLOCK_SIZE - offsx),
                         (float)(mouse_tile_coord.second * BLOCK_SIZE - offsy)});
       DrawRectangleLines(mouse_tile_coord.first * BLOCK_SIZE - offsx,
@@ -456,9 +463,9 @@ struct App {
                              WHITE);
         }
 
-        draw_tile(tile_types[i], Vector2{(float)(32 + i * 64),
-                                         (float)(GetScreenHeight() - 76)});
-        DrawText(tile_type_names[i], i * 64 + 32, GetScreenHeight() - 30, 10,
+        draw_tile(tiles[i].first, Vector2{(float)(32 + i * 64),
+                                          (float)(GetScreenHeight() - 76)});
+        DrawText(tiles[i].second, i * 64 + 32, GetScreenHeight() - 30, 10,
                  WHITE);
       }
 
@@ -476,10 +483,8 @@ struct App {
     Vector2 mouse_pos{GetMousePosition()};
     int tile_x = (mouse_pos.x + offsx) / BLOCK_SIZE;
     int tile_y = (mouse_pos.y + offsy) / BLOCK_SIZE;
-    if (mouse_pos.x + (float)offsx < 0.0f)
-      tile_x--;
-    if (mouse_pos.y + (float)offsy < 0.0f)
-      tile_y--;
+    if (mouse_pos.x + (float)offsx < 0.0f) tile_x--;
+    if (mouse_pos.y + (float)offsy < 0.0f) tile_y--;
     return pair<int, int>{tile_x, tile_y};
   }
 
@@ -539,7 +544,7 @@ struct App {
   }
 
   [[nodiscard]] static int tile_count() {
-    return sizeof(tile_types) / sizeof(TileType);
+    return sizeof(tiles) / sizeof(std::pair<TileType, const char*>);
   }
 
   void save_map() {
