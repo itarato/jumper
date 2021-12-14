@@ -95,7 +95,7 @@ void StrictPathChaseWalker::set_next_target(Rectangle& self_frame,
   // Using an array for const time find() performance.
   auto* visited = (uint8_t*)malloc(sizeof(uint8_t) *
                                    (map->pixel_height() * map->pixel_width()));
-  bzero(visited, sizeof(uint8_t) * (map->pixel_height() * map->pixel_width()));
+  memset(visited, 0, sizeof(uint8_t) * (map->pixel_height() * map->pixel_width()));
 
   while (!inspected.empty()) {
     //    dbg_ticker.tick();
@@ -137,8 +137,9 @@ void StrictPathChaseWalker::set_next_target(Rectangle& self_frame,
         continue;
       visited[neighbour_p.y * map->pixel_width() + neighbour_p.x] = 1;
 
-      inspected.emplace_back(neighbour_p, node.pre_cost + 1,
-                             neighbour_p.dist(end_p));
+      AStarNode new_node{neighbour_p, node.pre_cost + 1,
+                             neighbour_p.dist(end_p)};
+      inspected.push_back(new_node);
     }
   }
 

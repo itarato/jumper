@@ -1,6 +1,5 @@
 #include "app.h"
 
-#include <ranges>
 #include <string>
 
 #include "asset_manager.h"

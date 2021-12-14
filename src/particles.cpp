@@ -12,8 +12,8 @@ Explosion::Explosion(Rectangle start_frame, size_t particle_count, Color color) 
   for (size_t i = 0; i < particle_count; i++) {
     float angle = randf() * PI * 2.0f;
     float v = randf() * 2.0f + 5.0f;
-    particle_v.emplace_back(sinf(angle) * v, cosf(angle) * v);
-    particle_pos.emplace_back(start_frame.x + start_frame.width / 2, start_frame.y + start_frame.height / 2);
+    particle_v.emplace_back(Vector2{sinf(angle) * v, cosf(angle) * v});
+    particle_pos.emplace_back(Vector2{start_frame.x + start_frame.width / 2, start_frame.y + start_frame.height / 2});
     particle_rot.emplace_back(randf() * PI * 2.0f);
   }
 }
@@ -45,7 +45,7 @@ void Explosion::update() {
 Circler::Circler(Rectangle start_frame, size_t particle_count) : particle_count(particle_count),
                                                                  dist_step(4.0f) {
   for (size_t i = 0; i < particle_count; i++) {
-    particle_pos.emplace_back(start_frame.x + start_frame.width / 2, start_frame.y + start_frame.height / 2);
+    particle_pos.emplace_back(Vector2{start_frame.x + start_frame.width / 2, start_frame.y + start_frame.height / 2});
     rot_offs.emplace_back(randf() * PI * 2.0f);
     dist_offs.emplace_back(randf() * 16.0f);
   }
@@ -103,8 +103,8 @@ void Smoker::update() {
 
   if (frame_counter % round_frame_count == 0) {
     for (int i = 0; i < particle_per_round; i++) {
-      pos.emplace_back(start_frame->x + randf() * start_frame->width, start_frame->y + start_frame->height);
-      v.emplace_back(randf() / 2.0f, randf() - 0.8f);
+      pos.emplace_back(Vector2{start_frame->x + randf() * start_frame->width, start_frame->y + start_frame->height});
+      v.emplace_back(Vector2{randf() / 2.0f, randf() - 0.8f});
       alpha.emplace_back(1.0f);
     }
   }

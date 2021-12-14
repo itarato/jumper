@@ -4,15 +4,14 @@
 #include <cstring>
 #include <filesystem>
 #include <iostream>
-#include <ranges>
 
 AssetManager::~AssetManager() {
-  for (auto& texture : textures | std::views::values)
-    UnloadTexture(texture);
+  for (auto& texture : textures)
+    UnloadTexture(texture.second);
   textures.clear();
 
-  for (auto& font : fonts | std::views::values)
-    UnloadFont(font);
+  for (auto& font : fonts)
+    UnloadFont(font.second);
   fonts.clear();
 }
 
@@ -26,7 +25,7 @@ std::vector<Texture2D*> AssetManager::texture_list(
 
     sprintf(file_name, file_name_format, i);
 
-    if (!textures.contains(file_name))
+    if (textures.count(file_name) == 0)
       break;
 
     out.emplace_back(&textures[file_name]);

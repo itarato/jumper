@@ -14,7 +14,7 @@ int GameConfig::window_height() {
 }
 
 bool GameConfig::is_fullscreen() {
-  return argmap.contains("fullscreen");
+  return argmap.count("fullscreen") > 0;
 }
 
 std::string GameConfig::resource_dir() {
@@ -35,18 +35,18 @@ unsigned long GameConfig::background_color() {
 }
 
 bool GameConfig::is_background_image() {
-  return argmap.contains("background_image");
+  return argmap.count("background_image") > 0;
 }
 
 bool GameConfig::is_background_horizontal_tile() {
-  if (!argmap.contains("background_tile")) {
+  if (argmap.count("background_tile") == 0) {
     return false;
   }
   return argmap["background_tile"] == "horizontal";
 }
 
 bool GameConfig::is_background_full_tile() {
-  if (!argmap.contains("background_tile")) {
+  if (argmap.count("background_tile") == 0) {
     return false;
   }
   return argmap["background_tile"] == "full";
