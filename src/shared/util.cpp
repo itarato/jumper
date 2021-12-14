@@ -221,11 +221,8 @@ std::map<std::string, std::string> parse_args(int argc, char** argv) {
   exec_dir.append("..");
   exec_dir.append("/Resources");
   exec_dir.append("/assets");
-#elif __linux__
-  exec_dir.append("/assets");
 #else
-  LOG_ERR("System not supported");
-  exit(EXIT_FAILURE);
+  exec_dir.append("/assets");
 #endif
 
   out.insert({"assets_dir", exec_dir});

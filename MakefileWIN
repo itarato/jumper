@@ -1,4 +1,4 @@
-LIBS=-lraylib -lopengl32 -lgdi32 -lwinmm -lstdc++fs
+LIBS=-lraylib -lopengl32 -lgdi32 -lwinmm
 
 CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat -I C:\Users\itara\CHECKOUT\raylib\src -L C:\Users\itara\CHECKOUT\raylib\src
 
