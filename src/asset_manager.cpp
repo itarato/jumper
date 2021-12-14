@@ -2,16 +2,13 @@
 
 #include <cassert>
 #include <cstring>
-#include <filesystem>
 #include <iostream>
 
 AssetManager::~AssetManager() {
-  for (auto& texture : textures)
-    UnloadTexture(texture.second);
+  for (auto& texture_pair : textures) UnloadTexture(texture_pair.second);
   textures.clear();
 
-  for (auto& font : fonts)
-    UnloadFont(font.second);
+  for (auto& font_pair : fonts) UnloadFont(font_pair.second);
   fonts.clear();
 }
 
@@ -25,8 +22,7 @@ std::vector<Texture2D*> AssetManager::texture_list(
 
     sprintf(file_name, file_name_format, i);
 
-    if (textures.count(file_name) == 0)
-      break;
+    if (textures.count(file_name) == 0) break;
 
     out.emplace_back(&textures[file_name]);
   }
@@ -35,13 +31,18 @@ std::vector<Texture2D*> AssetManager::texture_list(
 }
 
 void AssetManager::preload_textures(std::string folder) {
-  for (auto const& file_path : std::filesystem::directory_iterator{folder}) {
-    if (file_path.path().extension() != ".png")
-      continue;
+  int file_count;
+  char** files = GetDirectoryFiles(folder.c_str(), &file_count);
 
-    textures.insert({file_path.path().filename(),
-                     LoadTexture(file_path.path().string().c_str())});
+  for (int i = 0; i < file_count; i++) {
+    if (!IsFileExtension(files[i], ".png")) continue;
+
+    textures.insert(
+        {files[i],
+         LoadTexture(concat(folder.c_str(), files[i], CONCAT_END).c_str())});
   }
+
+  ClearDirectoryFiles();
 }
 
 AssetManager asset_manager = AssetManager();

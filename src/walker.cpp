@@ -95,7 +95,8 @@ void StrictPathChaseWalker::set_next_target(Rectangle& self_frame,
   // Using an array for const time find() performance.
   auto* visited = (uint8_t*)malloc(sizeof(uint8_t) *
                                    (map->pixel_height() * map->pixel_width()));
-  memset(visited, 0, sizeof(uint8_t) * (map->pixel_height() * map->pixel_width()));
+  memset(visited, 0,
+         sizeof(uint8_t) * (map->pixel_height() * map->pixel_width()));
 
   while (!inspected.empty()) {
     //    dbg_ticker.tick();
