@@ -16,12 +16,6 @@
 
 #define WAIT_TO_COMPLETE_FRAMES 180
 
-static const char* game_map_files[]{
-    "/maps/1.jm",
-    "/maps/2.jm",
-    "/maps/3.jm",
-};
-
 typedef enum {
   GAME_STATE_PLAY = 0,
   GAME_STATE_WAIT_TO_COMPLETE = 1,
@@ -61,23 +55,6 @@ struct StageGame : IStage, JumperObserver {
   void init_level();
   std::optional<StageT> next_stage() override;
 
-  explicit StageGame(GameConfig* game_config)
-      : JumperObserver(),
-        game_config(game_config),
-        victory_text("Victory"),
-        game_over_text("Game over"),
-        map_file_paths({}) {
-    jumper.JumperSubject::subscribe(this);
-
-    auto pre_selected_map = game_config->selected_map;
-    if (pre_selected_map.has_value()) {
-      map_file_paths.push_back(pre_selected_map.value());
-    } else {
-      for (const auto& file : game_map_files) {
-        map_file_paths.emplace_back(
-            concat(game_config->resource_dir.c_str(), file, CONCAT_END));
-      }
-    }
-  };
+  explicit StageGame(GameConfig* game_config);
   ~StageGame() override = default;
 };

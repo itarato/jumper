@@ -72,7 +72,7 @@ struct Tile {
   int decoration;
 
   void reset() {
-    type = TILE_NULL;
+    type = TILE_AIR;
     pattern = "";
     decoration = -1;
   }

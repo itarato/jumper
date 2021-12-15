@@ -9,6 +9,41 @@
 #include "input.h"
 #include "shared/util.h"
 
+std::vector<std::string> default_map_file_list(const char* folder) {
+  int file_count;
+  char** files = GetDirectoryFiles(folder, &file_count);
+
+  std::vector<std::string> out{};
+
+  for (int i = 0; i < file_count; i++) {
+    if (IsFileExtension(files[i], ".jm")) {
+      out.emplace_back(concat(folder, files[i], CONCAT_END));
+    }
+  }
+
+  ClearDirectoryFiles();
+
+  return out;
+}
+
+StageGame::StageGame(GameConfig* game_config)
+    : JumperObserver(),
+      game_config(game_config),
+      victory_text("Victory"),
+      game_over_text("Game over"),
+      map_file_paths({}) {
+  jumper.JumperSubject::subscribe(this);
+
+  auto pre_selected_map = game_config->selected_map;
+  if (pre_selected_map.has_value()) {
+    map_file_paths.push_back(pre_selected_map.value());
+  } else {
+    map_file_paths = default_map_file_list(
+        concat(game_config->resource_dir.c_str(), "/maps/", CONCAT_END)
+            .c_str());
+  }
+};
+
 void StageGame::update() {
   if (state == GAME_STATE_PLAY) {
     // Reset stage.

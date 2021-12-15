@@ -117,7 +117,6 @@ struct Map {
   std::vector<std::vector<Tile>> map;
   size_t block_width;
   size_t block_height;
-  // FIXME -> we could generally memoize these
   Vector2 start_pos;
   Vector2 end_pos;
 
