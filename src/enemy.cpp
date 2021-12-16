@@ -3,13 +3,9 @@
 #include "defines.h"
 #include "shared/util.h"
 
-void Enemy::init() {
-  walker->init(frame);
-}
+void Enemy::init() { walker->init(frame); }
 
-void Enemy::update(const Rectangle& player) {
-  walker->update(frame, player);
-}
+void Enemy::update(const Rectangle& player) { walker->update(frame, player); }
 
 void Enemy::draw(IntVector2D scroll_offset) {
   Color color{WHITE};
@@ -23,7 +19,6 @@ void Enemy::draw(IntVector2D scroll_offset) {
               (int)frame.y - scroll_offset.y, color);
 }
 
-Enemy::Enemy(Rectangle frame,
-             std::unique_ptr<IWalker> walker,
+Enemy::Enemy(Rectangle frame, std::unique_ptr<IWalker> walker,
              Texture2D* texture)
     : frame(frame), walker(std::move(walker)), texture(texture) {}

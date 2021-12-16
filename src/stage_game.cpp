@@ -45,7 +45,7 @@ StageGame::StageGame(GameConfig* game_config)
 };
 
 void StageGame::update() {
-  if (state == GAME_STATE_PLAY) {
+  if (state == GameStateT::PLAY) {
     // Reset stage.
     if (is_key_pressed(KEY_BACKSPACE)) {
       init_level();
@@ -117,9 +117,9 @@ void StageGame::update() {
   }
 
   {  // Completion checks.
-    if (state == GAME_STATE_PLAY) {
+    if (state == GameStateT::PLAY) {
       if (jumper.frame.y >= (float)map.pixel_height() || jumper.is_dead()) {
-        state = GAME_STATE_WAIT_TO_RESTART_LEVEL;
+        state = GameStateT::WAIT_TO_RESTART_LEVEL;
         is_victory = false;
       }
 
@@ -127,9 +127,9 @@ void StageGame::update() {
         Rectangle end_rec{map.end_pos.x, map.end_pos.y, BLOCK_SIZE, BLOCK_SIZE};
         if (CheckCollisionRecs(end_rec, jumper.frame)) {
           if (current_map_number < (int)map_file_paths.size() - 1) {
-            state = GAME_STATE_WAIT_TO_NEXT_LEVEL;
+            state = GameStateT::WAIT_TO_NEXT_LEVEL;
           } else {
-            state = GAME_STATE_WAIT_TO_COMPLETE;
+            state = GameStateT::WAIT_TO_COMPLETE;
           }
           is_victory = true;
           timer.stop();
@@ -145,22 +145,22 @@ void StageGame::update() {
       }
     }
 
-    if (state == GAME_STATE_WAIT_TO_COMPLETE ||
-        state == GAME_STATE_WAIT_TO_NEXT_LEVEL ||
-        state == GAME_STATE_WAIT_TO_RESTART_LEVEL) {
+    if (state == GameStateT::WAIT_TO_COMPLETE ||
+        state == GameStateT::WAIT_TO_NEXT_LEVEL ||
+        state == GameStateT::WAIT_TO_RESTART_LEVEL) {
       wait_to_state_timeout++;
 
       if (wait_to_state_timeout >= WAIT_TO_COMPLETE_FRAMES ||
           is_key_pressed(KEY_ENTER)) {
-        if (state == GAME_STATE_WAIT_TO_COMPLETE) {
-          state = GAME_STATE_COMPLETE;
-        } else if (state == GAME_STATE_WAIT_TO_NEXT_LEVEL) {
+        if (state == GameStateT::WAIT_TO_COMPLETE) {
+          state = GameStateT::COMPLETE;
+        } else if (state == GameStateT::WAIT_TO_NEXT_LEVEL) {
           // FIXME - encapsulate state changes with logic.
-          state = GAME_STATE_PLAY;
+          state = GameStateT::PLAY;
           current_map_number++;
           init_level();
-        } else if (state == GAME_STATE_WAIT_TO_RESTART_LEVEL) {
-          state = GAME_STATE_PLAY;
+        } else if (state == GameStateT::WAIT_TO_RESTART_LEVEL) {
+          state = GameStateT::PLAY;
           init_level();
         }
       }
@@ -233,7 +233,7 @@ void StageGame::draw() {
   for (const auto& coin : coins) coin.draw(scroll_offset);
   for (const auto& poop : poops) poop.draw(scroll_offset);
   for (auto& enemy : enemies) enemy.draw(scroll_offset);
-  for (auto& shield : shields) shield.draw(scroll_offset);
+  for (const auto& shield : shields) shield.draw(scroll_offset);
 
   {  // Particles
     for (auto& explosion : explosions) explosion->draw(scroll_offset);
@@ -267,9 +267,9 @@ void StageGame::draw() {
                asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
   }
 
-  if (state == GAME_STATE_WAIT_TO_COMPLETE ||
-      state == GAME_STATE_WAIT_TO_NEXT_LEVEL ||
-      state == GAME_STATE_WAIT_TO_RESTART_LEVEL) {
+  if (state == GameStateT::WAIT_TO_COMPLETE ||
+      state == GameStateT::WAIT_TO_NEXT_LEVEL ||
+      state == GameStateT::WAIT_TO_RESTART_LEVEL) {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
                   Fade(RAYWHITE, 0.6));
     if (is_victory) {
@@ -298,7 +298,7 @@ void StageGame::init_level() {
 
   map.build(map_file_paths[current_map_number]);
 
-  state = GAME_STATE_PLAY;
+  state = GameStateT::PLAY;
   jumper.init(map.start_pos);
   wait_to_state_timeout = 0;
 
@@ -344,7 +344,7 @@ void StageGame::init_level() {
 }
 
 std::optional<StageT> StageGame::next_stage() {
-  if (state == GAME_STATE_COMPLETE) {
+  if (state == GameStateT::COMPLETE) {
     return std::optional<StageT>{STAGE_MENU};
   } else {
     return std::nullopt;

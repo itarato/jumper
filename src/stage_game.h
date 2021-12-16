@@ -16,13 +16,13 @@
 
 #define WAIT_TO_COMPLETE_FRAMES 180
 
-typedef enum {
-  GAME_STATE_PLAY = 0,
-  GAME_STATE_WAIT_TO_COMPLETE = 1,
-  GAME_STATE_WAIT_TO_NEXT_LEVEL = 2,
-  GAME_STATE_WAIT_TO_RESTART_LEVEL = 3,
-  GAME_STATE_COMPLETE = 4,
-} GameStateT;
+enum class GameStateT {
+  PLAY = 0,
+  WAIT_TO_COMPLETE = 1,
+  WAIT_TO_NEXT_LEVEL = 2,
+  WAIT_TO_RESTART_LEVEL = 3,
+  COMPLETE = 4,
+};
 
 struct StageGame : IStage, JumperObserver {
   GameStateT state;
