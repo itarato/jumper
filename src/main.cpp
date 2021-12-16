@@ -15,6 +15,12 @@
  *
  * Ideas:
  * - pushable box?
+ * - scalable screen?
+ * - more traps:
+ *  - toggle block (squashing down/up)
+ *  - shooting block
+ *  - toggling laser
+ * - dark reveal mode
  */
 
 #include <cstdlib>
