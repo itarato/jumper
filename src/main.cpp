@@ -12,6 +12,9 @@
  * - health
  * - teleport
  * - destroyable map type
+ *
+ * Ideas:
+ * - pushable box?
  */
 
 #include <cstdlib>
