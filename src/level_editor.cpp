@@ -439,13 +439,18 @@ struct App {
   void draw() {
     pair<int, int> mouse_tile_coord = tile_coord();
 
-    // Map.
+    // Map tile.
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
         Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
                          (float)(y * BLOCK_SIZE - offsy)};
         draw_tile(map[y][x].type, tile_pos, tile_textures);
+      }
+    }
 
+    // Map extras.
+    for (int y = 0; y < map_height; y++) {
+      for (int x = 0; x < map_width; x++) {
         if (selected_tile == &map[y][x]) {
           DrawRectangleLines(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy,
                              BLOCK_SIZE, BLOCK_SIZE, BLACK);
@@ -465,8 +470,11 @@ struct App {
     }
 
     // Window frame.
-    DrawRectangleLines(0 - offsx, 0 - offsy, map_width * BLOCK_SIZE,
-                       map_height * BLOCK_SIZE, MAGENTA);
+    DrawRectangleLinesEx(
+        Rectangle{(float)(0 - offsx - 8), (float)(0 - offsy - 8),
+                  (float)(map_width * BLOCK_SIZE + 16),
+                  (float)(map_height * BLOCK_SIZE + 16)},
+        8.0f, BLACK);
 
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
@@ -537,7 +545,7 @@ struct App {
           color = RAYWHITE;
           break;
         case TILE_AIR:
-          color = LIGHTGRAY;
+          color = RAYWHITE;
           break;
         case TILE_GROUND:
           color = BROWN;
