@@ -462,6 +462,7 @@ struct App {
         }
 
         if (!map[y][x].pattern.empty()) {
+          // FIXME: hidpi mode is not reflected here -> make argument for it
           int text_width = MeasureText(map[y][x].pattern.c_str(), 6);
           DrawRectangle(x * BLOCK_SIZE - offsx + 2, y * BLOCK_SIZE - offsy + 2,
                         text_width, 6, DARKPURPLE);
