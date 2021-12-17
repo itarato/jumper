@@ -42,7 +42,7 @@ StageGame::StageGame(GameConfig* game_config)
         concat(game_config->resource_dir.c_str(), "/maps/", CONCAT_END)
             .c_str());
   }
-};
+}
 
 void StageGame::update() {
   if (state == GameStateT::PLAY) {

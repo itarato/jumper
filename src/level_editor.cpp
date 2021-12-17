@@ -219,6 +219,8 @@ struct App {
         input_decoration_index("Decor idx", 48.0f),
         save_button("Save"),
         selected_tile(nullptr) {
+    SetConfigFlags(FLAG_WINDOW_HIGHDPI);
+
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
@@ -452,13 +454,19 @@ struct App {
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
         if (selected_tile == &map[y][x]) {
-          DrawRectangleLines(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy,
-                             BLOCK_SIZE, BLOCK_SIZE, BLACK);
+          DrawRectangleLinesEx(
+              Rectangle{(float)(x * BLOCK_SIZE - offsx - 2),
+                        (float)(y * BLOCK_SIZE - offsy - 2),
+                        (float)(BLOCK_SIZE + 4), (float)(BLOCK_SIZE + 4)},
+              2.0f, ORANGE);
         }
 
         if (!map[y][x].pattern.empty()) {
+          int text_width = MeasureText(map[y][x].pattern.c_str(), 6);
+          DrawRectangle(x * BLOCK_SIZE - offsx + 2, y * BLOCK_SIZE - offsy + 2,
+                        text_width, 6, DARKPURPLE);
           DrawText(map[y][x].pattern.c_str(), x * BLOCK_SIZE - offsx + 2,
-                   y * BLOCK_SIZE - offsy + 2, 6, BLACK);
+                   y * BLOCK_SIZE - offsy + 2, 6, WHITE);
         }
 
         if (map[y][x].decoration >= 0) {
