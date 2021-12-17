@@ -1,6 +1,8 @@
+#include <cctype>
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <string>
 #include <utility>
 #include <vector>
@@ -24,7 +26,6 @@
 using namespace std;
 
 static const pair<TileType, const char*> tiles[]{
-    {TILE_AIR, "Air"},
     {TILE_GROUND, "Ground"},
     {TILE_START, "Start"},
     {TILE_END, "End"},
@@ -69,7 +70,7 @@ char char_shift_version(char ch) {
 struct Tile {
   TileType type = TILE_NULL;
   string pattern;
-  int decoration;
+  int decoration{-1};
 
   void reset() {
     type = TILE_AIR;
@@ -119,7 +120,7 @@ struct Input {
           if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
             value.push_back(char_shift_version((char)ch));
           } else {
-            value.push_back((char)ch);
+            value.push_back((char)tolower(ch));
           }
         } else if (ch == KEY_BACKSPACE) {
           if (!value.empty()) value.pop_back();
@@ -208,6 +209,8 @@ struct App {
 
   Tile* selected_tile;
 
+  std::map<char, Texture2D> tile_textures;
+
   App()
       : input_window_width("Width", 64.0f),
         input_window_height("Height", 64.0f),
@@ -239,6 +242,28 @@ struct App {
 
     save_button.pos.x = GetScreenWidth() - 42;
     save_button.pos.y = GetScreenHeight() - 28;
+
+    tile_textures.insert(
+        {TILE_GROUND, LoadTexture("./assets/images/default/ground.png")});
+    tile_textures.insert(
+        {TILE_START, LoadTexture("./assets/images/default/ladybug.png")});
+    tile_textures.insert(
+        {TILE_END, LoadTexture("./assets/images/default/end.png")});
+    tile_textures.insert(
+        {TILE_ENEMY_RANDOM, LoadTexture("./assets/images/default/enemy.png")});
+    tile_textures.insert(
+        {TILE_ENEMY_CHASER,
+         LoadTexture("./assets/images/default/enemy_chaser.png")});
+    tile_textures.insert(
+        {TILE_COIN, LoadTexture("./assets/images/default/coin.png")});
+    tile_textures.insert(
+        {TILE_REGEX, LoadTexture("./assets/images/default/regex.png")});
+    tile_textures.insert(
+        {TILE_DOOR, LoadTexture("./assets/images/default/door_close.png")});
+    tile_textures.insert(
+        {TILE_TRAP, LoadTexture("./assets/images/default/spike.png")});
+    tile_textures.insert(
+        {TILE_SHIELD, LoadTexture("./assets/images/default/shield.png")});
   }
 
   void load_map_file(const char* file_name) {
@@ -419,7 +444,7 @@ struct App {
       for (int x = 0; x < map_width; x++) {
         Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
                          (float)(y * BLOCK_SIZE - offsy)};
-        draw_tile(map[y][x].type, tile_pos);
+        draw_tile(map[y][x].type, tile_pos, tile_textures);
 
         if (selected_tile == &map[y][x]) {
           DrawRectangleLines(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy,
@@ -447,7 +472,8 @@ struct App {
       // Under-mouse tile.
       draw_tile(tiles[selected_tile_idx].first,
                 Vector2{(float)(mouse_tile_coord.first * BLOCK_SIZE - offsx),
-                        (float)(mouse_tile_coord.second * BLOCK_SIZE - offsy)});
+                        (float)(mouse_tile_coord.second * BLOCK_SIZE - offsy)},
+                tile_textures);
       DrawRectangleLines(mouse_tile_coord.first * BLOCK_SIZE - offsx,
                          mouse_tile_coord.second * BLOCK_SIZE - offsy,
                          BLOCK_SIZE, BLOCK_SIZE, BLACK);
@@ -463,8 +489,10 @@ struct App {
                              WHITE);
         }
 
-        draw_tile(tiles[i].first, Vector2{(float)(32 + i * 64),
-                                          (float)(GetScreenHeight() - 76)});
+        draw_tile(
+            tiles[i].first,
+            Vector2{(float)(32 + i * 64), (float)(GetScreenHeight() - 76)},
+            tile_textures);
         DrawText(tiles[i].second, i * 64 + 32, GetScreenHeight() - 30, 10,
                  WHITE);
       }
@@ -496,51 +524,56 @@ struct App {
            mouse_tile_coord.second < map_height;
   }
 
-  static void draw_tile(TileType type, Vector2 pos) {
+  static void draw_tile(TileType type, Vector2 pos,
+                        std::map<char, Texture2D> tile_textures) {
     Rectangle frame{pos.x, pos.y, BLOCK_SIZE, BLOCK_SIZE};
     Color color;
 
-    switch (type) {
-      case TILE_NULL:
-        color = RAYWHITE;
-        break;
-      case TILE_AIR:
-        color = LIGHTGRAY;
-        break;
-      case TILE_GROUND:
-        color = BROWN;
-        break;
-      case TILE_START:
-        color = RED;
-        break;
-      case TILE_END:
-        color = YELLOW;
-        break;
-      case TILE_ENEMY_RANDOM:
-        color = LIME;
-        break;
-      case TILE_ENEMY_CHASER:
-        color = SKYBLUE;
-        break;
-      case TILE_COIN:
-        color = ORANGE;
-        break;
-      case TILE_REGEX:
-        color = BLUE;
-        break;
-      case TILE_DOOR:
-        color = MAGENTA;
-        break;
-      case TILE_TRAP:
-        color = PURPLE;
-        break;
-      case TILE_SHIELD:
-        color = VIOLET;
-        break;
-      default:
-        break;
+    if (tile_textures.count(type) > 0) {
+      DrawTexture(tile_textures[type], pos.x, pos.y, WHITE);
+    } else {
+      switch (type) {
+        case TILE_NULL:
+          color = RAYWHITE;
+          break;
+        case TILE_AIR:
+          color = LIGHTGRAY;
+          break;
+        case TILE_GROUND:
+          color = BROWN;
+          break;
+        case TILE_START:
+          color = RED;
+          break;
+        case TILE_END:
+          color = YELLOW;
+          break;
+        case TILE_ENEMY_RANDOM:
+          color = LIME;
+          break;
+        case TILE_ENEMY_CHASER:
+          color = SKYBLUE;
+          break;
+        case TILE_COIN:
+          color = ORANGE;
+          break;
+        case TILE_REGEX:
+          color = BLUE;
+          break;
+        case TILE_DOOR:
+          color = MAGENTA;
+          break;
+        case TILE_TRAP:
+          color = PURPLE;
+          break;
+        case TILE_SHIELD:
+          color = VIOLET;
+          break;
+        default:
+          break;
+      }
+      DrawRectangleRec(frame, color);
     }
-    DrawRectangleRec(frame, color);
   }
 
   [[nodiscard]] static int tile_count() {
