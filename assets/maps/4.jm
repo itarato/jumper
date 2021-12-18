@@ -15,6 +15,7 @@ g..ggggggggggggr
 .gr.rg........gg
 .d...d.....gttgg
 gggggggggggggggg
+decoration,1,0,1
 pattern,10,0,42
 pattern,13,1,/42/
 pattern,4,3,\d/

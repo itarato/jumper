@@ -86,6 +86,7 @@ struct Input {
   Rectangle frame;
   bool is_active;
   string label;
+  OneTimeBool key_has_pressed{};
 
   explicit Input(string label, float width = 128.0f)
       : frame({0.0f, 0.0f, width, 18.0f}),
@@ -116,6 +117,8 @@ struct Input {
     if (is_active) {
       int ch;
       while ((ch = GetKeyPressed())) {
+        key_has_pressed.set();
+
         if (ch >= 32 && ch <= 126) {
           if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
             value.push_back(char_shift_version((char)ch));
@@ -129,9 +132,11 @@ struct Input {
     }
   }
 
-  [[nodiscard]] bool has_changed() const {
+  [[nodiscard]] bool is_edit_completed() const {
     return is_active && IsKeyPressed(KEY_ENTER);
   }
+
+  [[nodiscard]] bool is_edited() { return is_active && key_has_pressed.get(); }
 
   void draw() const {
     DrawRectangleRec(frame, WHITE);
@@ -330,7 +335,7 @@ struct App {
 
   void update() {
     {  // Input fields.
-      if (input_window_width.has_changed()) {
+      if (input_window_width.is_edit_completed()) {
         int new_width = stoi(input_window_width.value);
         if (new_width > MAX_WINDOW_BLOCK_WIDTH) {
           input_window_width.set_value(to_string(MAX_WINDOW_BLOCK_WIDTH));
@@ -343,7 +348,7 @@ struct App {
         }
       }
 
-      if (input_window_height.has_changed()) {
+      if (input_window_height.is_edit_completed()) {
         int new_height = stoi(input_window_height.value);
         if (new_height > MAX_WINDOW_BLOCK_HEIGHT) {
           input_window_height.set_value(to_string(MAX_WINDOW_BLOCK_HEIGHT));
@@ -356,11 +361,11 @@ struct App {
         }
       }
 
-      if (input_tile_value.has_changed() && selected_tile) {
+      if (input_tile_value.is_edited() && selected_tile) {
         selected_tile->pattern = input_tile_value.value;
       }
 
-      if (input_decoration_index.has_changed() && selected_tile) {
+      if (input_decoration_index.is_edited() && selected_tile) {
         selected_tile->decoration = input_decoration_index.value.empty()
                                         ? -1
                                         : stoi(input_decoration_index.value);
@@ -463,17 +468,21 @@ struct App {
 
         if (!map[y][x].pattern.empty()) {
           // FIXME: hidpi mode is not reflected here -> make argument for it
-          int text_width = MeasureText(map[y][x].pattern.c_str(), 6);
-          DrawRectangle(x * BLOCK_SIZE - offsx + 2, y * BLOCK_SIZE - offsy + 2,
-                        text_width, 6, DARKPURPLE);
+          int text_width = MeasureText(map[y][x].pattern.c_str(), 10);
+          DrawRectangle(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy,
+                        text_width + 4, 10 + 4, DARKPURPLE);
           DrawText(map[y][x].pattern.c_str(), x * BLOCK_SIZE - offsx + 2,
-                   y * BLOCK_SIZE - offsy + 2, 6, WHITE);
+                   y * BLOCK_SIZE - offsy + 2, 10, WHITE);
         }
 
         if (map[y][x].decoration >= 0) {
+          int text_width =
+              MeasureText(to_string(map[y][x].decoration).c_str(), 10);
+          DrawRectangle(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy + 20,
+                        text_width + 4, 10 + 4, DARKGREEN);
           DrawText(to_string(map[y][x].decoration).c_str(),
-                   x * BLOCK_SIZE - offsx + 2, y * BLOCK_SIZE - offsy + 22, 6,
-                   BLACK);
+                   x * BLOCK_SIZE - offsx + 2, y * BLOCK_SIZE - offsy + 22, 10,
+                   WHITE);
         }
       }
     }
