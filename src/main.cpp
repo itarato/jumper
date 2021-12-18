@@ -3,6 +3,9 @@
  *
  * Features:
  * - score save (to file)
+ * - timed door!!!
+ * - print dying reason (bad regex, enemy, spike, etc)
+ * - pause
  *
  * Optional features:
  * - make pooping that attracts enemies for a bit:
