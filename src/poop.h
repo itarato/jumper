@@ -6,7 +6,7 @@
 // but less potent.
 
 struct Poop {
-  int timer{180};
+  int timer{360};
   Vector2 pos;
 
   Poop(Vector2 pos);

@@ -24,4 +24,7 @@ struct GameConfig {
   template <class Out>
   Out arg_val_or_default(std::map<std::string, std::string>& argmap,
                          const char* key, Out def, Out (*conv)(std::string));
+
+  bool get_bool_setting(std::map<std::string, std::string>& argmap,
+                        const char* name, bool fallback) const;
 };

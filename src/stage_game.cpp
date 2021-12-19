@@ -300,7 +300,7 @@ void StageGame::init() {
       ->with_aligned_center();
   pause_text.with_font(&asset_manager.fonts[FONT_LARGE])
       ->with_aligned_center()
-      ->with_color(Fade(RED, 0.5));
+      ->with_color(Fade(RED, 0.8));
 
   init_level();
 }

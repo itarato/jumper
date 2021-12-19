@@ -22,13 +22,12 @@ GameConfig::GameConfig(std::map<std::string, std::string>&& argmap) {
       arg_val_or_default(argmap, "background_color", (unsigned long)0xFAFAFAFF,
                          convert_string_to_ulong);
 
-  is_background_image = argmap.count("background_image") > 0;
+  is_background_image = get_bool_setting(argmap, "background_image", true);
 
-  is_background_horizontal_tile = argmap.count("background_tile") > 0 &&
-                                  argmap["background_tile"] == "horizontal";
-
-  is_background_full_tile = argmap.count("background_tile") > 0 &&
-                            argmap["background_tile"] == "full";
+  auto tile_type =
+      arg_val_or_default(argmap, "background_tile", std::string{"full"}, id);
+  is_background_horizontal_tile = tile_type == "horizontal";
+  is_background_full_tile = tile_type == "full";
 
   auto map_it = argmap.find("map");
   if (map_it != argmap.end())
@@ -43,4 +42,10 @@ Out GameConfig::arg_val_or_default(std::map<std::string, std::string>& argmap,
   if (it != argmap.end()) return conv(it->second);
 
   return def;
+}
+
+bool GameConfig::get_bool_setting(std::map<std::string, std::string>& argmap,
+                                  const char* name, bool fallback) const {
+  if (argmap.count(name) == 0) return fallback;
+  return argmap[name] == "1" || argmap[name] == "true";
 }

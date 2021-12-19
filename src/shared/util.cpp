@@ -38,6 +38,8 @@ int convert_string_to_int(std::string s) { return std::stoi(s); }
 
 unsigned long convert_string_to_ulong(std::string s) { return std::stoul(s); }
 
+std::string id(std::string s) { return s; }
+
 bool in_range(int number, int min, int max) {
   return number >= min && number <= max;
 }

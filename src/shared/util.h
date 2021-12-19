@@ -32,6 +32,7 @@ typedef enum {
 
 int convert_string_to_int(std::string s);
 unsigned long convert_string_to_ulong(std::string s);
+std::string id(std::string s);
 
 void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
@@ -177,8 +178,7 @@ struct Countdown {
   void cancel() { counter = 0; }
   bool is_completed() const { return counter == 0; }
   void tick() {
-    if (is_completed())
-      return;
+    if (is_completed()) return;
 
     counter--;
   }
