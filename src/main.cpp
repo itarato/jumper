@@ -6,6 +6,7 @@
  * - timed door!!!
  * - print dying reason (bad regex, enemy, spike, etc)
  * - make prepend/append clearer
+ * - pause visual indicator
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)

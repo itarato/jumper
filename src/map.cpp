@@ -114,32 +114,60 @@ void Map::draw(IntVector2D scroll_offset) {
     Tile* tile = &map[v][h];
 
     if (!tile->pattern.empty() && tile->is_enabled) {
-      Vector2 text_frame =
-          MeasureTextEx(asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
-                        asset_manager.fonts[FONT_SMALL].baseSize, 0);
+      Vector2 text_frame = MeasureTextEx(
+          asset_manager.fonts[FONT_SMALL], tile->formatted_pattern().c_str(),
+          asset_manager.fonts[FONT_SMALL].baseSize, 0);
 
       Color text_bubble_color;
-      if (tile->type == TILE_REGEX) {
-        text_bubble_color = LIME;
+      if (tile->is_regex()) {
+        if (tile->is_regex_transformation()) {
+          text_bubble_color = DARKBLUE;
+        } else {
+          text_bubble_color = LIME;
+        }
       } else {
         text_bubble_color = DARKPURPLE;
       }
+
+      int text_offset = tile->is_regex_prepend() ? 9 : 0;
+      float bubble_width = text_frame.x + 8.0f + text_offset;
+
+      if (tile->is_regex_append()) bubble_width += 9;
 
       DrawRectangleRounded(
           Rectangle{
               (float)(h * BLOCK_SIZE - scroll_offset.x - 4),
               (float)(v * BLOCK_SIZE - scroll_offset.y - 2),
-              text_frame.x + 8.0f,
+              bubble_width,
               text_frame.y + 4.0f,
           },
-          2.0f, 2, text_bubble_color);
-      DrawTextEx(asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
-                 Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
-                         (float)(v * BLOCK_SIZE - scroll_offset.y)},
-                 asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
+          6.0f, 6, text_bubble_color);
+
+      DrawTextEx(
+          asset_manager.fonts[FONT_SMALL], tile->formatted_pattern().c_str(),
+          Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x + text_offset),
+                  (float)(v * BLOCK_SIZE - scroll_offset.y)},
+          asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
+
+      if (tile->is_regex_prepend()) {
+        DrawTexture(asset_manager.textures[IMG_REGEX_PREPEND],
+                    h * BLOCK_SIZE - scroll_offset.x - 2,
+                    v * BLOCK_SIZE - scroll_offset.y + 1, WHITE);
+      }
+      if (tile->is_regex_append()) {
+        DrawTextureRec(
+            asset_manager.textures[IMG_REGEX_PREPEND],
+            Rectangle{0.0f, 0.0f,
+                      (float)-asset_manager.textures[IMG_REGEX_PREPEND].width,
+                      (float)asset_manager.textures[IMG_REGEX_PREPEND].height},
+            Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x + text_offset +
+                            text_frame.x + 2),
+                    (float)(v * BLOCK_SIZE - scroll_offset.y + 1)},
+            WHITE);
+      }
     }
 
-    if (tile->decoration >= 0) {
+    if (tile->has_decoration()) {
       std::string image_name{
           TextFormat(IMG_FORMAT_DECORATION, tile->decoration)};
       Texture2D* texture = &asset_manager.textures[image_name];

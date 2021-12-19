@@ -111,6 +111,44 @@ struct Tile {
   }
 
   void vertical_flip() { draw_frame.height *= -1; }
+
+  std::string formatted_pattern() {
+    std::string out{pattern};
+
+    if (is_regex_prepend() || is_regex_replace() || is_regex_transformation()) {
+      out.erase(0, 1);
+    }
+
+    if (is_regex_append() || is_regex_replace() || is_regex_transformation()) {
+      out.erase(out.size() - 1, 1);
+    }
+
+    return out;
+  }
+
+  // TODO: Make these memoized vars.
+  bool has_decoration() const { return decoration >= 0; }
+
+  bool is_regex() const { return type == TILE_REGEX; }
+
+  bool is_regex_replace() const {
+    if (pattern.size() <= 1) return false;
+    return pattern[0] == '/' && pattern[pattern.size() - 1] == '/';
+  }
+
+  bool is_regex_prepend() const {
+    if (pattern.size() <= 1) return false;
+    return pattern[0] == '/' && !is_regex_replace();
+  }
+
+  bool is_regex_append() const {
+    if (pattern.size() <= 1) return false;
+    return pattern[pattern.size() - 1] == '/' && !is_regex_replace();
+  }
+
+  bool is_regex_transformation() const {
+    return pattern == "[CLR]" || pattern == "[REV]";
+  }
 };
 
 struct Map {
