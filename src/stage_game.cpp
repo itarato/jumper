@@ -45,6 +45,11 @@ StageGame::StageGame(GameConfig* game_config)
 }
 
 void StageGame::update() {
+  {  // Pausing.
+    if (is_key_pressed(KEY_GRAVE)) is_paused = !is_paused;
+    if (is_paused) return;
+  }
+
   if (state == GameStateT::PLAY) {
     // Reset stage.
     if (is_key_pressed(KEY_BACKSPACE)) {
@@ -247,14 +252,14 @@ void StageGame::draw() {
                Vector2{12.0f, (float)GetScreenHeight() - 26.0f},
                asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
 
-    const char* regex_text = TextFormat("/%s/", jumper.regex_raw.c_str());
+    const char* regex_text = TextFormat("^%s$", jumper.regex_raw.c_str());
     Vector2 regex_text_size{
         MeasureTextEx(asset_manager.fonts[FONT_MEDIUM], regex_text,
                       asset_manager.fonts[FONT_MEDIUM].baseSize, 0)};
     DrawTextEx(asset_manager.fonts[FONT_MEDIUM], regex_text,
                Vector2{((float)GetScreenWidth() - regex_text_size.x) / 2.0f,
                        (float)GetScreenHeight() - 26.0f},
-               asset_manager.fonts[FONT_MEDIUM].baseSize, 0, WHITE);
+               asset_manager.fonts[FONT_MEDIUM].baseSize, 0, YELLOW);
 
     const char* time_text =
         TextFormat("%dm %ds", timer.minutes(), timer.seconds());
@@ -341,6 +346,8 @@ void StageGame::init_level() {
   }
 
   timer.start();
+
+  is_paused = false;
 }
 
 std::optional<StageT> StageGame::next_stage() {

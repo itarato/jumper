@@ -16,14 +16,15 @@ int gamepad_button_for_key(int key) {
       return 15;
     case KEY_X:
       return 11;
+    case KEY_GRAVE:
+      return 13;
     default:
       return 0;
   }
 }
 
 bool is_key_pressed(int key) {
-  if (IsKeyPressed(key))
-    return true;
+  if (IsKeyPressed(key)) return true;
 
   int gamepad_button{gamepad_button_for_key(key)};
   if (gamepad_button > 0 && IsGamepadButtonPressed(0, gamepad_button))
@@ -33,28 +34,22 @@ bool is_key_pressed(int key) {
 }
 
 bool is_key_down(int key) {
-  if (IsKeyDown(key))
-    return true;
+  if (IsKeyDown(key)) return true;
 
   int gamepad_button{gamepad_button_for_key(key)};
-  if (gamepad_button > 0 && IsGamepadButtonDown(0, gamepad_button))
-    return true;
+  if (gamepad_button > 0 && IsGamepadButtonDown(0, gamepad_button)) return true;
 
   return false;
 }
 
 float get_horizontal_axis() {
-  if (IsKeyDown(KEY_LEFT))
-    return -1.0f;
-  if (IsKeyDown(KEY_RIGHT))
-    return 1.0f;
+  if (IsKeyDown(KEY_LEFT)) return -1.0f;
+  if (IsKeyDown(KEY_RIGHT)) return 1.0f;
   return GetGamepadAxisMovement(0, 0);
 }
 
 float get_vertical_axis() {
-  if (IsKeyDown(KEY_DOWN))
-    return -1.0f;
-  if (IsKeyDown(KEY_UP))
-    return 1.0f;
+  if (IsKeyDown(KEY_DOWN)) return -1.0f;
+  if (IsKeyDown(KEY_UP)) return 1.0f;
   return GetGamepadAxisMovement(0, 1);
 }

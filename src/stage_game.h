@@ -47,6 +47,8 @@ struct StageGame : IStage, JumperObserver {
 
   SimpleTimer timer{};
 
+  bool is_paused{false};
+
   void on_jumper_update(JumperEvent event, JumperEventData data) override;
 
   void update() override;

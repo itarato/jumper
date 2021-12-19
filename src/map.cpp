@@ -1,6 +1,7 @@
 #include "map.h"
 
 #include <fstream>
+#include <optional>
 #include <utility>
 
 #include "asset_manager.h"
@@ -10,21 +11,49 @@
 
 static Tile null_tile{TILE_NULL};
 
+struct TileListIterator {
+  IntVector2D scroll_offset;
+  int width;
+  int height;
+  int v{0};
+  int h{0};
+
+  TileListIterator(IntVector2D scroll_offset, int width, int height)
+      : scroll_offset(scroll_offset), width(width), height(height) {}
+
+  std::optional<std::pair<int, int>> next() {
+    for (; v < height; v++) {
+      int block_lhs_y = v * BLOCK_SIZE - scroll_offset.y;
+      if (block_lhs_y >= GetScreenHeight()) break;
+
+      int block_rhs_y = block_lhs_y + BLOCK_SIZE;
+      if (block_rhs_y <= 0) continue;
+
+      for (; h < width; h++) {
+        int block_lhs_x = h * BLOCK_SIZE - scroll_offset.x;
+        if (block_lhs_x >= GetScreenWidth()) break;
+
+        int block_rhs_x = block_lhs_x + BLOCK_SIZE;
+        if (block_rhs_x <= 0) continue;
+
+        h++;
+        return std::optional<std::pair<int, int>>{{v, h}};
+      }
+    }
+
+    return std::nullopt;
+  }
+};
+
 Texture2D* SingleTextureProvider::texture() {
   return enabled ? texture_enabled : texture_disabled;
 }
 
-void SingleTextureProvider::disable() {
-  enabled = false;
-}
+void SingleTextureProvider::disable() { enabled = false; }
 
-void SingleTextureProvider::set_fade(float v) {
-  _fade = v;
-}
+void SingleTextureProvider::set_fade(float v) { _fade = v; }
 
-Color SingleTextureProvider::color() const {
-  return Fade(WHITE, _fade);
-}
+Color SingleTextureProvider::color() const { return Fade(WHITE, _fade); }
 
 Texture2D* DisableSpriteTextureProvider::texture() {
   if (enabled) {
@@ -47,28 +76,28 @@ Texture2D* DisableSpriteTextureProvider::texture() {
   }
 }
 
-void Map::build(const std::string& map_file_path) {
-  load_map(map_file_path);
-}
+void Map::build(const std::string& map_file_path) { load_map(map_file_path); }
 
 void Map::draw(IntVector2D scroll_offset) {
   for (int v = 0; v < (int)map.size(); v++) {
-    int block_lhs_y = v * BLOCK_SIZE - scroll_offset.y;
-    int block_rhs_y = block_lhs_y + BLOCK_SIZE;
-    if (block_rhs_y <= 0 ||
-        block_lhs_y >= GetScreenHeight()) {  // Out of window.
-      continue;
+    {  // Bound check.
+      int block_lhs_y = v * BLOCK_SIZE - scroll_offset.y;
+      if (block_lhs_y >= GetScreenHeight()) break;
+
+      int block_rhs_y = block_lhs_y + BLOCK_SIZE;
+      if (block_rhs_y <= 0) continue;
     }
 
     for (int h = 0; h < (int)map[v].size(); h++) {
-      Tile* tile = &map[v][h];
+      {  // Bound check.
+        int block_lhs_x = h * BLOCK_SIZE - scroll_offset.x;
+        if (block_lhs_x >= GetScreenWidth()) break;
 
-      int block_lhs_x = h * BLOCK_SIZE - scroll_offset.x;
-      int block_rhs_x = block_lhs_x + BLOCK_SIZE;
-      if (block_rhs_x <= 0 ||
-          block_lhs_x >= GetScreenWidth()) {  // Out of window.
-        continue;
+        int block_rhs_x = block_lhs_x + BLOCK_SIZE;
+        if (block_rhs_x <= 0) continue;
       }
+
+      Tile* tile = &map[v][h];
 
       Texture2D* texture{tile->texture_provider->texture()};
       if (texture) {
@@ -348,10 +377,6 @@ bool Map::is_inside_map(IntVector2D coord) const {
          coord.x < (int)block_width;
 }
 
-size_t Map::pixel_height() const {
-  return block_height * BLOCK_SIZE;
-}
+size_t Map::pixel_height() const { return block_height * BLOCK_SIZE; }
 
-size_t Map::pixel_width() const {
-  return block_width * BLOCK_SIZE;
-}
+size_t Map::pixel_width() const { return block_width * BLOCK_SIZE; }
