@@ -5,11 +5,9 @@
  * - score save (to file)
  * - timed door!!!
  * - print dying reason (bad regex, enemy, spike, etc)
- * - pause
  * - make prepend/append clearer
  *
  * Bug:
- * - map overlay is still covered (separate it)
  * - timer runs during pause (is it ok or not?)
  *
  * Optional features:
@@ -29,6 +27,7 @@
  *  - shooting block
  *  - toggling laser
  * - dark reveal mode
+ * - jumper producing sugar attracting enemy for short time
  */
 
 #include <cstdlib>
