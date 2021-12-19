@@ -31,6 +31,7 @@ StageGame::StageGame(GameConfig* game_config)
       game_config(game_config),
       victory_text("Victory"),
       game_over_text("Game over"),
+      pause_text("Pause"),
       map_file_paths({}) {
   jumper.JumperSubject::subscribe(this);
 
@@ -284,6 +285,8 @@ void StageGame::draw() {
       game_over_text.draw();
     }
   }
+
+  if (is_paused) pause_text.draw();
 }
 
 void StageGame::init() {
@@ -295,6 +298,9 @@ void StageGame::init() {
       ->with_aligned_center();
   game_over_text.with_font(&asset_manager.fonts[FONT_LARGE])
       ->with_aligned_center();
+  pause_text.with_font(&asset_manager.fonts[FONT_LARGE])
+      ->with_aligned_center()
+      ->with_color(Fade(RED, 0.5));
 
   init_level();
 }
