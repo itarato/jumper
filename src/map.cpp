@@ -36,12 +36,18 @@ struct TileListIterator {
         int block_rhs_x = block_lhs_x + BLOCK_SIZE;
         if (block_rhs_x <= 0) continue;
 
-        h++;
-        return std::optional<std::pair<int, int>>{{v, h}};
+        return std::optional<std::pair<int, int>>{{v, h++}};
       }
+
+      h = 0;
     }
 
     return std::nullopt;
+  }
+
+  void reset() {
+    v = 0;
+    h = 0;
   }
 };
 
@@ -79,71 +85,70 @@ Texture2D* DisableSpriteTextureProvider::texture() {
 void Map::build(const std::string& map_file_path) { load_map(map_file_path); }
 
 void Map::draw(IntVector2D scroll_offset) {
-  for (int v = 0; v < (int)map.size(); v++) {
-    {  // Bound check.
-      int block_lhs_y = v * BLOCK_SIZE - scroll_offset.y;
-      if (block_lhs_y >= GetScreenHeight()) break;
+  TileListIterator it{scroll_offset, (int)block_width, (int)block_height};
+  std::optional<std::pair<int, int>> coords;
 
-      int block_rhs_y = block_lhs_y + BLOCK_SIZE;
-      if (block_rhs_y <= 0) continue;
+  // First run - background tiles.
+  for (coords = it.next(); coords.has_value(); coords = it.next()) {
+    int v = coords.value().first;
+    int h = coords.value().second;
+
+    Tile* tile = &map[v][h];
+
+    Texture2D* texture{tile->texture_provider->texture()};
+    if (texture) {
+      DrawTextureRec(*texture, tile->draw_frame,
+                     Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
+                             (float)(v * BLOCK_SIZE - scroll_offset.y)},
+                     tile->texture_provider->color());
+    }
+  }
+
+  it.reset();
+
+  // Second run - overlays.
+  for (coords = it.next(); coords.has_value(); coords = it.next()) {
+    int v = coords.value().first;
+    int h = coords.value().second;
+
+    Tile* tile = &map[v][h];
+
+    if (!tile->pattern.empty() && tile->is_enabled) {
+      Vector2 text_frame =
+          MeasureTextEx(asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
+                        asset_manager.fonts[FONT_SMALL].baseSize, 0);
+
+      Color text_bubble_color;
+      if (tile->type == TILE_REGEX) {
+        text_bubble_color = LIME;
+      } else {
+        text_bubble_color = DARKPURPLE;
+      }
+
+      DrawRectangleRounded(
+          Rectangle{
+              (float)(h * BLOCK_SIZE - scroll_offset.x - 4),
+              (float)(v * BLOCK_SIZE - scroll_offset.y - 2),
+              text_frame.x + 8.0f,
+              text_frame.y + 4.0f,
+          },
+          2.0f, 2, text_bubble_color);
+      DrawTextEx(asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
+                 Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
+                         (float)(v * BLOCK_SIZE - scroll_offset.y)},
+                 asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
     }
 
-    for (int h = 0; h < (int)map[v].size(); h++) {
-      {  // Bound check.
-        int block_lhs_x = h * BLOCK_SIZE - scroll_offset.x;
-        if (block_lhs_x >= GetScreenWidth()) break;
+    if (tile->decoration >= 0) {
+      std::string image_name{
+          TextFormat(IMG_FORMAT_DECORATION, tile->decoration)};
+      Texture2D* texture = &asset_manager.textures[image_name];
 
-        int block_rhs_x = block_lhs_x + BLOCK_SIZE;
-        if (block_rhs_x <= 0) continue;
-      }
-
-      Tile* tile = &map[v][h];
-
-      Texture2D* texture{tile->texture_provider->texture()};
-      if (texture) {
-        DrawTextureRec(*texture, tile->draw_frame,
-                       Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
-                               (float)(v * BLOCK_SIZE - scroll_offset.y)},
-                       tile->texture_provider->color());
-      }
-
-      if (!tile->pattern.empty() && tile->is_enabled) {
-        Vector2 text_frame = MeasureTextEx(
-            asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
-            asset_manager.fonts[FONT_SMALL].baseSize, 0);
-
-        Color text_bubble_color;
-        if (tile->type == TILE_REGEX) {
-          text_bubble_color = LIME;
-        } else {
-          text_bubble_color = DARKPURPLE;
-        }
-
-        DrawRectangleRounded(
-            Rectangle{
-                (float)(h * BLOCK_SIZE - scroll_offset.x - 4),
-                (float)(v * BLOCK_SIZE - scroll_offset.y - 2),
-                text_frame.x + 8.0f,
-                text_frame.y + 4.0f,
-            },
-            2.0f, 2, text_bubble_color);
-        DrawTextEx(asset_manager.fonts[FONT_SMALL], tile->pattern.c_str(),
-                   Vector2{(float)(h * BLOCK_SIZE - scroll_offset.x),
-                           (float)(v * BLOCK_SIZE - scroll_offset.y)},
-                   asset_manager.fonts[FONT_SMALL].baseSize, 0, WHITE);
-      }
-
-      if (tile->decoration >= 0) {
-        std::string image_name{
-            TextFormat(IMG_FORMAT_DECORATION, tile->decoration)};
-        Texture2D* texture = &asset_manager.textures[image_name];
-
-        DrawTexture(*texture,
-                    h * BLOCK_SIZE - scroll_offset.x + (BLOCK_SIZE / 2) -
-                        (texture->width / 2),
-                    (v + 1) * BLOCK_SIZE - scroll_offset.y - texture->height,
-                    WHITE);
-      }
+      DrawTexture(*texture,
+                  h * BLOCK_SIZE - scroll_offset.x + (BLOCK_SIZE / 2) -
+                      (texture->width / 2),
+                  (v + 1) * BLOCK_SIZE - scroll_offset.y - texture->height,
+                  WHITE);
     }
   }
 }
