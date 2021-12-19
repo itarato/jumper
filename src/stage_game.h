@@ -40,6 +40,7 @@ struct StageGame : IStage, JumperObserver {
 
   Text victory_text;
   Text game_over_text;
+  Text game_over_explanation_text;
   Text pause_text;
 
   int current_map_number;

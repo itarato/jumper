@@ -112,6 +112,7 @@ struct Jumper : JumperSubject {
   OneTimeBool is_pooping{};
   Countdown shield_countdown{180};
   Phaser shield_phaser{0.2f, 0.6f, 0.8f};
+  const char* death_reason{""};
 
   void draw(IntVector2D scroll_offset);
   void update(Map* map);

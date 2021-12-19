@@ -77,10 +77,12 @@ void Jumper::update(Map* map) {
               }
             } catch (...) {
               // Incorrect regex.
+              death_reason = "Death by bad regular expression!";
               kill();
             }
           }
           if (tile.type == TILE_TRAP) {
+            death_reason = "Death by trap!";
             kill();
           }
         }
@@ -267,6 +269,8 @@ void Jumper::init(Vector2 start_pos) {
   dying_rot = 0.0f;
   dying_fade = 1.0f;
   dying_scale = 1.0f;
+
+  death_reason = "";
 }
 
 std::regex Jumper::get_regex() const {
@@ -278,23 +282,15 @@ std::regex Jumper::get_regex() const {
   return std::regex{raw};
 }
 
-bool Jumper::is_dead() const {
-  return state == JumperState::Dead;
-}
+bool Jumper::is_dead() const { return state == JumperState::Dead; }
 
-bool Jumper::is_alive() const {
-  return state == JumperState::Normal;
-}
+bool Jumper::is_alive() const { return state == JumperState::Normal; }
 
 void Jumper::kill() {
   state = JumperState::Dying;
   JumperSubject::notify_all(JumperEvent::Die, JumperEventData{&frame});
 }
 
-void Jumper::activate_shield() {
-  shield_countdown.reset();
-}
+void Jumper::activate_shield() { shield_countdown.reset(); }
 
-bool Jumper::is_shielded() {
-  return !shield_countdown.is_completed();
-}
+bool Jumper::is_shielded() { return !shield_countdown.is_completed(); }

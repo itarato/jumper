@@ -29,8 +29,10 @@ std::vector<std::string> default_map_file_list(const char* folder) {
 StageGame::StageGame(GameConfig* game_config)
     : JumperObserver(),
       game_config(game_config),
-      victory_text("Victory"),
+      victory_text("Victory"),  // TODO: We could move these to the initialized
+                                // phase (with_text)..
       game_over_text("Game over"),
+      game_over_explanation_text(""),
       pause_text("Pause"),
       map_file_paths({}) {
   jumper.JumperSubject::subscribe(this);
@@ -124,9 +126,21 @@ void StageGame::update() {
 
   {  // Completion checks.
     if (state == GameStateT::PLAY) {
-      if (jumper.frame.y >= (float)map.pixel_height() || jumper.is_dead()) {
+      if (jumper.frame.y >= (float)map.pixel_height()) {
         state = GameStateT::WAIT_TO_RESTART_LEVEL;
         is_victory = false;
+
+        game_over_explanation_text.with_text("Death by fall!")
+            ->with_aligned_center();
+      }
+
+      if (jumper.is_dead()) {
+        state = GameStateT::WAIT_TO_RESTART_LEVEL;
+        is_victory = false;
+
+        if (strcmp(game_over_explanation_text.text, "") == 0)
+          game_over_explanation_text.with_text(jumper.death_reason)
+              ->with_aligned_center();
       }
 
       if (jumper.is_alive()) {
@@ -144,6 +158,8 @@ void StageGame::update() {
         if (!jumper.is_shielded()) {
           for (Enemy& enemy : enemies) {
             if (CheckCollisionRecs(jumper.frame, enemy.frame)) {
+              game_over_explanation_text.with_text("Death by enemy!")
+                  ->with_aligned_center();
               jumper.kill();
             }
           }
@@ -283,6 +299,7 @@ void StageGame::draw() {
       victory_text.draw();
     } else {
       game_over_text.draw();
+      game_over_explanation_text.draw();
     }
   }
 
@@ -295,12 +312,19 @@ void StageGame::init() {
   current_map_number = 0;
 
   victory_text.with_font(&asset_manager.fonts[FONT_LARGE])
-      ->with_aligned_center();
+      ->with_aligned_center()
+      ->with_background(WHITE, 0.0f, 20.0f);
   game_over_text.with_font(&asset_manager.fonts[FONT_LARGE])
-      ->with_aligned_center();
+      ->with_aligned_center()
+      ->with_background(WHITE, -1.0f, 12.0f);
+  game_over_explanation_text.with_font(&asset_manager.fonts[FONT_MEDIUM])
+      ->with_color(RED)
+      ->with_vertical_offset(48)
+      ->with_background(WHITE, 2.0f, 8.0f);
   pause_text.with_font(&asset_manager.fonts[FONT_LARGE])
       ->with_aligned_center()
-      ->with_color(Fade(RED, 0.8));
+      ->with_color(Fade(RED, 0.8))
+      ->with_background(Fade(WHITE, 0.6f), 3.0f, 6.0f);
 
   init_level();
 }
@@ -355,6 +379,8 @@ void StageGame::init_level() {
   timer.start();
 
   is_paused = false;
+
+  game_over_explanation_text.text = "";
 }
 
 std::optional<StageT> StageGame::next_stage() {
