@@ -9,19 +9,19 @@
  */
 
 struct Text {
-  const char* text;
-  Color color;
-  Font* font;
-  Vector2 pos;
-  bool is_hover_effect;
+  const char* text{nullptr};
+  Color color{DARKGRAY};
+  Font* font{nullptr};
+  Vector2 pos{};
+  bool is_hover_effect{false};
   int vertical_offset{0};
   bool is_background{false};
-  Color background_color;
+  Color background_color{WHITE};
   float background_rotation{0.0f};
   float background_padding{0.0f};
 
   explicit Text(const char* text)
-      : text(text), color(DARKGRAY), font(nullptr) {}
+      : text(text), font(nullptr) {}
 
   Text* with_color(Color new_color) {
     color = new_color;

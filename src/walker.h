@@ -13,10 +13,10 @@ struct IWalker {
 };
 
 struct TargetWalker : IWalker {
-  Vector2 origin;
-  Vector2 target;
-  int step;
-  Map *map;
+  Vector2 origin{};
+  Vector2 target{};
+  int step{0};
+  Map *map{nullptr};
 
   void init(Rectangle &self_frame) override;
   void update(Rectangle &self_frame, const Rectangle &player_frame) override;

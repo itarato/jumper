@@ -69,8 +69,8 @@ enum class JumperEvent {
 };
 
 struct JumperEventData {
-  Rectangle* frame;
-  Rectangle subject;
+  Rectangle* frame{nullptr};
+  Rectangle subject{};
 
   explicit JumperEventData(Rectangle* frame) : frame(frame), subject(*frame) {}
   explicit JumperEventData(Rectangle* frame, Rectangle subject)
@@ -94,19 +94,19 @@ struct JumperSubject {
 };
 
 struct Jumper : JumperSubject {
-  Rectangle frame;
-  Vector2 v;
-  VerticalState vstate;
+  Rectangle frame{};
+  Vector2 v{};
+  VerticalState vstate{};
   bool is_facing_right{true};
   Sprite move_sprite;
   Sprite stand_sprite;
   Sprite fly_sprite;
-  DoubleJump double_jump;
+  DoubleJump double_jump{};
   std::string regex_raw{};
-  JumperState state;
-  float dying_rot;
-  float dying_fade;
-  float dying_scale;
+  JumperState state{JumperState::Normal};
+  float dying_rot{0.0f};
+  float dying_fade{0.0f};
+  float dying_scale{0.0f};
   Pooper pooper{};
   Phaser shade_phaser{0.0f, 255.0f, 0.5f};
   OneTimeBool is_pooping{};

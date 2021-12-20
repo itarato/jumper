@@ -25,26 +25,26 @@ enum class GameStateT {
 };
 
 struct StageGame : IStage, JumperObserver {
-  GameStateT state;
-  int wait_to_state_timeout;
-  bool is_victory;
+  GameStateT state{GameStateT::PLAY};
+  int wait_to_state_timeout{0};
+  bool is_victory{false};
 
-  GameConfig* game_config;
-  Jumper jumper;
-  Map map;
-  std::vector<Enemy> enemies;
-  std::vector<Coin> coins;
-  std::vector<Poop> poops;
-  std::vector<Shield> shields;
-  int score;
+  GameConfig* game_config{nullptr};
+  Jumper jumper{};
+  Map map{};
+  std::vector<Enemy> enemies{};
+  std::vector<Coin> coins{};
+  std::vector<Poop> poops{};
+  std::vector<Shield> shields{};
+  int score{0};
 
   Text victory_text;
   Text game_over_text;
   Text game_over_explanation_text;
   Text pause_text;
 
-  int current_map_number;
-  std::vector<std::string> map_file_paths;
+  int current_map_number{0};
+  std::vector<std::string> map_file_paths{};
   std::vector<std::unique_ptr<IParticle>> explosions{};
 
   SimpleTimer timer{};

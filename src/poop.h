@@ -9,11 +9,11 @@ struct Poop {
   int timer{360};
   Vector2 pos;
 
-  Poop(Vector2 pos);
+  explicit Poop(Vector2 pos);
 
   void update();
   void draw(IntVector2D screen_offset) const;
 
-  bool is_dead() const;
-  Rectangle frame() const;
+  [[nodiscard]] bool is_dead() const;
+  [[nodiscard]] Rectangle frame() const;
 };

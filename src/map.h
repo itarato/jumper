@@ -25,9 +25,9 @@ struct NullTextureProvider : ITextureProvider {
 };
 
 struct SingleTextureProvider : ITextureProvider {
-  Texture2D* texture_enabled;
-  Texture2D* texture_disabled;
-  bool enabled;
+  Texture2D* texture_enabled{nullptr};
+  Texture2D* texture_disabled{nullptr};
+  bool enabled{true};
   float _fade{1.0};
 
   explicit SingleTextureProvider(Texture2D* texture_enabled)
@@ -49,11 +49,11 @@ struct SingleTextureProvider : ITextureProvider {
 };
 
 struct DisableSpriteTextureProvider : SingleTextureProvider {
-  std::vector<Texture2D*> disable_sprite;
+  std::vector<Texture2D*> disable_sprite{};
   int disable_step{0};
   bool disable_sequence_completed{false};
   int frame_counter{0};
-  int step_frame_count;
+  int step_frame_count{1};
 
   DisableSpriteTextureProvider(Texture2D* texture_enabled,
                                Texture2D* texture_disabled,
@@ -67,12 +67,12 @@ struct DisableSpriteTextureProvider : SingleTextureProvider {
 };
 
 struct Tile {
-  TileType type = TILE_AIR;
-  std::string pattern{""};
+  TileType type{TILE_AIR};
+  std::string pattern{};
   int decoration{-1};
-  bool is_enabled = true;
-  std::shared_ptr<ITextureProvider> texture_provider;
-  Rectangle draw_frame;
+  bool is_enabled{true};
+  std::shared_ptr<ITextureProvider> texture_provider{nullptr};
+  Rectangle draw_frame{};
 
   explicit Tile(TileType type)
       : type(type),
@@ -152,11 +152,11 @@ struct Tile {
 };
 
 struct Map {
-  std::vector<std::vector<Tile>> map;
-  size_t block_width;
-  size_t block_height;
-  Vector2 start_pos;
-  Vector2 end_pos;
+  std::vector<std::vector<Tile>> map{};
+  size_t block_width{0};
+  size_t block_height{0};
+  Vector2 start_pos{};
+  Vector2 end_pos{};
 
   void build(const std::string& map_file_path);
   void draw(IntVector2D scroll_offset);
