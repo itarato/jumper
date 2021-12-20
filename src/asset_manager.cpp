@@ -13,7 +13,7 @@ AssetManager::~AssetManager() {
 }
 
 std::vector<Texture2D*> AssetManager::texture_list(
-    const char* file_name_format) {
+    const char* file_name_format) const {
   std::vector<Texture2D*> out{};
 
   for (int i{0};; i++) {
@@ -24,7 +24,7 @@ std::vector<Texture2D*> AssetManager::texture_list(
 
     if (textures.count(file_name) == 0) break;
 
-    out.emplace_back(&textures[file_name]);
+    out.emplace_back((Texture*)(&textures.at(file_name)));
   }
 
   return out;
