@@ -22,7 +22,5 @@ void Sprite::progress() {
     counter = 0;
   }
 
-  if (step >= (int)img_names.size()) {
-    step = 0;
-  }
+  if (step >= (int)img_names.size()) step = 0;
 }

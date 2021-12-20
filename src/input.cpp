@@ -16,7 +16,7 @@ int gamepad_button_for_key(int key) {
       return 15;
     case KEY_X:
       return 11;
-    case KEY_GRAVE:
+    case KEY_P:
       return 13;
     default:
       return 0;

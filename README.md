@@ -45,7 +45,7 @@ Keyboard:
 * X     : poop (enemy paralyzer)
 * BACKPACE : restart level
 * ENTER : skip (works on specific screens)
-* `     : pause
+* P     : pause
 
 Or compatible gamepad controller (eg XBox).
 

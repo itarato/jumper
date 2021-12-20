@@ -49,7 +49,7 @@ StageGame::StageGame(GameConfig* game_config)
 
 void StageGame::update() {
   {  // Pausing.
-    if (is_key_pressed(KEY_GRAVE)) is_paused = !is_paused;
+    if (is_key_pressed(KEY_P)) is_paused = !is_paused;
     if (is_paused) return;
   }
 
