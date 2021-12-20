@@ -32,6 +32,8 @@
 #include <ctime>
 
 #include "app.h"
+#include "asset_manager.h"
+#include "game_config.h"
 #include "shared/util.h"
 
 int main(int argc, char** argv) {
@@ -39,7 +41,9 @@ int main(int argc, char** argv) {
 
   srand(time(nullptr));
 
-  App app{parse_args(argc, argv)};
+  GameConfig game_config(parse_args(argc, argv));
+
+  App app{std::move(game_config)};
   app.init();
   app.loop();
 

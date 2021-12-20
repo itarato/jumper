@@ -16,13 +16,9 @@
 #define JUMPER_FLY_SLOWNESS 6
 
 Jumper::Jumper()
-    : move_sprite({IMG_LADYBUG_MOVE_0, IMG_LADYBUG_MOVE_1, IMG_LADYBUG_MOVE_2,
-                   IMG_LADYBUG_MOVE_3},
-                  JUMPER_STEP_SLOWNESS),
-      stand_sprite({IMG_LADYBUG_STAND_0, IMG_LADYBUG_STAND_1,
-                    IMG_LADYBUG_STAND_2, IMG_LADYBUG_STAND_3},
-                   JUMPER_STAND_SLOWNESS),
-      fly_sprite({IMG_LADYBUG_FLY_0, IMG_LADYBUG_FLY_1}, JUMPER_FLY_SLOWNESS) {}
+    : move_sprite(IMG_FORMAT_SPRITE_LADYBUG_MOVE, JUMPER_STEP_SLOWNESS),
+      stand_sprite(IMG_FORMAT_SPRITE_LADYBUG_STAND, JUMPER_STAND_SLOWNESS),
+      fly_sprite(IMG_FORMAT_SPRITE_LADYBUG_FLY, JUMPER_FLY_SLOWNESS) {}
 
 void Jumper::update(Map* map) {
   if (state == JumperState::Normal) {
@@ -211,7 +207,7 @@ void Jumper::update(Map* map) {
 }
 
 void Jumper::draw(IntVector2D scroll_offset) {
-  std::string image_name;
+  Texture2D* image_name{nullptr};
   if (vstate == VerticalState::FALLING && is_key_down(KEY_LEFT_ALT)) {
     image_name = fly_sprite.current_img();
     fly_sprite.progress();
@@ -239,11 +235,11 @@ void Jumper::draw(IntVector2D scroll_offset) {
     }
 
     DrawTextureRec(
-        asset_manager.textures[image_name], draw_frame,
+        *image_name, draw_frame,
         Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y},
         Fade(color, fade));
   } else if (state == JumperState::Dying) {
-    DrawTextureEx(asset_manager.textures[image_name],
+    DrawTextureEx(*image_name,
                   Vector2{frame.x - scroll_offset.x, frame.y - scroll_offset.y},
                   dying_rot, dying_scale, Fade(WHITE, dying_fade));
   }

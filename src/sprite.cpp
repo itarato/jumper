@@ -4,15 +4,24 @@
 
 #include "asset_manager.h"
 
-Sprite::Sprite(std::vector<std::string> img_names, int frame_skip_count)
-    : img_names(move(img_names)), frame_skip_count(frame_skip_count) {}
-
 Sprite::Sprite(const char* img_names_format, int frame_skip_count)
-    : frame_skip_count(frame_skip_count) {
-  img_names = asset_manager.texture_name_list(img_names_format);
+    : frame_skip_count(frame_skip_count),
+      textures(asset_manager.texture_list(img_names_format)) {
+  LOG_INFO("Loading sprite %s, found %d steps.", img_names_format,
+           (int)textures.size());
+
+  if (textures.size() == 0) {
+    PANIC("Failed loading sprite: %s\n", img_names_format);
+  }
 }
 
-std::string Sprite::current_img() const { return img_names[step]; }
+Texture2D* Sprite::current_img() const {
+  if (step >= textures.size()) {
+    PANIC("Sprite step out of bounds. Size: %d Step: %d\n",
+          (int)textures.size(), step);
+  }
+  return textures[step];
+}
 
 void Sprite::progress() {
   counter++;
@@ -22,5 +31,5 @@ void Sprite::progress() {
     counter = 0;
   }
 
-  if (step >= (int)img_names.size()) step = 0;
+  if (step >= (int)textures.size()) step = 0;
 }

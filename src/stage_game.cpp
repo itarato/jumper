@@ -249,8 +249,6 @@ void StageGame::draw() {
     }
   }
 
-  jumper.draw(scroll_offset);
-
   for (const auto& coin : coins) coin.draw(scroll_offset);
   for (const auto& poop : poops) poop.draw(scroll_offset);
   for (auto& enemy : enemies) enemy.draw(scroll_offset);
@@ -261,6 +259,8 @@ void StageGame::draw() {
   {  // Particles
     for (auto& explosion : explosions) explosion->draw(scroll_offset);
   }
+
+  jumper.draw(scroll_offset);
 
   {  // Overlay.
     DrawRectangle(0, GetScreenHeight() - 32, GetScreenWidth(), 32,

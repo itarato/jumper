@@ -12,24 +12,6 @@ AssetManager::~AssetManager() {
   fonts.clear();
 }
 
-std::vector<std::string> AssetManager::texture_name_list(
-    const char* file_name_format) const {
-  std::vector<std::string> out{};
-
-  for (int i{0};; i++) {
-    char file_name[256];
-    assert(strlen(file_name_format) < 240);
-
-    sprintf(file_name, file_name_format, i);
-
-    if (textures.count(file_name) == 0) break;
-
-    out.emplace_back(file_name);
-  }
-
-  return out;
-}
-
 std::vector<Texture2D*> AssetManager::texture_list(
     const char* file_name_format) const {
   std::vector<Texture2D*> out{};

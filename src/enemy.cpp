@@ -25,7 +25,6 @@ void Enemy::draw(IntVector2D scroll_offset) {
   }
 
   // Todo: Use the chaser enemy texture.
-  DrawTexture(asset_manager.textures[sprite.current_img()],
-              (int)frame.x - scroll_offset.x, (int)frame.y - scroll_offset.y,
-              color);
+  DrawTexture(*sprite.current_img(), (int)frame.x - scroll_offset.x,
+              (int)frame.y - scroll_offset.y, color);
 }

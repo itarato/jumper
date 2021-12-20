@@ -8,8 +8,7 @@
 #include "stage_game.h"
 #include "stage_menu.h"
 
-App::App(std::map<std::string, std::string> argmap)
-    : game_config(std::move(argmap)) {}
+App::App(GameConfig&& game_config) : game_config(std::move(game_config)) {}
 
 App::~App() {
   for (auto& stage_pair : stages) {
@@ -19,9 +18,6 @@ App::~App() {
 }
 
 void App::init() {
-  stages.insert({STAGE_MENU, new StageMenu(&game_config)});
-  stages.insert({STAGE_GAME, new StageGame(&game_config)});
-
   bool is_fullscreen = game_config.is_fullscreen;
   InitWindow(is_fullscreen ? 0 : game_config.window_width,
              is_fullscreen ? 0 : game_config.window_height, "Jumper");
@@ -46,6 +42,9 @@ void App::init() {
                                      FONT_FIRA_SRC, CONCAT_END)
                                   .c_str(),
                               64, nullptr, 255)});
+
+  stages.insert({STAGE_MENU, new StageMenu(&game_config)});
+  stages.insert({STAGE_GAME, new StageGame(&game_config)});
 }
 
 void App::loop() {
