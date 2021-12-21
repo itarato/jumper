@@ -8,3 +8,5 @@ level_editor
 build
 jumper.exe
 CppProperties.json
+spooky.conf
+assets/images/spooky
