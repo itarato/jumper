@@ -5,8 +5,8 @@
 #include "asset_manager.h"
 
 Sprite::Sprite(const char* img_names_format, int frame_skip_count)
-    : frame_skip_count(frame_skip_count),
-      textures(asset_manager.texture_list(img_names_format)) {
+    : textures(asset_manager.texture_list(img_names_format)),
+      frame_skip_count(frame_skip_count) {
   LOG_INFO("Loading sprite %s, found %d steps.", img_names_format,
            (int)textures.size());
 
@@ -16,7 +16,7 @@ Sprite::Sprite(const char* img_names_format, int frame_skip_count)
 }
 
 Texture2D* Sprite::current_img() const {
-  if (step >= textures.size()) {
+  if (step >= (int)textures.size()) {
     PANIC("Sprite step out of bounds. Size: %d Step: %d\n",
           (int)textures.size(), step);
   }
