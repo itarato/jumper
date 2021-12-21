@@ -28,7 +28,6 @@ struct SingleTextureProvider : ITextureProvider {
   Texture2D* texture_enabled{nullptr};
   Texture2D* texture_disabled{nullptr};
   bool enabled{true};
-  float _fade{1.0};
 
   explicit SingleTextureProvider(Texture2D* texture_enabled)
       : ITextureProvider(),
@@ -44,8 +43,6 @@ struct SingleTextureProvider : ITextureProvider {
   Texture2D* texture() override;
   void disable() override;
   [[nodiscard]] Color color() const override;
-
-  void set_fade(float v);
 };
 
 struct DisableSpriteTextureProvider : SingleTextureProvider {
@@ -80,7 +77,6 @@ struct Tile {
     if (type == TILE_GROUND) {
       auto _texture_provider = std::make_shared<SingleTextureProvider>(
           &asset_manager.textures[IMG_GROUND]);
-      _texture_provider->set_fade(randf(0.8f, 1.0f));
 
       texture_provider = _texture_provider;
     } else if (type == TILE_END) {

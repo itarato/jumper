@@ -204,19 +204,20 @@ void Jumper::update(Map* map) {
       state = JumperState::Dead;
     }
   }
+
+  fly_sprite.progress();
+  stand_sprite.progress();
+  move_sprite.progress();
 }
 
 void Jumper::draw(IntVector2D scroll_offset) {
   Texture2D* image_name{nullptr};
   if (vstate == VerticalState::FALLING && is_key_down(KEY_LEFT_ALT)) {
     image_name = fly_sprite.current_img();
-    fly_sprite.progress();
   } else if (v.x == 0.0) {
     image_name = stand_sprite.current_img();
-    stand_sprite.progress();
   } else {
     image_name = move_sprite.current_img();
-    move_sprite.progress();
   }
 
   Rectangle draw_frame{0.0f, 0.0f, is_facing_right ? -frame.width : frame.width,

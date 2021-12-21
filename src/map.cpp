@@ -57,9 +57,7 @@ Texture2D* SingleTextureProvider::texture() {
 
 void SingleTextureProvider::disable() { enabled = false; }
 
-void SingleTextureProvider::set_fade(float v) { _fade = v; }
-
-Color SingleTextureProvider::color() const { return Fade(WHITE, _fade); }
+Color SingleTextureProvider::color() const { return WHITE; }
 
 Texture2D* DisableSpriteTextureProvider::texture() {
   if (enabled) {
