@@ -63,6 +63,12 @@ struct DisableSpriteTextureProvider : SingleTextureProvider {
   Texture2D* texture() override;
 };
 
+struct Tile;
+
+struct TileBehaviour {
+  virtual void update(Tile* tile) = 0;
+};
+
 struct Tile {
   TileType type{TILE_AIR};
   std::string pattern{};
@@ -70,6 +76,7 @@ struct Tile {
   bool is_enabled{true};
   std::shared_ptr<ITextureProvider> texture_provider{nullptr};
   Rectangle draw_frame{};
+  std::shared_ptr<TileBehaviour> behaviour{nullptr};
 
   explicit Tile(TileType type)
       : type(type),
@@ -96,6 +103,12 @@ struct Tile {
     } else {
       texture_provider = std::make_shared<NullTextureProvider>();
     }
+  }
+
+  void update() {
+    if (!behaviour) return;
+
+    behaviour->update(this);
   }
 
   [[nodiscard]] bool is_solid() const {
@@ -144,6 +157,32 @@ struct Tile {
 
   bool is_regex_transformation() const {
     return pattern == "[CLR]" || pattern == "[REV]";
+  }
+};
+
+struct TimedDoorBehaviour : TileBehaviour {
+  const int timeout{0};
+  bool is_timing{false};
+  int counter{0};
+
+  TimedDoorBehaviour(int timeout) : timeout(timeout) {}
+
+  void update(Tile* tile) override {
+    if (!is_timing) {
+      if (!tile->is_enabled) {
+        is_timing = true;
+        counter = timeout;
+      }
+    }
+
+    if (is_timing) {
+      counter--;
+
+      if (counter <= 0) {
+        is_timing = false;
+        tile->is_enabled = true;
+      }
+    }
   }
 };
 

@@ -34,12 +34,12 @@ void App::init() {
                               12, nullptr, 255)});
   asset_manager.fonts.insert(
       {FONT_MEDIUM, LoadFontEx(concat(game_config.resource_dir.c_str(),
-                                      FONT_FIRA_SRC, CONCAT_END)
+                                      FONT_FIRA_BOLD_SRC, CONCAT_END)
                                    .c_str(),
                                20, nullptr, 255)});
   asset_manager.fonts.insert(
       {FONT_LARGE, LoadFontEx(concat(game_config.resource_dir.c_str(),
-                                     FONT_FIRA_SRC, CONCAT_END)
+                                     FONT_FIRA_BOLD_SRC, CONCAT_END)
                                   .c_str(),
                               64, nullptr, 255)});
 
