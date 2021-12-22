@@ -48,22 +48,32 @@ struct SingleTextureProvider : ITextureProvider {
   [[nodiscard]] Color color() const override;
 };
 
+enum class SpriteTextureProviderState {
+  Enabled,
+  Disabled,
+  Enabling,
+  Disabling,
+};
+
 struct DisableSpriteTextureProvider : SingleTextureProvider {
-  std::vector<Texture2D*> disable_sprite{};
-  int disable_step{0};
-  bool disable_sequence_completed{false};
+  std::vector<Texture2D*> sprite{};
+  int step{0};
   int frame_counter{0};
   int step_frame_count{1};
+  SpriteTextureProviderState state{SpriteTextureProviderState::Enabled};
 
   DisableSpriteTextureProvider(Texture2D* texture_enabled,
                                Texture2D* texture_disabled,
-                               std::vector<Texture2D*>&& disable_sprite,
+                               std::vector<Texture2D*>&& sprite,
                                int step_frame_count)
       : SingleTextureProvider(texture_enabled, texture_disabled),
-        disable_sprite(std::move(disable_sprite)),
+        sprite(std::move(sprite)),
         step_frame_count(step_frame_count) {}
 
   Texture2D* texture() override;
+
+  void disable() override;
+  void enable() override;
 };
 
 struct Tile;

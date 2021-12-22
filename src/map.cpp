@@ -61,24 +61,45 @@ void SingleTextureProvider::enable() { enabled = true; }
 Color SingleTextureProvider::color() const { return WHITE; }
 
 Texture2D* DisableSpriteTextureProvider::texture() {
-  if (enabled) {
+  if (state == SpriteTextureProviderState::Enabled) {
     return texture_enabled;
-  } else if (disable_sequence_completed) {
+  } else if (state == SpriteTextureProviderState::Disabled) {
     return texture_disabled;
   } else {
-    int idx = disable_step;
+    int idx = step;
 
     if (frame_counter % step_frame_count == 0) {
-      disable_step++;
-      if (disable_step >= (int)disable_sprite.size()) {
-        disable_sequence_completed = true;
+      if (state == SpriteTextureProviderState::Disabling) {
+        step++;
+        if (step >= (int)sprite.size()) {
+          state = SpriteTextureProviderState::Disabled;
+          step--;
+        }
+      } else if (state == SpriteTextureProviderState::Enabling) {
+        step--;
+        if (step < 0) {
+          state = SpriteTextureProviderState::Enabled;
+          step = 0;
+        }
+      } else {
+        PANIC("Incorrect SpriteTextureProviderState");
       }
     }
 
     frame_counter++;
 
-    return disable_sprite[idx];
+    return sprite[idx];
   }
+}
+
+void DisableSpriteTextureProvider::disable() {
+  SingleTextureProvider::disable();
+  state = SpriteTextureProviderState::Disabling;
+}
+
+void DisableSpriteTextureProvider::enable() {
+  SingleTextureProvider::enable();
+  state = SpriteTextureProviderState::Enabling;
 }
 
 void Map::build(const std::string& map_file_path) { load_map(map_file_path); }
