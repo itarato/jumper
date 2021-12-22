@@ -383,6 +383,11 @@ void Map::load_map(const std::string& file_path) {
     if (tile_meta.has_decoration()) {
       map[tile_meta.y][tile_meta.x].decoration = tile_meta.decoration;
     }
+
+    if (tile_meta.has_door_timeout()) {
+      map[tile_meta.y][tile_meta.x].behaviour =
+          std::make_shared<TimedDoorBehaviour>(tile_meta.door_timeout);
+    }
   }
 
   file.close();
@@ -398,12 +403,6 @@ void Map::load_map(const std::string& file_path) {
         if (y > 0 && map[y - 1][x].is_solid()) {
           tile->vertical_flip();
         }
-      }
-
-      if (tile->type == TILE_DOOR) {
-        std::shared_ptr<TileBehaviour> timed_door_behaviour =
-            std::make_shared<TimedDoorBehaviour>(60);
-        tile->behaviour.swap(timed_door_behaviour);
       }
     }
   }

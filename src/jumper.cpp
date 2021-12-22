@@ -49,11 +49,14 @@ void Jumper::update(Map* map) {
         }
       }
 
-      {  // Door check.
+      {  // Door open check.
         Rectangle planned_next_frame{rec_plus_vector2(frame, v)};
-        for (auto& corner :
+        // Shrinking here is useful to avoid beeing-on-coordinate-borderline
+        // problems.
+        for (const auto& corner :
              corner_block_coords(shrink(planned_next_frame, 2.0f))) {
           Tile& tile = map->get_tile(corner);
+
           if (tile.type == TILE_DOOR && tile.is_enabled()) {
             try {
               Rectangle door_frame{
@@ -77,6 +80,7 @@ void Jumper::update(Map* map) {
               kill();
             }
           }
+
           if (tile.type == TILE_TRAP) {
             death_reason = "Death by trap!";
             kill();
@@ -92,6 +96,18 @@ void Jumper::update(Map* map) {
             map->next_right(frame).value_or(map->block_width * BLOCK_SIZE) -
             frame.width;
         frame.x = std::min((int)(frame.x + v.x), right_wall_x);
+      }
+
+      {  // Stuck-in door check.
+        // We check this for cases when a door is re-closing and the jumper is
+        // right in it.
+        for (auto& corner : corner_block_coords(shrink(frame, 2.0f))) {
+          Tile& tile = map->get_tile(corner);
+          if (tile.type == TILE_DOOR && tile.is_enabled()) {
+            death_reason = "Death by closing door!";
+            kill();
+          }
+        }
       }
     }
 
