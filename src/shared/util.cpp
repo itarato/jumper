@@ -184,6 +184,8 @@ void merge_pattern(std::string& base, std::string new_part) {
   } else if (new_part.back() == '/') {  // To end.
     new_part.pop_back();
     base.append(new_part);
+  } else {  // Replace too.
+    base = new_part;
   }
 }
 
