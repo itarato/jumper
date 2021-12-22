@@ -16,12 +16,14 @@
 struct ITextureProvider {
   virtual Texture2D* texture() = 0;
   virtual void disable() = 0;
+  virtual void enable() = 0;
   [[nodiscard]] virtual Color color() const { return WHITE; }
 };
 
 struct NullTextureProvider : ITextureProvider {
   Texture2D* texture() override { return nullptr; }
   void disable() override {}
+  void enable() override {}
 };
 
 struct SingleTextureProvider : ITextureProvider {
@@ -42,6 +44,7 @@ struct SingleTextureProvider : ITextureProvider {
 
   Texture2D* texture() override;
   void disable() override;
+  void enable() override;
   [[nodiscard]] Color color() const override;
 };
 
@@ -73,7 +76,6 @@ struct Tile {
   TileType type{TILE_AIR};
   std::string pattern{};
   int decoration{-1};
-  bool is_enabled{true};
   std::shared_ptr<ITextureProvider> texture_provider{nullptr};
   Rectangle draw_frame{};
   std::shared_ptr<TileBehaviour> behaviour{nullptr};
@@ -112,10 +114,18 @@ struct Tile {
   }
 
   [[nodiscard]] bool is_solid() const {
-    return is_enabled && is_tile_type_solid(type);
+    return is_enabled() && is_tile_type_solid(type);
   }
+
+  bool is_enabled() const { return _is_enabled; }
+
+  void enable() {
+    _is_enabled = true;
+    texture_provider->enable();
+  }
+
   void disable() {
-    is_enabled = false;
+    _is_enabled = false;
     texture_provider->disable();
   }
 
@@ -158,6 +168,9 @@ struct Tile {
   bool is_regex_transformation() const {
     return pattern == "[CLR]" || pattern == "[REV]";
   }
+
+ private:
+  bool _is_enabled{true};
 };
 
 struct TimedDoorBehaviour : TileBehaviour {
@@ -169,7 +182,7 @@ struct TimedDoorBehaviour : TileBehaviour {
 
   void update(Tile* tile) override {
     if (!is_timing) {
-      if (!tile->is_enabled) {
+      if (!tile->is_enabled()) {
         is_timing = true;
         counter = timeout;
       }
@@ -180,7 +193,9 @@ struct TimedDoorBehaviour : TileBehaviour {
 
       if (counter <= 0) {
         is_timing = false;
-        tile->is_enabled = true;
+        tile->enable();
+        // TODO: Backward animation
+        // TODO: logic when jumper is on window during close
       }
     }
   }
@@ -194,6 +209,7 @@ struct Map {
   Vector2 end_pos{};
 
   void build(const std::string& map_file_path);
+  void update();
   void draw(IntVector2D scroll_offset);
 
   std::optional<int> next_floor(Rectangle p);

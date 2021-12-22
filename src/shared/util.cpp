@@ -157,6 +157,8 @@ TileMeta::TileMeta(std::string raw) {
     pattern.swap(parts[3]);
   } else if (parts[0] == "decoration") {
     decoration = std::stoi(parts[3]);
+  } else if (parts[0] == "door_timer") {
+    door_timeout = std::stoi(parts[3]);
   }
 }
 

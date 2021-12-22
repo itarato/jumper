@@ -54,7 +54,7 @@ void Jumper::update(Map* map) {
         for (auto& corner :
              corner_block_coords(shrink(planned_next_frame, 2.0f))) {
           Tile& tile = map->get_tile(corner);
-          if (tile.type == TILE_DOOR && tile.is_enabled) {
+          if (tile.type == TILE_DOOR && tile.is_enabled()) {
             try {
               Rectangle door_frame{
                   (float)(corner.x * BLOCK_SIZE),
@@ -166,7 +166,7 @@ void Jumper::update(Map* map) {
       auto tile_coords = corner_block_coords(frame);
       for (const auto& tile_coord : tile_coords) {
         Tile& tile = map->get_tile(tile_coord);
-        if (tile.type == TILE_REGEX && tile.is_enabled) {
+        if (tile.type == TILE_REGEX && tile.is_enabled()) {
           merge_pattern(regex_raw, tile.pattern);
           tile.disable();
           JumperSubject::notify_all(JumperEvent::CaptureRegex,

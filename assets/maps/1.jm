@@ -8,3 +8,4 @@ gggggggggg
 pattern,3,1,/HELLO/
 decoration,4,3,1
 pattern,6,3,HELLO
+door_timer,6,3,60

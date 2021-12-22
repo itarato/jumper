@@ -71,11 +71,13 @@ struct Tile {
   TileType type = TILE_NULL;
   string pattern;
   int decoration{-1};
+  int door_timeout{0};
 
   void reset() {
     type = TILE_AIR;
     pattern = "";
     decoration = -1;
+    door_timeout = 0;
   }
 };
 
@@ -140,9 +142,9 @@ struct Input {
 
   void draw() const {
     DrawRectangleRec(frame, WHITE);
-    if (is_active) DrawRectangleLinesEx(frame, 2, BLUE);
+    if (is_active) DrawRectangleLinesEx(frame, 2, MAGENTA);
     DrawText(value.c_str(), frame.x + 4, frame.y + 4, 10, BLACK);
-    DrawText(label.c_str(), frame.x + 4, frame.y + 22, 8, WHITE);
+    DrawText(label.c_str(), frame.x, frame.y + 22, 10, WHITE);
   }
 };
 
@@ -173,15 +175,17 @@ struct Button : IButton {
   int font_size = 10;
 
   explicit Button(string label) : label(std::move(label)) {}
+  explicit Button(string label, Vector2 pos)
+      : pos(pos), label(std::move(label)) {}
 
   Rectangle frame() override {
     return Rectangle{pos.x, pos.y,
-                     (float)(MeasureText(label.c_str(), font_size) + 8),
-                     (float)(font_size + 8)};
+                     (float)(MeasureText(label.c_str(), font_size) + 16),
+                     (float)(font_size + 16)};
   }
 
   void draw() override {
-    DrawText(label.c_str(), pos.x + 4, pos.y + 4, font_size, WHITE);
+    DrawText(label.c_str(), pos.x + 8, pos.y + 8, font_size, WHITE);
 
     IButton::draw();
   }
@@ -206,6 +210,7 @@ struct App {
   Input input_map_file_name;
   Input input_tile_value;
   Input input_decoration_index;
+  Input input_door_timer;
 
   int map_width = DEFAULT_WINDOW_BLOCK_WIDTH;
   int map_height = DEFAULT_WINDOW_BLOCK_HEIGHT;
@@ -220,8 +225,9 @@ struct App {
       : input_window_width("Width", 64.0f),
         input_window_height("Height", 64.0f),
         input_map_file_name("Map file"),
-        input_tile_value("Tile value"),
+        input_tile_value("Regex"),
         input_decoration_index("Decor idx", 48.0f),
+        input_door_timer("Door re-close timer", 48.0f),
         save_button("Save"),
         selected_tile(nullptr) {
     SetConfigFlags(FLAG_WINDOW_HIGHDPI);
@@ -229,23 +235,22 @@ struct App {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
-    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 140),
-                                       (float)(GetScreenHeight() - 90)});
+    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 190), 10.0f});
     input_window_width.set_value(to_string(DEFAULT_WINDOW_BLOCK_WIDTH));
 
-    input_window_height.set_pos(Vector2{(float)(GetScreenWidth() - 140),
-                                        (float)(GetScreenHeight() - 50)});
+    input_window_height.set_pos(Vector2{(float)(GetScreenWidth() - 90), 10.0f});
     input_window_height.set_value(to_string(DEFAULT_WINDOW_BLOCK_HEIGHT));
 
-    input_map_file_name.set_pos(Vector2{(float)(GetScreenWidth() - 280),
-                                        (float)(GetScreenHeight() - 50)});
+    input_map_file_name.set_pos(
+        Vector2{(float)(GetScreenWidth() - 190), 60.0f});
     input_map_file_name.set_value("maps/untitled.jm");
 
-    input_tile_value.set_pos(Vector2{(float)(GetScreenWidth() - 280),
-                                     (float)(GetScreenHeight() - 90)});
+    input_tile_value.set_pos(Vector2{(float)(GetScreenWidth() - 190), 110.0f});
 
-    input_decoration_index.set_pos(Vector2{(float)(GetScreenWidth() - 60),
-                                           (float)(GetScreenHeight() - 90)});
+    input_decoration_index.set_pos(
+        Vector2{(float)(GetScreenWidth() - 190), 160.0f});
+
+    input_door_timer.set_pos(Vector2{(float)(GetScreenWidth() - 190), 210.0f});
 
     save_button.pos.x = GetScreenWidth() - 42;
     save_button.pos.y = GetScreenHeight() - 28;
@@ -257,10 +262,11 @@ struct App {
     tile_textures.insert(
         {TILE_END, LoadTexture("./assets/images/default/end.png")});
     tile_textures.insert(
-        {TILE_ENEMY_RANDOM, LoadTexture("./assets/images/default/enemy.png")});
+        {TILE_ENEMY_RANDOM,
+         LoadTexture("./assets/images/default/enemy_random_0.png")});
     tile_textures.insert(
         {TILE_ENEMY_CHASER,
-         LoadTexture("./assets/images/default/enemy_chaser.png")});
+         LoadTexture("./assets/images/default/enemy_chaser_0.png")});
     tile_textures.insert(
         {TILE_COIN, LoadTexture("./assets/images/default/coin.png")});
     tile_textures.insert(
@@ -310,13 +316,18 @@ struct App {
 
     while (getline(map_file, line)) {
       TileMeta tile_meta{line};
+      Tile* tile{&map[tile_meta.y][tile_meta.x]};
 
       if (tile_meta.has_pattern()) {
-        map[tile_meta.y][tile_meta.x].pattern = tile_meta.pattern;
+        tile->pattern = tile_meta.pattern;
       }
 
       if (tile_meta.has_decoration()) {
-        map[tile_meta.y][tile_meta.x].decoration = tile_meta.decoration;
+        tile->decoration = tile_meta.decoration;
+      }
+
+      if (tile_meta.has_door_timeout()) {
+        tile->door_timeout = tile_meta.door_timeout;
       }
     }
   }
@@ -370,6 +381,11 @@ struct App {
                                         ? -1
                                         : stoi(input_decoration_index.value);
       }
+
+      if (input_door_timer.is_edited() && selected_tile) {
+        selected_tile->door_timeout =
+            input_door_timer.value.empty() ? 0 : stoi(input_door_timer.value);
+      }
     }
 
     {  // Drag space.
@@ -420,6 +436,7 @@ struct App {
       input_map_file_name.update();
       input_tile_value.update();
       input_decoration_index.update();
+      input_door_timer.update();
     }
 
     {  // Button.
@@ -439,6 +456,9 @@ struct App {
             selected_tile->decoration >= 0
                 ? to_string(selected_tile->decoration)
                 : "";
+        input_door_timer.value = selected_tile->door_timeout <= 0
+                                     ? ""
+                                     : to_string(selected_tile->door_timeout);
       }
     }
   }
@@ -506,8 +526,12 @@ struct App {
     }
 
     {  // Overlay
+      // Bottom.
       DrawRectangle(0, GetScreenHeight() - 96, GetScreenWidth(), 96,
-                    Fade(BLACK, 0.7f));
+                    Fade(BLACK, 0.5f));
+      // Right side.
+      DrawRectangle(GetScreenWidth() - 200, 0, 200, GetScreenHeight() - 96,
+                    Fade(BLACK, 0.5f));
 
       for (int i = 0; i < tile_count(); i++) {
         if (selected_tile_idx == i) {
@@ -528,6 +552,7 @@ struct App {
       input_map_file_name.draw();
       input_tile_value.draw();
       input_decoration_index.draw();
+      input_door_timer.draw();
 
       save_button.draw();
     }
@@ -638,6 +663,10 @@ struct App {
         if (map[y][x].decoration >= 0) {
           map_file << "decoration," << x << "," << y << ","
                    << map[y][x].decoration << endl;
+        }
+        if (map[y][x].door_timeout > 0) {
+          map_file << "door_timer," << x << "," << y << ","
+                   << map[y][x].door_timeout << endl;
         }
       }
     }

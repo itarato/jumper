@@ -9,6 +9,7 @@
  * - timer runs during pause (is it ok or not?)
  *
  * Optional features:
+ * - timeout door visual timer (timer or slow backwards animation)
  * - make pooping that attracts enemies for a bit:
  *  - adding next-poop ability delay
  *  - visual feedback of when next pooping is available

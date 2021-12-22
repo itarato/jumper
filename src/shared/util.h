@@ -62,11 +62,13 @@ struct TileMeta {
   int y;
   std::string pattern{""};
   int decoration{-1};
+  int door_timeout{0};
 
   explicit TileMeta(std::string raw);
 
   bool has_pattern() const { return !pattern.empty(); }
   bool has_decoration() const { return decoration >= 0; }
+  bool has_door_timeout() const { return door_timeout > 0; }
 };
 
 void merge_pattern(std::string& base, std::string new_part);

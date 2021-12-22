@@ -63,6 +63,9 @@ void StageGame::update() {
     // Player update.
     jumper.update(&map);
 
+    // Map update.
+    map.update();
+
     // Enemy movement.
     for (Enemy& enemy : enemies) {
       if (std::any_of(poops.begin(), poops.end(), [&](const Poop& poop) {

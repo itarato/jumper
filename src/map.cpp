@@ -56,6 +56,7 @@ Texture2D* SingleTextureProvider::texture() {
 }
 
 void SingleTextureProvider::disable() { enabled = false; }
+void SingleTextureProvider::enable() { enabled = true; }
 
 Color SingleTextureProvider::color() const { return WHITE; }
 
@@ -81,6 +82,14 @@ Texture2D* DisableSpriteTextureProvider::texture() {
 }
 
 void Map::build(const std::string& map_file_path) { load_map(map_file_path); }
+
+void Map::update() {
+  for (auto& row : map) {
+    for (auto& tile : row) {
+      tile.update();
+    }
+  }
+}
 
 void Map::draw(IntVector2D scroll_offset) {
   TileListIterator it{scroll_offset, (int)block_width, (int)block_height};
@@ -111,7 +120,7 @@ void Map::draw(IntVector2D scroll_offset) {
 
     Tile* tile = &map[v][h];
 
-    if (!tile->pattern.empty() && tile->is_enabled) {
+    if (!tile->pattern.empty() && tile->is_enabled()) {
       Vector2 text_frame = MeasureTextEx(
           asset_manager.fonts[FONT_SMALL], tile->formatted_pattern().c_str(),
           asset_manager.fonts[FONT_SMALL].baseSize, 0);
@@ -368,6 +377,12 @@ void Map::load_map(const std::string& file_path) {
         if (y > 0 && map[y - 1][x].is_solid()) {
           tile->vertical_flip();
         }
+      }
+
+      if (tile->type == TILE_DOOR) {
+        std::shared_ptr<TileBehaviour> timed_door_behaviour =
+            std::make_shared<TimedDoorBehaviour>(60);
+        tile->behaviour.swap(timed_door_behaviour);
       }
     }
   }
