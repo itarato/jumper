@@ -252,12 +252,12 @@ void StageGame::draw() {
     }
   }
 
-  map.draw(scroll_offset);
-
   for (const auto& coin : coins) coin.draw(scroll_offset);
   for (const auto& poop : poops) poop.draw(scroll_offset);
   for (auto& enemy : enemies) enemy.draw(scroll_offset);
   for (const auto& shield : shields) shield.draw(scroll_offset);
+
+  map.draw(scroll_offset);
 
   {  // Particles
     for (auto& explosion : explosions) explosion->draw(scroll_offset);
