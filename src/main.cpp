@@ -3,10 +3,10 @@
  *
  * Features:
  * - score save (to file)
+ * - in pause mode - make mouse pos able to move the map (so it can be assessed)
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)
- * - different ways of doing sprites -> lets just use the sprite struct
  *
  * Optional features:
  * - make pooping that attracts enemies for a bit:

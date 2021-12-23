@@ -201,19 +201,41 @@ void StageGame::draw() {
    * Offset:  ---------^
    */
   IntVector2D scroll_offset{0, 0};
-  int h_offs_padding = (GetScreenHeight() - BLOCK_SIZE) / 2;
-  int v_offs_padding = (GetScreenHeight() - BLOCK_SIZE) / 2;
-  if ((int)map.pixel_width() <= GetScreenWidth()) {
-    scroll_offset.x = -(GetScreenWidth() - (int)map.pixel_width()) / 2;
-  } else if (jumper.frame.x >= h_offs_padding) {
-    scroll_offset.x = std::min((int)map.pixel_width() - GetScreenWidth(),
-                               (int)jumper.frame.x - h_offs_padding);
-  }
-  if ((int)map.pixel_height() <= GetScreenHeight()) {
-    scroll_offset.y = -(GetScreenHeight() - (int)map.pixel_height()) / 2;
-  } else if (jumper.frame.y >= v_offs_padding) {
-    scroll_offset.y = std::min((int)map.pixel_height() - GetScreenHeight(),
-                               (int)jumper.frame.y - v_offs_padding);
+
+  if (!is_paused) {
+    int h_offs_padding = (GetScreenWidth() - BLOCK_SIZE) / 2;
+    int v_offs_padding = (GetScreenHeight() - BLOCK_SIZE) / 2;
+    if ((int)map.pixel_width() <= GetScreenWidth()) {
+      scroll_offset.x = -(GetScreenWidth() - (int)map.pixel_width()) / 2;
+    } else if (jumper.frame.x >= h_offs_padding) {
+      scroll_offset.x = std::min((int)map.pixel_width() - GetScreenWidth(),
+                                 (int)jumper.frame.x - h_offs_padding);
+    }
+    if ((int)map.pixel_height() <= GetScreenHeight()) {
+      scroll_offset.y = -(GetScreenHeight() - (int)map.pixel_height()) / 2;
+    } else if (jumper.frame.y >= v_offs_padding) {
+      scroll_offset.y = std::min((int)map.pixel_height() - GetScreenHeight(),
+                                 (int)jumper.frame.y - v_offs_padding);
+    }
+  } else {
+    const int padding{BLOCK_SIZE * 2};
+    // Horizontal check.
+    if ((int)map.pixel_width() <= GetScreenWidth()) {
+      scroll_offset.x = -(GetScreenWidth() - (int)map.pixel_width()) / 2;
+    } else {
+      int scroll_width = map.pixel_width() - GetScreenWidth() + padding * 2;
+      float horizontal_shift = (float)GetMouseX() / (float)GetScreenWidth();
+      scroll_offset.x = (int)(horizontal_shift * (float)scroll_width) - padding;
+    }
+
+    // Vertical check.
+    if ((int)map.pixel_height() <= GetScreenHeight()) {
+      scroll_offset.y = -(GetScreenHeight() - (int)map.pixel_height()) / 2;
+    } else {
+      int scroll_height = map.pixel_height() - GetScreenHeight() + padding * 2;
+      float vertical_shift = (float)GetMouseY() / (float)GetScreenHeight();
+      scroll_offset.y = (int)(vertical_shift * (float)scroll_height) - padding;
+    }
   }
 
   // Full background color.
