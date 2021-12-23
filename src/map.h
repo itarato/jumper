@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <memory>
 #include <optional>
+#include <string>
 #include <vector>
 
 #include "asset_manager.h"
@@ -80,6 +81,8 @@ struct Tile;
 
 struct TileBehaviour {
   virtual void update(Tile* tile) = 0;
+  virtual void draw(const Tile* tile, IntVector2D pos,
+                    IntVector2D scroll_offset){};
 };
 
 struct Tile {
@@ -121,6 +124,12 @@ struct Tile {
     if (!behaviour) return;
 
     behaviour->update(this);
+  }
+
+  void draw(IntVector2D pos, IntVector2D scroll_offset) const {
+    if (!behaviour) return;
+
+    behaviour->draw(this, pos, scroll_offset);
   }
 
   [[nodiscard]] bool is_solid() const {
@@ -204,9 +213,19 @@ struct TimedDoorBehaviour : TileBehaviour {
       if (counter <= 0) {
         is_timing = false;
         tile->enable();
-        // TODO: Backward animation
-        // TODO: logic when jumper is on window during close
       }
+    }
+  }
+
+  void draw(const Tile* tile, IntVector2D pos,
+            IntVector2D scroll_offset) override {
+    if (is_timing) {
+      DrawRectangle((pos.x * BLOCK_SIZE) - scroll_offset.x,
+                    (pos.y * BLOCK_SIZE) - scroll_offset.y, BLOCK_SIZE, 12,
+                    DARKBLUE);
+      DrawText(std::to_string(counter).c_str(),
+               (pos.x * BLOCK_SIZE) - scroll_offset.x + 2,
+               (pos.y * BLOCK_SIZE) - scroll_offset.y + 1, 10, WHITE);
     }
   }
 };

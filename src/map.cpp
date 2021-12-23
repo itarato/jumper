@@ -206,6 +206,8 @@ void Map::draw(IntVector2D scroll_offset) {
                   (v + 1) * BLOCK_SIZE - scroll_offset.y - texture->height,
                   WHITE);
     }
+
+    tile->draw(IntVector2D{h, v}, scroll_offset);
   }
 }
 
