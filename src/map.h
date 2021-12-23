@@ -13,6 +13,7 @@
 #include "shared/shared_map_schema.h"
 #include "shared/types.h"
 #include "shared/util.h"
+#include "sprite.h"
 
 struct ITextureProvider {
   virtual Texture2D* texture() = 0;
@@ -57,19 +58,15 @@ enum class SpriteTextureProviderState {
 };
 
 struct DisableSpriteTextureProvider : SingleTextureProvider {
-  std::vector<Texture2D*> sprite{};
-  int step{0};
-  int frame_counter{0};
-  int step_frame_count{1};
+  Sprite sprite;
   SpriteTextureProviderState state{SpriteTextureProviderState::Enabled};
 
   DisableSpriteTextureProvider(Texture2D* texture_enabled,
                                Texture2D* texture_disabled,
-                               std::vector<Texture2D*>&& sprite,
-                               int step_frame_count)
+                               const char* sprite_image_name_format,
+                               int frame_skip_count)
       : SingleTextureProvider(texture_enabled, texture_disabled),
-        sprite(std::move(sprite)),
-        step_frame_count(step_frame_count) {}
+        sprite(sprite_image_name_format, frame_skip_count, SPRITE_NO_CYCLE) {}
 
   Texture2D* texture() override;
 
@@ -107,8 +104,7 @@ struct Tile {
     } else if (type == TILE_DOOR) {
       texture_provider = std::make_shared<DisableSpriteTextureProvider>(
           &asset_manager.textures[IMG_DOOR_CLOSE],
-          &asset_manager.textures[IMG_DOOR_OPEN],
-          asset_manager.texture_list(IMG_FORMAT_DOOR_CLOSE), 4);
+          &asset_manager.textures[IMG_DOOR_OPEN], IMG_FORMAT_DOOR_CLOSE, 4);
     } else if (type == TILE_REGEX) {
       texture_provider = std::make_shared<SingleTextureProvider>(
           &asset_manager.textures[IMG_REGEX]);

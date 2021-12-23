@@ -16,9 +16,12 @@
 #define JUMPER_FLY_SLOWNESS 6
 
 Jumper::Jumper()
-    : move_sprite(IMG_FORMAT_SPRITE_LADYBUG_MOVE, JUMPER_STEP_SLOWNESS),
-      stand_sprite(IMG_FORMAT_SPRITE_LADYBUG_STAND, JUMPER_STAND_SLOWNESS),
-      fly_sprite(IMG_FORMAT_SPRITE_LADYBUG_FLY, JUMPER_FLY_SLOWNESS) {}
+    : move_sprite(IMG_FORMAT_SPRITE_LADYBUG_MOVE, JUMPER_STEP_SLOWNESS,
+                  SPRITE_CYCLE),
+      stand_sprite(IMG_FORMAT_SPRITE_LADYBUG_STAND, JUMPER_STAND_SLOWNESS,
+                   SPRITE_CYCLE),
+      fly_sprite(IMG_FORMAT_SPRITE_LADYBUG_FLY, JUMPER_FLY_SLOWNESS,
+                 SPRITE_CYCLE) {}
 
 void Jumper::update(Map* map) {
   if (state == JumperState::Normal) {
@@ -229,11 +232,11 @@ void Jumper::update(Map* map) {
 void Jumper::draw(IntVector2D scroll_offset) {
   Texture2D* image_name{nullptr};
   if (vstate == VerticalState::FALLING && is_key_down(KEY_LEFT_ALT)) {
-    image_name = fly_sprite.current_img();
+    image_name = fly_sprite.texture();
   } else if (v.x == 0.0) {
-    image_name = stand_sprite.current_img();
+    image_name = stand_sprite.texture();
   } else {
-    image_name = move_sprite.current_img();
+    image_name = move_sprite.texture();
   }
 
   Rectangle draw_frame{0.0f, 0.0f, is_facing_right ? -frame.width : frame.width,

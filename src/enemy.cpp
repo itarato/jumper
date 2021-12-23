@@ -8,7 +8,7 @@ Enemy::Enemy(Rectangle frame, std::unique_ptr<IWalker> walker,
              const char* sprite_image_name_format)
     : frame(frame),
       walker(std::move(walker)),
-      sprite(sprite_image_name_format, 6) {}
+      sprite(sprite_image_name_format, 6, SPRITE_CYCLE) {}
 
 void Enemy::init() { walker->init(frame); }
 
@@ -25,6 +25,6 @@ void Enemy::draw(IntVector2D scroll_offset) {
   }
 
   // Todo: Use the chaser enemy texture.
-  DrawTexture(*sprite.current_img(), (int)frame.x - scroll_offset.x,
+  DrawTexture(*sprite.texture(), (int)frame.x - scroll_offset.x,
               (int)frame.y - scroll_offset.y, color);
 }

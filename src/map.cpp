@@ -66,29 +66,25 @@ Texture2D* DisableSpriteTextureProvider::texture() {
   } else if (state == SpriteTextureProviderState::Disabled) {
     return texture_disabled;
   } else {
-    int idx = step;
+    Texture2D* texture{sprite.texture()};
 
-    if (frame_counter % step_frame_count == 0) {
-      if (state == SpriteTextureProviderState::Disabling) {
-        step++;
-        if (step >= (int)sprite.size()) {
-          state = SpriteTextureProviderState::Disabled;
-          step--;
-        }
-      } else if (state == SpriteTextureProviderState::Enabling) {
-        step--;
-        if (step < 0) {
-          state = SpriteTextureProviderState::Enabled;
-          step = 0;
-        }
+    if (state == SpriteTextureProviderState::Disabling) {
+      if (sprite.is_progress_completed()) {
+        state = SpriteTextureProviderState::Disabled;
       } else {
-        PANIC("Incorrect SpriteTextureProviderState");
+        sprite.progress();
       }
+    } else if (state == SpriteTextureProviderState::Enabling) {
+      if (sprite.is_regress_completed()) {
+        state = SpriteTextureProviderState::Enabled;
+      } else {
+        sprite.regress();
+      }
+    } else {
+      PANIC("Incorrect SpriteTextureProviderState");
     }
 
-    frame_counter++;
-
-    return sprite[idx];
+    return texture;
   }
 }
 
