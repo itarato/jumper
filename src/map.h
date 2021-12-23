@@ -221,11 +221,12 @@ struct TimedDoorBehaviour : TileBehaviour {
             IntVector2D scroll_offset) override {
     if (is_timing) {
       DrawRectangle((pos.x * BLOCK_SIZE) - scroll_offset.x,
-                    (pos.y * BLOCK_SIZE) - scroll_offset.y, BLOCK_SIZE, 12,
-                    DARKBLUE);
-      DrawText(std::to_string(counter).c_str(),
-               (pos.x * BLOCK_SIZE) - scroll_offset.x + 2,
-               (pos.y * BLOCK_SIZE) - scroll_offset.y + 1, 10, WHITE);
+                    (pos.y * BLOCK_SIZE) - scroll_offset.y,
+                    (float)BLOCK_SIZE * ((float)counter / (float)timeout), 8,
+                    VIOLET);
+      // DrawText(std::to_string(counter).c_str(),
+      //          (pos.x * BLOCK_SIZE) - scroll_offset.x + 2,
+      //          (pos.y * BLOCK_SIZE) - scroll_offset.y + 1, 10, WHITE);
     }
   }
 };
