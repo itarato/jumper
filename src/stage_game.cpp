@@ -205,20 +205,26 @@ void StageGame::draw() {
   if (!is_paused) {
     int h_offs_padding = (GetScreenWidth() - BLOCK_SIZE) / 2;
     int v_offs_padding = (GetScreenHeight() - BLOCK_SIZE) / 2;
+
     if ((int)map.pixel_width() <= GetScreenWidth()) {
       scroll_offset.x = -(GetScreenWidth() - (int)map.pixel_width()) / 2;
     } else if (jumper.frame.x >= h_offs_padding) {
       scroll_offset.x = std::min((int)map.pixel_width() - GetScreenWidth(),
                                  (int)jumper.frame.x - h_offs_padding);
     }
-    if ((int)map.pixel_height() <= GetScreenHeight()) {
-      scroll_offset.y = -(GetScreenHeight() - (int)map.pixel_height()) / 2;
-    } else if (jumper.frame.y >= v_offs_padding) {
+
+    if ((int)map.pixel_height() + BLOCK_SIZE <= GetScreenHeight()) {
+      scroll_offset.y =
+          -(GetScreenHeight() - (int)map.pixel_height() - BLOCK_SIZE) / 2;
+    } else if (jumper.frame.y >= (v_offs_padding - BLOCK_SIZE)) {
       scroll_offset.y = std::min((int)map.pixel_height() - GetScreenHeight(),
-                                 (int)jumper.frame.y - v_offs_padding);
+                                 (int)jumper.frame.y - v_offs_padding) +
+                        BLOCK_SIZE;
     }
   } else {
-    const int padding{BLOCK_SIZE * 2};
+    // During pause the map can be panned in order to inspect the map.
+
+    const int padding{BLOCK_SIZE * 4};
     // Horizontal check.
     if ((int)map.pixel_width() <= GetScreenWidth()) {
       scroll_offset.x = -(GetScreenWidth() - (int)map.pixel_width()) / 2;
