@@ -224,7 +224,7 @@ std::map<std::string, std::string> parse_args(int argc, char** argv) {
 
   std::string exec_dir{GetDirectoryPath(argv[0])};
 #if __APPLE__
-  exec_dir.append("..");
+  exec_dir.append("/..");
   exec_dir.append("/Resources");
   exec_dir.append("/assets");
 #else
