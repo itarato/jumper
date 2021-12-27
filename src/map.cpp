@@ -308,7 +308,7 @@ std::optional<int> Map::next_right(Rectangle p) {
 
   std::optional<int> right;
 
-  if (in_range(curr_row_top, 0, map.size() - 1)) {
+  if (in_range(curr_row_top, 0, (int)map.size() - 1)) {
     for (size_t i = std::max(0, curr_col + 1); i < block_width; i++) {
       if (map[curr_row_top][i].is_solid()) {
         right = std::optional<int>{i * BLOCK_SIZE};
@@ -318,7 +318,7 @@ std::optional<int> Map::next_right(Rectangle p) {
   }
 
   if (curr_row_top != curr_row_bottom) {
-    if (in_range(curr_row_bottom, 0, map.size() - 1)) {
+    if (in_range(curr_row_bottom, 0, (int)map.size() - 1)) {
       for (size_t i = std::max(0, curr_col + 1); i < block_width; i++) {
         if (map[curr_row_bottom][i].is_solid()) {
           int bottom_right = i * BLOCK_SIZE;

@@ -44,11 +44,11 @@ bool in_range(int number, int min, int max) {
   return number >= min && number <= max;
 }
 
+int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
+
 float randf() { return (float)(rand() & 0xFFFF) / 0xFFFF; }
 
 float randf(float min, float max) { return randf() * (max - min) + min; }
-
-int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
   return Rectangle{

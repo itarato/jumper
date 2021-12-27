@@ -3,7 +3,6 @@
  *
  * Features:
  * - score save (to file)
- * - in pause mode - make mouse pos able to move the map (so it can be assessed)
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)

@@ -30,12 +30,14 @@ typedef enum {
   LOG_LEVEL_ERROR = 2,
 } LogLevelT;
 
+void log(LogLevelT level, std::string msg, ...);
+
 int convert_string_to_int(std::string s);
 unsigned long convert_string_to_ulong(std::string s);
 std::string id(std::string s);
 
-void log(LogLevelT level, std::string msg, ...);
 bool in_range(int number, int min, int max);
+
 int rand_range(int min, int max);
 float randf();
 float randf(float min, float max);
