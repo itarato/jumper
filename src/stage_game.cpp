@@ -238,7 +238,8 @@ void StageGame::draw() {
 
     // Vertical check.
     if ((int)map.pixel_height() <= GetScreenHeight()) {
-      scroll_offset.y = -(GetScreenHeight() - (int)map.pixel_height()) / 2;
+      scroll_offset.y =
+          -(GetScreenHeight() - (int)map.pixel_height() - 2 * BLOCK_SIZE) / 2;
     } else {
       int scroll_height = map.pixel_height() - GetScreenHeight() + padding * 2;
       float vertical_shift = (float)GetMouseY() / (float)GetScreenHeight();
@@ -416,6 +417,10 @@ void StageGame::init_level() {
   is_paused = false;
 
   game_over_explanation_text.text = "";
+
+  // FIXME: This will break things that "remember" the window size, eg `Text`.
+  //        Fix text to have alignment realtime.
+  // SetWindowSize(map.pixel_width(), map.pixel_height() + BLOCK_SIZE);
 }
 
 std::optional<StageT> StageGame::next_stage() {
