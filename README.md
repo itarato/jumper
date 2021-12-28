@@ -24,6 +24,15 @@ Nonsense ladybug regex builder game.
 - `cd jumper`
 - `make -f MakefileOSX bundle`
 
+### Windows
+
+- install MinGW: https://www.mingw-w64.org/downloads/#mingw-builds
+- clone into same folder:
+  - `git clone git@github.com:itarato/jumper.git`
+  - `git clone git@github.com:raysan5/raylib.git`
+- build raylib: https://github.com/raysan5/raylib/wiki/Working-on-Windows
+- `mingw32-make.exe -f .\MakefileWIN`
+
 ### Runtime options
 
 Configuration can be either added as command line arguments or a configuration file - or mixed (last one overrides).
