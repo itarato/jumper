@@ -3,14 +3,12 @@
  *
  * Features:
  * - score save (to file)
+ * - replace chrono - so maybe OSX native gcc can build it
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)
  *
  * Optional features:
- * - make pooping that attracts enemies for a bit:
- *  - adding next-poop ability delay
- *  - visual feedback of when next pooping is available
  * - limit dashes
  * - health
  * - teleport
@@ -24,7 +22,6 @@
  *  - shooting block
  *  - toggling laser
  * - dark reveal mode
- * - jumper producing sugar attracting enemy for short time
  */
 
 #include <cstdlib>
