@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chrono>
 #include <cstdarg>
 #include <cstdio>
 #include <iomanip>
@@ -80,18 +79,19 @@ void merge_pattern(std::string& base, std::string new_part);
  * Used for debugging.
  */
 struct DebugTimer {
-  std::chrono::time_point<std::chrono::system_clock> _tick{};
+  double _tick{};
 
   DebugTimer() = default;
 
-  void tick() { _tick = std::chrono::high_resolution_clock::now(); }
+  // FIXME: The tick-tock interface looks bad. Make it more obvious.
+  void tick() { _tick = GetTime(); }
 
+  // Returns elapsed time since last `tick()` in seconds.
   [[nodiscard]] double tock() const {
     auto old_tick = _tick;
-    auto new_tick = std::chrono::high_resolution_clock::now();
+    auto new_tick = GetTime();
 
-    return std::chrono::duration<double, std::milli>(new_tick - old_tick)
-        .count();
+    return new_tick - old_tick;
   }
 
   void tock_and_dump(std::string msg = "") const {

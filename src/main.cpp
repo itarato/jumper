@@ -3,7 +3,7 @@
  *
  * Features:
  * - score save (to file)
- * - replace chrono - so maybe OSX native gcc can build it
+ * - slowdown effect by manipulating fps?
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)
