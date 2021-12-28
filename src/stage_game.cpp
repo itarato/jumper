@@ -23,6 +23,8 @@ std::vector<std::string> default_map_file_list(const char* folder) {
 
   ClearDirectoryFiles();
 
+  std::sort(out.begin(), out.end());
+
   return out;
 }
 
@@ -296,6 +298,8 @@ void StageGame::draw() {
   {  // Overlay.
     DrawRectangle(0, GetScreenHeight() - 32, GetScreenWidth(), 32,
                   Fade(BLACK, 0.7f));
+    DrawLine(0, GetScreenHeight() - 32, GetScreenWidth(),
+             GetScreenHeight() - 32, GRAY);
 
     DrawTextEx(asset_manager.fonts[FONT_MEDIUM], TextFormat("Score: %d", score),
                Vector2{12.0f, (float)GetScreenHeight() - 26.0f},

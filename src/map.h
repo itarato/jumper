@@ -220,9 +220,6 @@ struct TimedDoorBehaviour : TileBehaviour {
                     (pos.y * BLOCK_SIZE) - scroll_offset.y,
                     (float)BLOCK_SIZE * ((float)counter / (float)timeout), 8,
                     VIOLET);
-      // DrawText(std::to_string(counter).c_str(),
-      //          (pos.x * BLOCK_SIZE) - scroll_offset.x + 2,
-      //          (pos.y * BLOCK_SIZE) - scroll_offset.y + 1, 10, WHITE);
     }
   }
 };
