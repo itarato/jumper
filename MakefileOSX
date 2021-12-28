@@ -1,6 +1,6 @@
 LIBS=-lm -lpthread -ldl -framework IOKit -framework Cocoa -framework OpenGL `pkg-config --libs --cflags raylib`
 
-CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat -I../raylib/src
+CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat -I./lib
 
 BIN=jumper
 
@@ -33,7 +33,7 @@ bundle: all
 	rm -rf ./build
 	mkdir -p ./build/jumper.app/Contents/{MacOS,Resources}
 	cp ./misc/osx_bundle/Info.plist ./build/jumper.app/Contents/
-	cp ./jumper ./build/jumper.app/Contents/MacOS
+	cp ./jumper ./build/jumper.app/Contents/MacOS/
 	cp -rf ./assets ./build/jumper.app/Contents/Resources/
 
 clean:
