@@ -244,9 +244,9 @@ void StageGame::draw() {
     }
 
     // Vertical check.
-    if ((int)map.pixel_height() <= GetScreenHeight()) {
+    if ((int)map.pixel_height() <= (GetScreenHeight() - BLOCK_SIZE)) {
       scroll_offset.y =
-          -(GetScreenHeight() - (int)map.pixel_height() - 2 * BLOCK_SIZE) / 2;
+          -(GetScreenHeight() - (int)map.pixel_height() - BLOCK_SIZE) / 2;
     } else {
       int scroll_height = map.pixel_height() - GetScreenHeight() + padding * 2;
       float vertical_shift = (float)GetMouseY() / (float)GetScreenHeight();
