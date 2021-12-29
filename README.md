@@ -15,16 +15,12 @@ Nonsense ladybug regex builder game.
 
 ### OS-X
 
-- clone into same folder:
-  - `git clone git@github.com:itarato/jumper.git`
-  - `git clone git@github.com:raysan5/raylib.git`
 - `brew install raylib`
-- `brew install gcc`
-- `export CXX=/usr/local/Cellar/gcc/<INSTALLED_VERSION>/bin/g++`
+- `git clone git@github.com:itarato/jumper.git`
 - `cd jumper`
 - `make -f MakefileOSX bundle`
 
-### Windows
+### Windows (not tested with latest version)
 
 - install MinGW: https://www.mingw-w64.org/downloads/#mingw-builds
 - clone into same folder:
