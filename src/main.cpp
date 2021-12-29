@@ -8,6 +8,7 @@
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)
+ * - fix pause scroll offset for map 2 default screen size
  *
  * Optional features:
  * - limit dashes

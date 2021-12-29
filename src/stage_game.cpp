@@ -36,6 +36,7 @@ StageGame::StageGame(GameConfig* game_config)
       game_over_text("Game over"),
       game_over_explanation_text(""),
       pause_text("Pause"),
+      start_text("Press ENTER to start..."),
       map_file_paths({}) {
   jumper.JumperSubject::subscribe(this);
 
@@ -53,6 +54,12 @@ void StageGame::update() {
   {  // Pausing.
     if (is_key_pressed(KEY_P)) is_paused = !is_paused;
     if (is_paused) return;
+  }
+
+  if (state == GameStateT::WAIT_TO_START) {
+    if (is_key_pressed(KEY_ENTER)) {
+      state = GameStateT::PLAY;
+    }
   }
 
   if (state == GameStateT::PLAY) {
@@ -340,6 +347,10 @@ void StageGame::draw() {
   }
 
   if (is_paused) pause_text.draw();
+
+  if (state == GameStateT::WAIT_TO_START) {
+    start_text.draw();
+  }
 }
 
 void StageGame::init() {
@@ -361,6 +372,10 @@ void StageGame::init() {
       ->with_aligned_center()
       ->with_color(Fade(RED, 0.8))
       ->with_background(Fade(WHITE, 0.6f), 3.0f, 6.0f);
+  start_text.with_font(&asset_manager.fonts[FONT_MEDIUM])
+      ->with_color(WHITE)
+      ->with_aligned_center()
+      ->with_background(Fade(RED, 0.9f), -2.0f, 8.0f);
 
   init_level();
 }
@@ -370,7 +385,7 @@ void StageGame::init_level() {
 
   map.build(map_file_paths[current_map_number]);
 
-  state = GameStateT::PLAY;
+  state = GameStateT::WAIT_TO_START;
   jumper.init(map.start_pos);
   wait_to_state_timeout = 0;
 

@@ -17,15 +17,16 @@
 #define WAIT_TO_COMPLETE_FRAMES 180
 
 enum class GameStateT {
-  PLAY = 0,
-  WAIT_TO_COMPLETE = 1,
-  WAIT_TO_NEXT_LEVEL = 2,
-  WAIT_TO_RESTART_LEVEL = 3,
-  COMPLETE = 4,
+  WAIT_TO_START = 0,
+  PLAY = 1,
+  WAIT_TO_COMPLETE = 2,
+  WAIT_TO_NEXT_LEVEL = 3,
+  WAIT_TO_RESTART_LEVEL = 4,
+  COMPLETE = 5,
 };
 
 struct StageGame : IStage, JumperObserver {
-  GameStateT state{GameStateT::PLAY};
+  GameStateT state{GameStateT::WAIT_TO_START};
   int wait_to_state_timeout{0};
   bool is_victory{false};
 
@@ -42,6 +43,7 @@ struct StageGame : IStage, JumperObserver {
   Text game_over_text;
   Text game_over_explanation_text;
   Text pause_text;
+  Text start_text;
 
   int current_map_number{0};
   std::vector<std::string> map_file_paths{};
