@@ -4,6 +4,7 @@
  * Features:
  * - score save (to file)
  * - slowdown effect by manipulating fps?
+ * - don't start automatically
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)
