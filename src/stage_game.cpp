@@ -9,6 +9,13 @@
 #include "input.h"
 #include "shared/util.h"
 
+template <typename T>
+void consume_killed(std::vector<T>& items) {
+  items.erase(std::remove_if(items.begin(), items.end(),
+                             [](const auto& e) { return e.is_killed(); }),
+              items.end());
+}
+
 std::vector<std::string> default_map_file_list(const char* folder) {
   int file_count;
   char** files = GetDirectoryFiles(folder, &file_count);
@@ -86,11 +93,10 @@ void StageGame::update() {
       enemy.update(jumper.frame);
     }
 
-    for (auto& poop : poops) poop.update();
-
-    poops.erase(std::remove_if(poops.begin(), poops.end(),
-                               [](const auto& e) { return e.is_dead(); }),
-                poops.end());
+    {  // Poops.
+      for (auto& poop : poops) poop.update();
+      consume_killed(poops);
+    }
 
     {  // Particles
       for (auto& explosion : explosions) explosion->update();
@@ -106,7 +112,7 @@ void StageGame::update() {
   {  // Coin collection.
     for (auto& coin : coins) {
       if (CheckCollisionRecs(coin.frame, jumper.frame)) {
-        coin.is_collected = true;
+        coin.kill();
         score++;
 
         explosions.push_back(
@@ -114,15 +120,13 @@ void StageGame::update() {
       }
     }
 
-    coins.erase(std::remove_if(coins.begin(), coins.end(),
-                               [](const auto& e) { return e.is_collected; }),
-                coins.end());
+    consume_killed(coins);
   }
 
   {  // Shield collection.
     for (auto& shield : shields) {
       if (CheckCollisionRecs(shield.frame, jumper.frame)) {
-        shield.is_collected = true;
+        shield.kill();
         jumper.activate_shield();
 
         explosions.push_back(
@@ -130,10 +134,7 @@ void StageGame::update() {
       }
     }
 
-    // Fixme: delegate these to a helper.
-    shields.erase(std::remove_if(shields.begin(), shields.end(),
-                                 [](const auto& e) { return e.is_collected; }),
-                  shields.end());
+    consume_killed(shields);
   }
 
   {  // Completion checks.

@@ -3,12 +3,10 @@
 #include "raylib.h"
 #include "shared/types.h"
 
-struct Collectible {
+struct Collectible : Killable {
   Rectangle frame;
-  bool is_collected;
 
   explicit Collectible(Vector2 pos);
-
   virtual void draw(IntVector2D screen_offset) const = 0;
 };
 

@@ -6,8 +6,7 @@
 // COLLECTIBLE ////
 
 Collectible::Collectible(Vector2 pos)
-    : frame({pos.x, pos.y, (float)BLOCK_SIZE, (float)BLOCK_SIZE}),
-      is_collected(false) {}
+    : frame({pos.x, pos.y, (float)BLOCK_SIZE, (float)BLOCK_SIZE}) {}
 
 // COIN ////
 

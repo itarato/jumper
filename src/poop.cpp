@@ -6,7 +6,7 @@
 Poop::Poop(Vector2 pos) : pos(pos) {}
 
 void Poop::update() {
-  timer--;
+  if (--timer <= 0) kill();
 }
 
 void Poop::draw(IntVector2D screen_offset) const {
@@ -18,10 +18,6 @@ void Poop::draw(IntVector2D screen_offset) const {
 
   DrawTexture(asset_manager.textures[IMG_POOP], pos.x - screen_offset.x,
               pos.y - screen_offset.y, Fade(WHITE, fade));
-}
-
-bool Poop::is_dead() const {
-  return timer <= 0;
 }
 
 Rectangle Poop::frame() const {

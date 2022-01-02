@@ -5,7 +5,7 @@
 // Idea: poop could be as strong as the struggle -- so tiny poops are quicker
 // but less potent.
 
-struct Poop {
+struct Poop : Killable {
   int timer{360};
   Vector2 pos;
 
@@ -14,6 +14,5 @@ struct Poop {
   void update();
   void draw(IntVector2D screen_offset) const;
 
-  [[nodiscard]] bool is_dead() const;
   [[nodiscard]] Rectangle frame() const;
 };
