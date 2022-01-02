@@ -3,7 +3,11 @@
  *
  * Features:
  * - score save (to file)
- * - slowdown effect by manipulating fps?
+ * - finish
+ *  - tutorial
+ *  - more maps
+ *    - explain different dynamics
+ *  - help (eg keyboard/controller)
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)
