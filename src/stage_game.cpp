@@ -104,7 +104,7 @@ void StageGame::update() {
       // Cleanup completed explosions.
       explosions.erase(
           std::remove_if(explosions.begin(), explosions.end(),
-                         [](const auto& e) { return e->is_completed(); }),
+                         [](const auto& e) { return e->is_killed(); }),
           explosions.end());
     }
   }

@@ -15,19 +15,14 @@ struct ParticleFrameCapper {
 
   explicit ParticleFrameCapper(uint64_t cap) : cap(cap) {}
 
-  void tick() {
-    frame_counter++;
-  }
+  void tick() { frame_counter++; }
 
-  [[nodiscard]] bool is_complete() const {
-    return frame_counter >= cap;
-  }
+  [[nodiscard]] bool is_complete() const { return frame_counter >= cap; }
 };
 
-struct IParticle {
+struct IParticle : Killable {
   virtual void draw(IntVector2D scroll_offset) const = 0;
   virtual void update() = 0;
-  [[nodiscard]] virtual bool is_completed() const = 0;
   virtual ~IParticle() = default;
 };
 
@@ -43,7 +38,6 @@ struct Explosion : IParticle {
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;
-  [[nodiscard]] bool is_completed() const override { return fade < 0.0f; }
 };
 
 struct Circler : IParticle {
@@ -60,15 +54,14 @@ struct Circler : IParticle {
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;
-  [[nodiscard]] bool is_completed() const override;
 };
 
 struct Smoker : IParticle {
   Rectangle *start_frame;
-  int particle_per_round{1};// How many new particles per frame group.
-  int round_frame_count{1}; // How many frame is in one frame group.
+  int particle_per_round{1};  // How many new particles per frame group.
+  int round_frame_count{1};   // How many frame is in one frame group.
   int frame_counter{0};
-  int total_frame_groups{16};// How many frame groups to do.
+  int total_frame_groups{16};  // How many frame groups to do.
   std::vector<Vector2> pos{};
   std::vector<Vector2> v{};
   std::vector<float> alpha{};
@@ -78,15 +71,14 @@ struct Smoker : IParticle {
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;
-  [[nodiscard]] bool is_completed() const override;
 };
 
 struct Repeater : IParticle {
   Rectangle start_frame;
 
-  int particle_per_round{1};// How many new particles per frame group.
-  int round_frame_count{1}; // How many frame is in one frame group.
-  int total_frame_groups{4};// How many frame groups to do.
+  int particle_per_round{1};  // How many new particles per frame group.
+  int round_frame_count{1};   // How many frame is in one frame group.
+  int total_frame_groups{4};  // How many frame groups to do.
 
   int frame_counter{0};
 
@@ -94,18 +86,13 @@ struct Repeater : IParticle {
 
   std::vector<IParticle *> sub_particles;
 
-  Repeater(
-          Rectangle start_frame,
-          int particle_per_round,
-          int round_frame_count,
-          int total_frame_groups,
-          IParticle *(*particle_factory)(Rectangle));
+  Repeater(Rectangle start_frame, int particle_per_round, int round_frame_count,
+           int total_frame_groups, IParticle *(*particle_factory)(Rectangle));
 
   ~Repeater() override;
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;
-  [[nodiscard]] bool is_completed() const override;
 };
 
 struct Sprinkler : IParticle, ParticleFrameCapper {
@@ -118,5 +105,4 @@ struct Sprinkler : IParticle, ParticleFrameCapper {
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;
-  [[nodiscard]] bool is_completed() const override;
 };
