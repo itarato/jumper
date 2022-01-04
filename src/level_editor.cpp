@@ -25,6 +25,10 @@
 
 using namespace std;
 
+// FIXME: Some new features, eg tile meta (eg tutorial, decoration, etc)
+// requires code updates the same 5-7 places. This should be captured in a
+// single entity and an interface be called only a those points.
+
 static const pair<TileType, const char*> tiles[]{
     {TILE_GROUND, "Ground"},
     {TILE_START, "Start"},
@@ -68,16 +72,18 @@ char char_shift_version(char ch) {
 }
 
 struct Tile {
-  TileType type = TILE_NULL;
-  string pattern;
+  TileType type{TILE_NULL};
+  string pattern{};
   int decoration{-1};
   int door_timeout{0};
+  string tutorial{};
 
   void reset() {
     type = TILE_AIR;
-    pattern = "";
+    pattern.clear();
     decoration = -1;
     door_timeout = 0;
+    tutorial.clear();
   }
 };
 
@@ -211,6 +217,7 @@ struct App {
   Input input_tile_value;
   Input input_decoration_index;
   Input input_door_timer;
+  Input input_tutorial;
 
   int map_width = DEFAULT_WINDOW_BLOCK_WIDTH;
   int map_height = DEFAULT_WINDOW_BLOCK_HEIGHT;
@@ -228,6 +235,7 @@ struct App {
         input_tile_value("Regex"),
         input_decoration_index("Decor idx", 48.0f),
         input_door_timer("Door re-close timer", 48.0f),
+        input_tutorial("Tutorial text"),
         save_button("Save"),
         selected_tile(nullptr) {
     SetConfigFlags(FLAG_WINDOW_HIGHDPI);
@@ -251,6 +259,8 @@ struct App {
         Vector2{(float)(GetScreenWidth() - 190), 160.0f});
 
     input_door_timer.set_pos(Vector2{(float)(GetScreenWidth() - 190), 210.0f});
+
+    input_tutorial.set_pos(Vector2{(float)(GetScreenWidth() - 190), 260.0f});
 
     save_button.pos.x = GetScreenWidth() - 42;
     save_button.pos.y = GetScreenHeight() - 28;
@@ -329,6 +339,10 @@ struct App {
       if (tile_meta.has_door_timeout()) {
         tile->door_timeout = tile_meta.door_timeout;
       }
+
+      if (tile_meta.has_tutorial()) {
+        tile->tutorial = tile_meta.tutorial;
+      }
     }
   }
 
@@ -386,6 +400,10 @@ struct App {
         selected_tile->door_timeout =
             input_door_timer.value.empty() ? 0 : stoi(input_door_timer.value);
       }
+
+      if (input_tutorial.is_edited() && selected_tile) {
+        selected_tile->tutorial = input_tutorial.value;
+      }
     }
 
     {  // Drag space.
@@ -431,12 +449,7 @@ struct App {
     }
 
     {  // Input fields.
-      input_window_width.update();
-      input_window_height.update();
-      input_map_file_name.update();
-      input_tile_value.update();
-      input_decoration_index.update();
-      input_door_timer.update();
+      for (auto input : Input::inputs) input->update();
     }
 
     {  // Button.
@@ -459,6 +472,7 @@ struct App {
         input_door_timer.value = selected_tile->door_timeout <= 0
                                      ? ""
                                      : to_string(selected_tile->door_timeout);
+        input_tutorial.value = selected_tile->tutorial;
       }
     }
   }
@@ -504,6 +518,11 @@ struct App {
                    x * BLOCK_SIZE - offsx + 2, y * BLOCK_SIZE - offsy + 22, 10,
                    WHITE);
         }
+
+        if (!map[y][x].tutorial.empty()) {
+          DrawRectangle(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy,
+                        BLOCK_SIZE, BLOCK_SIZE, Fade(RED, 0.5));
+        }
       }
     }
 
@@ -547,12 +566,7 @@ struct App {
                  WHITE);
       }
 
-      input_window_width.draw();
-      input_window_height.draw();
-      input_map_file_name.draw();
-      input_tile_value.draw();
-      input_decoration_index.draw();
-      input_door_timer.draw();
+      for (auto input : Input::inputs) input->draw();
 
       save_button.draw();
     }
@@ -667,6 +681,10 @@ struct App {
         if (map[y][x].door_timeout > 0) {
           map_file << "door_timer," << x << "," << y << ","
                    << map[y][x].door_timeout << endl;
+        }
+        if (!map[y][x].tutorial.empty()) {
+          map_file << "tutorial," << x << "," << y << "," << map[y][x].tutorial
+                   << endl;
         }
       }
     }
