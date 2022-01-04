@@ -89,6 +89,7 @@ struct Tile {
   std::shared_ptr<ITextureProvider> texture_provider{nullptr};
   Rectangle draw_frame{};
   std::shared_ptr<TileBehaviour> behaviour{nullptr};
+  std::string tutorial{};
 
   explicit Tile(TileType type)
       : type(type),
@@ -184,6 +185,8 @@ struct Tile {
     return pattern == "[CLR]" || pattern == "[REV]";
   }
 
+  bool has_tutorial() const { return !tutorial.empty(); }
+
  private:
   bool _is_enabled{true};
 };
@@ -244,7 +247,10 @@ struct Map {
   [[nodiscard]] bool is_solid_tile(IntVector2D coord) const;
   [[nodiscard]] Tile& get_tile(IntVector2D coord);
 
+  // FIXME: If Tile would have coordinated we could solve a lot of problems in
+  // one step instead of with a lookup.
   std::vector<IntVector2D> coords_of_tile_type(TileType type);
+  std::vector<IntVector2D> coords_of_tile(bool (*fn)(Tile* tile));
 
   [[nodiscard]] bool is_inside_map(IntVector2D coord) const;
 

@@ -386,6 +386,10 @@ void Map::load_map(const std::string& file_path) {
       map[tile_meta.y][tile_meta.x].behaviour =
           std::make_shared<TimedDoorBehaviour>(tile_meta.door_timeout);
     }
+
+    if (tile_meta.has_tutorial()) {
+      map[tile_meta.y][tile_meta.x].tutorial = tile_meta.tutorial;
+    }
   }
 
   file.close();
@@ -420,6 +424,20 @@ std::vector<IntVector2D> Map::coords_of_tile_type(TileType type) {
   for (std::size_t y = 0; y < map.size(); y++) {
     for (std::size_t x = 0; x < map[0].size(); x++) {
       if (map[y][x].type == type) {
+        out.emplace_back((int)x, (int)y);
+      }
+    }
+  }
+
+  return out;
+}
+
+std::vector<IntVector2D> Map::coords_of_tile(bool (*fn)(Tile* tile)) {
+  std::vector<IntVector2D> out;
+
+  for (std::size_t y = 0; y < map.size(); y++) {
+    for (std::size_t x = 0; x < map[0].size(); x++) {
+      if (fn(&map[y][x])) {
         out.emplace_back((int)x, (int)y);
       }
     }

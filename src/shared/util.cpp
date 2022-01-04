@@ -159,6 +159,10 @@ TileMeta::TileMeta(std::string raw) {
     decoration = std::stoi(parts[3]);
   } else if (parts[0] == "door_timer") {
     door_timeout = std::stoi(parts[3]);
+  } else if (parts[0] == "tutorial") {
+    tutorial.swap(parts[3]);
+  } else {
+    PANIC("Cannot read map meta: %s", parts[0].c_str());
   }
 }
 

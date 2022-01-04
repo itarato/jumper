@@ -107,6 +107,17 @@ void StageGame::update() {
                          [](const auto& e) { return e->is_killed(); }),
           explosions.end());
     }
+
+    {  // Tutorials
+      for (auto& tutorial : tutorials) {
+        if (CheckCollisionRecs(jumper.frame, tutorial.block_frame)) {
+          // Rainfall particles.
+          tutorial.kill();
+        }
+      }
+
+      consume_killed(tutorials);
+    }
   }
 
   {  // Coin collection.
@@ -347,6 +358,8 @@ void StageGame::draw() {
     }
   }
 
+  for (const auto& tutorial : tutorials) tutorial.draw(scroll_offset);
+
   if (is_paused) pause_text.draw();
 
   if (state == GameStateT::WAIT_TO_START) {
@@ -395,9 +408,10 @@ void StageGame::init_level() {
   explosions.clear();
   poops.clear();
   shields.clear();
+  tutorials.clear();
 
   auto random_enemies = map.coords_of_tile_type(TILE_ENEMY_RANDOM);
-  for (auto enemy_block_coord : random_enemies) {
+  for (auto& enemy_block_coord : random_enemies) {
     enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
                                    (float)(enemy_block_coord.y * BLOCK_SIZE),
                                    (float)BLOCK_SIZE, (float)BLOCK_SIZE},
@@ -406,7 +420,7 @@ void StageGame::init_level() {
   }
 
   auto chaser_enemies = map.coords_of_tile_type(TILE_ENEMY_CHASER);
-  for (auto enemy_block_coord : chaser_enemies) {
+  for (auto& enemy_block_coord : chaser_enemies) {
     enemies.emplace_back(Rectangle{(float)(enemy_block_coord.x * BLOCK_SIZE),
                                    (float)(enemy_block_coord.y * BLOCK_SIZE),
                                    (float)BLOCK_SIZE, (float)BLOCK_SIZE},
@@ -417,15 +431,22 @@ void StageGame::init_level() {
   for (Enemy& enemy : enemies) enemy.init();
 
   auto coin_coords = map.coords_of_tile_type(TILE_COIN);
-  for (auto coin_coord : coin_coords) {
+  for (auto& coin_coord : coin_coords) {
     coins.emplace_back(Vector2{(float)(coin_coord.x * BLOCK_SIZE),
                                (float)(coin_coord.y * BLOCK_SIZE)});
   }
 
   auto shield_coords = map.coords_of_tile_type(TILE_SHIELD);
-  for (auto shield_coord : shield_coords) {
+  for (auto& shield_coord : shield_coords) {
     shields.emplace_back(Vector2{(float)(shield_coord.x * BLOCK_SIZE),
                                  (float)(shield_coord.y * BLOCK_SIZE)});
+  }
+
+  auto tutorial_coords =
+      map.coords_of_tile([](Tile* tile) { return tile->has_tutorial(); });
+  for (auto& tutorial_coord : tutorial_coords) {
+    auto tile = map.get_tile(tutorial_coord);
+    tutorials.emplace_back(tile.tutorial, tutorial_coord);
   }
 
   timer.start();

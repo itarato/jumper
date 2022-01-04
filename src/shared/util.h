@@ -61,15 +61,17 @@ std::vector<std::string> split(std::string word, char delim);
 struct TileMeta {
   int x;
   int y;
-  std::string pattern{""};
+  std::string pattern{};
   int decoration{-1};
   int door_timeout{0};
+  std::string tutorial{};
 
   explicit TileMeta(std::string raw);
 
   bool has_pattern() const { return !pattern.empty(); }
   bool has_decoration() const { return decoration >= 0; }
   bool has_door_timeout() const { return door_timeout > 0; }
+  bool has_tutorial() const { return !tutorial.empty(); }
 };
 
 void merge_pattern(std::string& base, std::string new_part);

@@ -13,6 +13,7 @@
 #include "shared/types.h"
 #include "shared/util.h"
 #include "text.h"
+#include "tutorial.h"
 
 #define WAIT_TO_COMPLETE_FRAMES 180
 
@@ -33,10 +34,13 @@ struct StageGame : IStage, JumperObserver {
   GameConfig* game_config{nullptr};
   Jumper jumper{};
   Map map{};
+
   std::vector<Enemy> enemies{};
   std::vector<Coin> coins{};
   std::vector<Poop> poops{};
   std::vector<Shield> shields{};
+  std::vector<Tutorial> tutorials{};
+
   int score{0};
 
   Text victory_text;

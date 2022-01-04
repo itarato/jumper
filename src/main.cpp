@@ -8,6 +8,7 @@
  *  - more maps
  *    - explain different dynamics
  *  - help (eg keyboard/controller)
+ *  - tutorial explosion (rainfall effect)
  *
  * Bug:
  * - timer runs during pause (is it ok or not?)
