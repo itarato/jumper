@@ -18,6 +18,8 @@ App::~App() {
 }
 
 void App::init() {
+  SetConfigFlags(FLAG_WINDOW_HIGHDPI);
+
   bool is_fullscreen = game_config.is_fullscreen;
   InitWindow(is_fullscreen ? 0 : game_config.window_width,
              is_fullscreen ? 0 : game_config.window_height, "Jumper");
