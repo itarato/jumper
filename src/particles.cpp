@@ -192,3 +192,31 @@ void Sprinkler::update() {
 
   if (ParticleFrameCapper::is_complete()) kill();
 }
+
+// RAINFALL ///////////////////////////////////////////////////////////////////
+
+Rainfall::Rainfall(Rectangle frame, int count)
+    : start_x(frame.x), length(frame.width) {
+  for (int i = 0; i < count; i++) {
+    y_positions.emplace_back(frame.y + frame.height);
+    speeds.emplace_back(randf(2.0f, 6.0f));
+  }
+}
+
+void Rainfall::draw(IntVector2D scroll_offset) const {
+  for (int i = 0; i < y_positions.size(); i++) {
+    DrawRectangle(start_x + (i * length / y_positions.size()) - scroll_offset.x,
+                  y_positions[i] - scroll_offset.y, 4.0f, 4.0f,
+                  Fade(RED, fade));
+  }
+}
+
+void Rainfall::update() {
+  for (int i = 0; i < y_positions.size(); i++) {
+    y_positions[i] += speeds[i];
+  }
+
+  fade -= 0.02;
+
+  if (fade <= 0) kill();
+}

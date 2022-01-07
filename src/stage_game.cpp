@@ -113,6 +113,8 @@ void StageGame::update() {
         if (CheckCollisionRecs(jumper.frame, tutorial.block_frame)) {
           // Rainfall particles.
           tutorial.kill();
+          explosions.push_back(
+              std::make_unique<Rainfall>(tutorial.block_frame, 16));
         }
       }
 
