@@ -10,6 +10,14 @@ Tutorial::Tutorial(std::string text, IntVector2D tile_coords) : text(text) {
   block_frame.y = tile_coords.y * BLOCK_SIZE;
   block_frame.width = BLOCK_SIZE;
   block_frame.height = BLOCK_SIZE;
+
+  int text_width = MeasureText(text.c_str(), TUTORIAL_TEXT_FONT_SIZE);
+  int bubble_height = TUTORIAL_TEXT_FONT_SIZE + TUTORIAL_TEXT_PADDING * 2;
+
+  text_block_frame.width = text_width + TUTORIAL_TEXT_PADDING * 2;
+  text_block_frame.height = bubble_height;
+  text_block_frame.x = block_frame.x;
+  text_block_frame.y = block_frame.y - bubble_height;
 }
 
 void Tutorial::draw(IntVector2D scroll_offset) const {

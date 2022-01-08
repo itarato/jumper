@@ -195,18 +195,18 @@ void Sprinkler::update() {
 
 // RAINFALL ///////////////////////////////////////////////////////////////////
 
-Rainfall::Rainfall(Rectangle frame, int count)
-    : start_x(frame.x), length(frame.width) {
+Rainfall::Rainfall(Vector2 pos, int length, int count)
+    : start_x(pos.x), length(length) {
   for (int i = 0; i < count; i++) {
-    y_positions.emplace_back(frame.y + frame.height);
-    speeds.emplace_back(randf(2.0f, 6.0f));
+    y_positions.emplace_back(pos.y);
+    speeds.emplace_back(randf(3.0f, 6.0f));
   }
 }
 
 void Rainfall::draw(IntVector2D scroll_offset) const {
   for (int i = 0; i < y_positions.size(); i++) {
     DrawRectangle(start_x + (i * length / y_positions.size()) - scroll_offset.x,
-                  y_positions[i] - scroll_offset.y, 4.0f, 4.0f,
+                  y_positions[i] - scroll_offset.y, 6.0f, 6.0f,
                   Fade(RED, fade));
   }
 }
@@ -216,7 +216,7 @@ void Rainfall::update() {
     y_positions[i] += speeds[i];
   }
 
-  fade -= 0.02;
+  fade -= 0.05;
 
   if (fade <= 0) kill();
 }

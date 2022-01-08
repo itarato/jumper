@@ -114,7 +114,8 @@ void StageGame::update() {
           // Rainfall particles.
           tutorial.kill();
           explosions.push_back(
-              std::make_unique<Rainfall>(tutorial.block_frame, 16));
+              std::make_unique<Rainfall>(position_of(tutorial.text_block_frame),
+                                         tutorial.text_block_frame.width, 24));
         }
       }
 

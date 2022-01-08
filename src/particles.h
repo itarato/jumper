@@ -111,12 +111,12 @@ struct Rainfall : IParticle {
   int start_x;
   int length;
 
-  std::vector<int> y_positions{};
+  std::vector<float> y_positions{};
   std::vector<float> speeds{};
 
   float fade{1.0};
 
-  Rainfall(Rectangle frame, int count);
+  Rainfall(Vector2 pos, int length, int count);
 
   void draw(IntVector2D scroll_offset) const override;
   void update() override;

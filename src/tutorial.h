@@ -8,6 +8,7 @@
 struct Tutorial : Killable {
   std::string text{};
   Rectangle block_frame{};
+  Rectangle text_block_frame{};
 
   Tutorial(std::string text, IntVector2D tile_coords);
 
