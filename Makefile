@@ -1,6 +1,6 @@
 LIBS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
-CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat
+CXXFLAGS=-std=c++2a -Wall -pedantic -Wformat -Werror
 
 BIN=jumper
 

@@ -4,6 +4,8 @@
 #include <cstring>
 #include <iostream>
 
+#include "raylib.h"
+
 AssetManager::~AssetManager() {
   for (auto& texture_pair : textures) UnloadTexture(texture_pair.second);
   textures.clear();
@@ -13,7 +15,7 @@ AssetManager::~AssetManager() {
 }
 
 std::vector<Texture2D*> AssetManager::texture_list(
-    const char* file_name_format) const {
+        const char* file_name_format) const {
   std::vector<Texture2D*> out{};
 
   for (int i{0};; i++) {
@@ -24,25 +26,20 @@ std::vector<Texture2D*> AssetManager::texture_list(
 
     if (textures.count(file_name) == 0) break;
 
-    out.emplace_back((Texture*)(&textures.at(file_name)));
+    out.emplace_back((Texture*) (&textures.at(file_name)));
   }
 
   return out;
 }
 
 void AssetManager::preload_textures(std::string folder) {
-  int file_count;
-  char** files = GetDirectoryFiles(folder.c_str(), &file_count);
+  FilePathList files = LoadDirectoryFiles(folder.c_str());
 
-  for (int i = 0; i < file_count; i++) {
-    if (!IsFileExtension(files[i], ".png")) continue;
-
+  for (int i = 0; i < (int) files.count; i++) {
     textures.insert(
-        {files[i],
-         LoadTexture(concat(folder.c_str(), files[i], CONCAT_END).c_str())});
+            {GetFileName(files.paths[i]),
+             LoadTexture(files.paths[i])});
   }
-
-  ClearDirectoryFiles();
 }
 
 AssetManager asset_manager = AssetManager();

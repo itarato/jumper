@@ -8,7 +8,8 @@
 // EXPLOSION //////////////////////////////////////////////////////////////////
 
 Explosion::Explosion(Rectangle start_frame, size_t particle_count, Color color)
-    : particle_count(particle_count), color(color) {
+    : particle_count(particle_count),
+      color(color) {
   for (size_t i = 0; i < particle_count; i++) {
     float angle = randf() * PI * 2.0f;
     float v = randf() * 2.0f + 5.0f;
@@ -47,7 +48,8 @@ void Explosion::update() {
 // CIRCLER ////////////////////////////////////////////////////////////////////
 
 Circler::Circler(Rectangle start_frame, size_t particle_count)
-    : particle_count(particle_count), dist_step(4.0f) {
+    : particle_count(particle_count),
+      dist_step(4.0f) {
   for (size_t i = 0; i < particle_count; i++) {
     particle_pos.emplace_back(Vector2{start_frame.x + start_frame.width / 2,
                                       start_frame.y + start_frame.height / 2});
@@ -61,9 +63,9 @@ void Circler::draw(IntVector2D scroll_offset) const {
   for (size_t i = 0; i < particle_count; i++) {
     toggle_rot = i % 2 == 0 ? rot : -rot;
     DrawRectangle(particle_pos[i].x - scroll_offset.x +
-                      (sinf(toggle_rot + rot_offs[i]) * (dist_offs[i] + dist)),
+                          (sinf(toggle_rot + rot_offs[i]) * (dist_offs[i] + dist)),
                   particle_pos[i].y - scroll_offset.y +
-                      (cosf(toggle_rot + rot_offs[i]) * (dist_offs[i] + dist)),
+                          (cosf(toggle_rot + rot_offs[i]) * (dist_offs[i] + dist)),
                   9, 9, Fade(RED, fade));
   }
 }
@@ -80,10 +82,11 @@ void Circler::update() {
 // SMOKER /////////////////////////////////////////////////////////////////////
 
 Smoker::Smoker(Rectangle *start_frame, Color color)
-    : start_frame(start_frame), color(color) {}
+    : start_frame(start_frame),
+      color(color) {}
 
 void Smoker::draw(IntVector2D scroll_offset) const {
-  for (int i = 0; i < (int)pos.size(); i++) {
+  for (int i = 0; i < (int) pos.size(); i++) {
     if (alpha[i] <= 0.0f) continue;
 
     DrawRectangle(pos[i].x - scroll_offset.x, pos[i].y - scroll_offset.y, 4, 4,
@@ -94,7 +97,7 @@ void Smoker::draw(IntVector2D scroll_offset) const {
 void Smoker::update() {
   if (start_frame == nullptr) return;
 
-  for (int i = 0; i < (int)pos.size(); i++) {
+  for (int i = 0; i < (int) pos.size(); i++) {
     if (alpha[i] <= 0.0f) continue;
 
     pos[i].x += v[i].x;
@@ -160,8 +163,8 @@ void Repeater::update() {
   }
 
   if (std::all_of(
-          sub_particles.begin(), sub_particles.end(),
-          [](const auto &sub_particle) { return sub_particle->is_killed(); })) {
+              sub_particles.begin(), sub_particles.end(),
+              [](const auto &sub_particle) { return sub_particle->is_killed(); })) {
     kill();
   }
 }
@@ -169,7 +172,9 @@ void Repeater::update() {
 // SPRINKLER //////////////////////////////////////////////////////////////////
 
 Sprinkler::Sprinkler(Vector2 pos, float angle, uint64_t length, Color color)
-    : ParticleFrameCapper(length), pos(pos), color(color) {
+    : ParticleFrameCapper(length),
+      pos(pos),
+      color(color) {
   angle += randf(-0.6f, 0.6f);
   v.x = cosf(angle) * 1.5f;
   v.y = sinf(angle) * 1.5f;
@@ -196,7 +201,8 @@ void Sprinkler::update() {
 // RAINFALL ///////////////////////////////////////////////////////////////////
 
 Rainfall::Rainfall(Vector2 pos, int length, int count)
-    : start_x(pos.x), length(length) {
+    : start_x(pos.x),
+      length(length) {
   for (int i = 0; i < count; i++) {
     y_positions.emplace_back(pos.y);
     speeds.emplace_back(randf(3.0f, 6.0f));
@@ -204,7 +210,7 @@ Rainfall::Rainfall(Vector2 pos, int length, int count)
 }
 
 void Rainfall::draw(IntVector2D scroll_offset) const {
-  for (int i = 0; i < y_positions.size(); i++) {
+  for (int i = 0; i < (int) y_positions.size(); i++) {
     DrawRectangle(start_x + (i * length / y_positions.size()) - scroll_offset.x,
                   y_positions[i] - scroll_offset.y, 6.0f, 6.0f,
                   Fade(RED, fade));
@@ -212,7 +218,7 @@ void Rainfall::draw(IntVector2D scroll_offset) const {
 }
 
 void Rainfall::update() {
-  for (int i = 0; i < y_positions.size(); i++) {
+  for (int i = 0; i < (int) y_positions.size(); i++) {
     y_positions[i] += speeds[i];
   }
 
