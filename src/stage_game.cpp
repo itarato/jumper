@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstring>
 #include <memory>
 
 #include "asset_manager.h"
@@ -275,7 +276,7 @@ void StageGame::draw() {
   // Play area tile.
   if (game_config->is_background_image) {
     if (game_config->is_background_horizontal_tile) {
-      DrawTextureTiled(
+      DrawTexturePro(
               asset_manager.textures[IMG_BACKGROUND],
               Rectangle{0.0f, 0.0f,
                         (float) asset_manager.textures[IMG_BACKGROUND].width,
@@ -290,16 +291,16 @@ void StageGame::draw() {
                       (float) map.pixel_width(),
                       std::min((float) map.pixel_height(),
                                (float) asset_manager.textures[IMG_BACKGROUND].height)},
-              Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+              Vector2{0.0f, 0.0f}, 0.0f, WHITE);
     } else if (game_config->is_background_full_tile) {
-      DrawTextureTiled(
+      DrawTexturePro(
               asset_manager.textures[IMG_BACKGROUND],
               Rectangle{0.0f, 0.0f,
                         (float) asset_manager.textures[IMG_BACKGROUND].width,
                         (float) asset_manager.textures[IMG_BACKGROUND].height},
               Rectangle{(float) -scroll_offset.x, (float) -scroll_offset.y,
                         (float) map.pixel_width(), (float) map.pixel_height()},
-              Vector2{0.0f, 0.0f}, 0.0f, 1.0f, WHITE);
+              Vector2{0.0f, 0.0f}, 0.0f, WHITE);
     }
   }
 
