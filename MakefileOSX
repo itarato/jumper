@@ -34,7 +34,7 @@ bundle: all
 	mkdir -p ./build/jumper.app/Contents/{MacOS,Resources}
 	cp ./misc/osx_bundle/Info.plist ./build/jumper.app/Contents/
 	cp ./jumper ./build/jumper.app/Contents/MacOS/
-	cp -rf ./assets ./build/jumper.app/Contents/Resources/
+	cp -rf ./resources ./build/jumper.app/Contents/Resources/
 
 clean:
 	rm -f ./src/*.o

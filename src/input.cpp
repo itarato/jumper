@@ -5,13 +5,13 @@
 int gamepad_button_for_key(int key) {
   switch (key) {
     case KEY_SPACE:
-      return 7;
+      return GAMEPAD_BUTTON_RIGHT_FACE_DOWN;
     case KEY_LEFT_CONTROL:
-      return 8;
+      return GAMEPAD_BUTTON_RIGHT_FACE_LEFT;
     case KEY_LEFT_ALT:
-      return 6;
+      return GAMEPAD_BUTTON_RIGHT_FACE_RIGHT;
     case KEY_ENTER:
-      return 5;
+      return GAMEPAD_BUTTON_RIGHT_FACE_UP;
     case KEY_BACKSPACE:
       return 15;
     case KEY_X:

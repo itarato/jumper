@@ -30,16 +30,16 @@ using namespace std;
 // single entity and an interface be called only a those points.
 
 static const pair<TileType, const char*> tiles[]{
-    {TILE_GROUND, "Ground"},
-    {TILE_START, "Start"},
-    {TILE_END, "End"},
-    {TILE_ENEMY_RANDOM, "EnemyRnd"},
-    {TILE_ENEMY_CHASER, "EnemyCsr"},
-    {TILE_COIN, "Coin"},
-    {TILE_REGEX, "Regex"},
-    {TILE_DOOR, "Door"},
-    {TILE_TRAP, "Trap"},
-    {TILE_SHIELD, "Shield"},
+        {TILE_GROUND, "Ground"},
+        {TILE_START, "Start"},
+        {TILE_END, "End"},
+        {TILE_ENEMY_RANDOM, "EnemyRnd"},
+        {TILE_ENEMY_CHASER, "EnemyCsr"},
+        {TILE_COIN, "Coin"},
+        {TILE_REGEX, "Regex"},
+        {TILE_DOOR, "Door"},
+        {TILE_TRAP, "Trap"},
+        {TILE_SHIELD, "Shield"},
 };
 
 char char_shift_version(char ch) {
@@ -129,9 +129,9 @@ struct Input {
 
         if (ch >= 32 && ch <= 126) {
           if (IsKeyDown(KEY_LEFT_SHIFT) || IsKeyDown(KEY_RIGHT_SHIFT)) {
-            value.push_back(char_shift_version((char)ch));
+            value.push_back(char_shift_version((char) ch));
           } else {
-            value.push_back((char)tolower(ch));
+            value.push_back((char) tolower(ch));
           }
         } else if (ch == KEY_BACKSPACE) {
           if (!value.empty()) value.pop_back();
@@ -182,12 +182,13 @@ struct Button : IButton {
 
   explicit Button(string label) : label(std::move(label)) {}
   explicit Button(string label, Vector2 pos)
-      : pos(pos), label(std::move(label)) {}
+      : pos(pos),
+        label(std::move(label)) {}
 
   Rectangle frame() override {
     return Rectangle{pos.x, pos.y,
-                     (float)(MeasureText(label.c_str(), font_size) + 16),
-                     (float)(font_size + 16)};
+                     (float) (MeasureText(label.c_str(), font_size) + 16),
+                     (float) (font_size + 16)};
   }
 
   void draw() override {
@@ -243,50 +244,50 @@ struct App {
     InitWindow(WIN_W, WIN_H, "Level Editor");
     SetTargetFPS(FPS);
 
-    input_window_width.set_pos(Vector2{(float)(GetScreenWidth() - 190), 10.0f});
+    input_window_width.set_pos(Vector2{(float) (GetScreenWidth() - 190), 10.0f});
     input_window_width.set_value(to_string(DEFAULT_WINDOW_BLOCK_WIDTH));
 
-    input_window_height.set_pos(Vector2{(float)(GetScreenWidth() - 90), 10.0f});
+    input_window_height.set_pos(Vector2{(float) (GetScreenWidth() - 90), 10.0f});
     input_window_height.set_value(to_string(DEFAULT_WINDOW_BLOCK_HEIGHT));
 
     input_map_file_name.set_pos(
-        Vector2{(float)(GetScreenWidth() - 190), 60.0f});
+            Vector2{(float) (GetScreenWidth() - 190), 60.0f});
     input_map_file_name.set_value("maps/untitled.jm");
 
-    input_tile_value.set_pos(Vector2{(float)(GetScreenWidth() - 190), 110.0f});
+    input_tile_value.set_pos(Vector2{(float) (GetScreenWidth() - 190), 110.0f});
 
     input_decoration_index.set_pos(
-        Vector2{(float)(GetScreenWidth() - 190), 160.0f});
+            Vector2{(float) (GetScreenWidth() - 190), 160.0f});
 
-    input_door_timer.set_pos(Vector2{(float)(GetScreenWidth() - 190), 210.0f});
+    input_door_timer.set_pos(Vector2{(float) (GetScreenWidth() - 190), 210.0f});
 
-    input_tutorial.set_pos(Vector2{(float)(GetScreenWidth() - 190), 260.0f});
+    input_tutorial.set_pos(Vector2{(float) (GetScreenWidth() - 190), 260.0f});
 
     save_button.pos.x = GetScreenWidth() - 42;
     save_button.pos.y = GetScreenHeight() - 28;
 
     tile_textures.insert(
-        {TILE_GROUND, LoadTexture("./assets/images/default/ground.png")});
+            {TILE_GROUND, LoadTexture("./resources/images/default/ground.png")});
     tile_textures.insert(
-        {TILE_START, LoadTexture("./assets/images/default/ladybug.png")});
+            {TILE_START, LoadTexture("./resources/images/default/ladybug.png")});
     tile_textures.insert(
-        {TILE_END, LoadTexture("./assets/images/default/end.png")});
+            {TILE_END, LoadTexture("./resources/images/default/end.png")});
     tile_textures.insert(
-        {TILE_ENEMY_RANDOM,
-         LoadTexture("./assets/images/default/enemy_random_0.png")});
+            {TILE_ENEMY_RANDOM,
+             LoadTexture("./resources/images/default/enemy_random_0.png")});
     tile_textures.insert(
-        {TILE_ENEMY_CHASER,
-         LoadTexture("./assets/images/default/enemy_chaser_0.png")});
+            {TILE_ENEMY_CHASER,
+             LoadTexture("./resources/images/default/enemy_chaser_0.png")});
     tile_textures.insert(
-        {TILE_COIN, LoadTexture("./assets/images/default/coin.png")});
+            {TILE_COIN, LoadTexture("./resources/images/default/coin.png")});
     tile_textures.insert(
-        {TILE_REGEX, LoadTexture("./assets/images/default/regex.png")});
+            {TILE_REGEX, LoadTexture("./resources/images/default/regex.png")});
     tile_textures.insert(
-        {TILE_DOOR, LoadTexture("./assets/images/default/door_close.png")});
+            {TILE_DOOR, LoadTexture("./resources/images/default/door_close.png")});
     tile_textures.insert(
-        {TILE_TRAP, LoadTexture("./assets/images/default/spike.png")});
+            {TILE_TRAP, LoadTexture("./resources/images/default/spike.png")});
     tile_textures.insert(
-        {TILE_SHIELD, LoadTexture("./assets/images/default/shield.png")});
+            {TILE_SHIELD, LoadTexture("./resources/images/default/shield.png")});
   }
 
   void load_map_file(const char* file_name) {
@@ -315,11 +316,11 @@ struct App {
       getline(map_file, line);
 
       if (i == 0) {
-        map_width = (int)line.size();
+        map_width = (int) line.size();
         input_window_width.set_value(to_string(map_width));
       }
 
-      for (int j = 0; j < (int)line.size(); j++) {
+      for (int j = 0; j < (int) line.size(); j++) {
         map[i][j].type = char_to_tile_type(line.at(j));
       }
     }
@@ -359,7 +360,7 @@ struct App {
   }
 
   void update() {
-    {  // Input fields.
+    {// Input fields.
       if (input_window_width.is_edit_completed()) {
         int new_width = stoi(input_window_width.value);
         if (new_width > MAX_WINDOW_BLOCK_WIDTH) {
@@ -392,13 +393,13 @@ struct App {
 
       if (input_decoration_index.is_edited() && selected_tile) {
         selected_tile->decoration = input_decoration_index.value.empty()
-                                        ? -1
-                                        : stoi(input_decoration_index.value);
+                                            ? -1
+                                            : stoi(input_decoration_index.value);
       }
 
       if (input_door_timer.is_edited() && selected_tile) {
         selected_tile->door_timeout =
-            input_door_timer.value.empty() ? 0 : stoi(input_door_timer.value);
+                input_door_timer.value.empty() ? 0 : stoi(input_door_timer.value);
       }
 
       if (input_tutorial.is_edited() && selected_tile) {
@@ -406,7 +407,7 @@ struct App {
       }
     }
 
-    {  // Drag space.
+    {// Drag space.
       if (IsKeyPressed(KEY_LEFT_ALT)) {
         prev_offsx = offsx;
         prev_offsy = offsy;
@@ -429,49 +430,49 @@ struct App {
         if (IsMouseButtonDown(0)) {
           if (is_bulk_creation) {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                tiles[selected_tile_idx].first;
+                    tiles[selected_tile_idx].first;
           } else {
             map[mouse_tile_coord.second][mouse_tile_coord.first].type =
-                TILE_NULL;
+                    TILE_NULL;
           }
         }
       }
     }
 
-    {  // Tile type switch.
+    {// Tile type switch.
       if (IsKeyPressed(KEY_PAGE_DOWN) || GetMouseWheelMove() == 1.0f) {
         selected_tile_idx =
-            (selected_tile_idx + tile_count() - 1) % tile_count();
+                (selected_tile_idx + tile_count() - 1) % tile_count();
       }
       if (IsKeyPressed(KEY_PAGE_UP) || GetMouseWheelMove() == -1.0f) {
         selected_tile_idx = (selected_tile_idx + 1) % tile_count();
       }
     }
 
-    {  // Input fields.
+    {// Input fields.
       for (auto input : Input::inputs) input->update();
     }
 
-    {  // Button.
+    {// Button.
       if (save_button.is_clicked()) {
         save_map();
         cout << "Map saved.\n";
       }
     }
 
-    {  // Tile selection.
+    {// Tile selection.
       if (IsMouseButtonPressed(1) && mouse_in_max_frame()) {
         auto selected_tile_coord = tile_coord();
         selected_tile =
-            &map[selected_tile_coord.second][selected_tile_coord.first];
+                &map[selected_tile_coord.second][selected_tile_coord.first];
         input_tile_value.value = selected_tile->pattern;
         input_decoration_index.value =
-            selected_tile->decoration >= 0
-                ? to_string(selected_tile->decoration)
-                : "";
+                selected_tile->decoration >= 0
+                        ? to_string(selected_tile->decoration)
+                        : "";
         input_door_timer.value = selected_tile->door_timeout <= 0
-                                     ? ""
-                                     : to_string(selected_tile->door_timeout);
+                                         ? ""
+                                         : to_string(selected_tile->door_timeout);
         input_tutorial.value = selected_tile->tutorial;
       }
     }
@@ -483,8 +484,8 @@ struct App {
     // Map tile.
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
-        Vector2 tile_pos{(float)(x * BLOCK_SIZE - offsx),
-                         (float)(y * BLOCK_SIZE - offsy)};
+        Vector2 tile_pos{(float) (x * BLOCK_SIZE - offsx),
+                         (float) (y * BLOCK_SIZE - offsy)};
         draw_tile(map[y][x].type, tile_pos, tile_textures);
       }
     }
@@ -494,10 +495,10 @@ struct App {
       for (int x = 0; x < map_width; x++) {
         if (selected_tile == &map[y][x]) {
           DrawRectangleLinesEx(
-              Rectangle{(float)(x * BLOCK_SIZE - offsx - 2),
-                        (float)(y * BLOCK_SIZE - offsy - 2),
-                        (float)(BLOCK_SIZE + 4), (float)(BLOCK_SIZE + 4)},
-              2.0f, ORANGE);
+                  Rectangle{(float) (x * BLOCK_SIZE - offsx - 2),
+                            (float) (y * BLOCK_SIZE - offsy - 2),
+                            (float) (BLOCK_SIZE + 4), (float) (BLOCK_SIZE + 4)},
+                  2.0f, ORANGE);
         }
 
         if (!map[y][x].pattern.empty()) {
@@ -511,7 +512,7 @@ struct App {
 
         if (map[y][x].decoration >= 0) {
           int text_width =
-              MeasureText(to_string(map[y][x].decoration).c_str(), 10);
+                  MeasureText(to_string(map[y][x].decoration).c_str(), 10);
           DrawRectangle(x * BLOCK_SIZE - offsx, y * BLOCK_SIZE - offsy + 20,
                         text_width + 4, 10 + 4, DARKGREEN);
           DrawText(to_string(map[y][x].decoration).c_str(),
@@ -528,23 +529,23 @@ struct App {
 
     // Window frame.
     DrawRectangleLinesEx(
-        Rectangle{(float)(0 - offsx - 8), (float)(0 - offsy - 8),
-                  (float)(map_width * BLOCK_SIZE + 16),
-                  (float)(map_height * BLOCK_SIZE + 16)},
-        8.0f, BLACK);
+            Rectangle{(float) (0 - offsx - 8), (float) (0 - offsy - 8),
+                      (float) (map_width * BLOCK_SIZE + 16),
+                      (float) (map_height * BLOCK_SIZE + 16)},
+            8.0f, BLACK);
 
     if (mouse_in_max_frame()) {
       // Under-mouse tile.
       draw_tile(tiles[selected_tile_idx].first,
-                Vector2{(float)(mouse_tile_coord.first * BLOCK_SIZE - offsx),
-                        (float)(mouse_tile_coord.second * BLOCK_SIZE - offsy)},
+                Vector2{(float) (mouse_tile_coord.first * BLOCK_SIZE - offsx),
+                        (float) (mouse_tile_coord.second * BLOCK_SIZE - offsy)},
                 tile_textures);
       DrawRectangleLines(mouse_tile_coord.first * BLOCK_SIZE - offsx,
                          mouse_tile_coord.second * BLOCK_SIZE - offsy,
                          BLOCK_SIZE, BLOCK_SIZE, BLACK);
     }
 
-    {  // Overlay
+    {// Overlay
       // Bottom.
       DrawRectangle(0, GetScreenHeight() - 96, GetScreenWidth(), 96,
                     Fade(BLACK, 0.5f));
@@ -559,9 +560,9 @@ struct App {
         }
 
         draw_tile(
-            tiles[i].first,
-            Vector2{(float)(32 + i * 64), (float)(GetScreenHeight() - 76)},
-            tile_textures);
+                tiles[i].first,
+                Vector2{(float) (32 + i * 64), (float) (GetScreenHeight() - 76)},
+                tile_textures);
         DrawText(tiles[i].second, i * 64 + 32, GetScreenHeight() - 30, 10,
                  WHITE);
       }
@@ -576,8 +577,8 @@ struct App {
     Vector2 mouse_pos{GetMousePosition()};
     int tile_x = (mouse_pos.x + offsx) / BLOCK_SIZE;
     int tile_y = (mouse_pos.y + offsy) / BLOCK_SIZE;
-    if (mouse_pos.x + (float)offsx < 0.0f) tile_x--;
-    if (mouse_pos.y + (float)offsy < 0.0f) tile_y--;
+    if (mouse_pos.x + (float) offsx < 0.0f) tile_x--;
+    if (mouse_pos.y + (float) offsy < 0.0f) tile_y--;
     return pair<int, int>{tile_x, tile_y};
   }
 
@@ -660,9 +661,9 @@ struct App {
     // Tiles.
     for (int y = 0; y < map_height; y++) {
       for (int x = 0; x < map_width; x++) {
-        map_file.put((char)(map[y][x].type == TileType::TILE_NULL
-                                ? TileType::TILE_AIR
-                                : map[y][x].type));
+        map_file.put((char) (map[y][x].type == TileType::TILE_NULL
+                                     ? TileType::TILE_AIR
+                                     : map[y][x].type));
       }
       map_file.put('\n');
     }

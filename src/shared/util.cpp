@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 
+#include "../defines.h"
 #include "shared_defines.h"
 
 void log(LogLevelT level, std::string msg, ...) {
@@ -46,39 +47,39 @@ bool in_range(int number, int min, int max) {
 
 int rand_range(int min, int max) { return (rand() % (max - min + 1)) + min; }
 
-float randf() { return (float)(rand() & 0xFFFF) / 0xFFFF; }
+float randf() { return (float) (rand() & 0xFFFF) / 0xFFFF; }
 
 float randf(float min, float max) { return randf() * (max - min) + min; }
 
 Rectangle rec_plus_vector2(Rectangle rec, Vector2 v) {
   return Rectangle{
-      rec.x + v.x,
-      rec.y + v.y,
-      rec.width,
-      rec.height,
+          rec.x + v.x,
+          rec.y + v.y,
+          rec.width,
+          rec.height,
   };
 }
 
 Rectangle shrink(Rectangle rec, float n) {
   return Rectangle{
-      rec.x + n,
-      rec.y + n,
-      rec.width - n * 2.0f,
-      rec.height - n * 2.0f,
+          rec.x + n,
+          rec.y + n,
+          rec.width - n * 2.0f,
+          rec.height - n * 2.0f,
   };
 }
 
 Vector2 relative_midpoint(Rectangle rec) {
   return Vector2{
-      rec.width / 2.0f,
-      rec.height / 2.0f,
+          rec.width / 2.0f,
+          rec.height / 2.0f,
   };
 }
 
 Vector2 absolute_midpoint(Rectangle rec) {
   return Vector2{
-      rec.x + rec.width / 2.0f,
-      rec.y + rec.height / 2.0f,
+          rec.x + rec.width / 2.0f,
+          rec.y + rec.height / 2.0f,
   };
 }
 
@@ -123,21 +124,21 @@ std::vector<std::string> split(std::string word, char delim) {
     }
   }
   out.push_back(
-      word.substr(prev_delim_pos + 1, word.size() - prev_delim_pos - 1));
+          word.substr(prev_delim_pos + 1, word.size() - prev_delim_pos - 1));
 
   return out;
 }
 
 std::vector<IntVector2D> corner_block_coords(Rectangle frame) {
   std::vector<IntVector2D> out{
-      IntVector2D{(int)frame.x / BLOCK_SIZE,
-                  (int)frame.y / BLOCK_SIZE},  // Top left
-      IntVector2D{(int)(frame.x + frame.width) / BLOCK_SIZE,
-                  (int)frame.y / BLOCK_SIZE},  // Top right
-      IntVector2D{(int)frame.x / BLOCK_SIZE,
-                  (int)(frame.y + frame.height) / BLOCK_SIZE},  // Bottom left
-      IntVector2D{(int)(frame.x + frame.width) / BLOCK_SIZE,
-                  (int)(frame.y + frame.height) / BLOCK_SIZE},  // Bottom right
+          IntVector2D{(int) frame.x / BLOCK_SIZE,
+                      (int) frame.y / BLOCK_SIZE},// Top left
+          IntVector2D{(int) (frame.x + frame.width) / BLOCK_SIZE,
+                      (int) frame.y / BLOCK_SIZE},// Top right
+          IntVector2D{(int) frame.x / BLOCK_SIZE,
+                      (int) (frame.y + frame.height) / BLOCK_SIZE},// Bottom left
+          IntVector2D{(int) (frame.x + frame.width) / BLOCK_SIZE,
+                      (int) (frame.y + frame.height) / BLOCK_SIZE},// Bottom right
   };
 
   std::sort(out.begin(), out.end());
@@ -172,23 +173,23 @@ void merge_pattern(std::string& base, std::string new_part) {
     return;
   }
 
-  if (new_part == "[CLR]") {  // Clear regex.
+  if (new_part == "[CLR]") {// Clear regex.
     base.clear();
-  } else if (new_part == "[REV]") {  // Reverse regex.
+  } else if (new_part == "[REV]") {// Reverse regex.
     std::string new_base{base};
     base.clear();
     std::copy(new_base.rbegin(), new_base.rend(), std::back_inserter(base));
-  } else if (new_part.front() == '/' && new_part.back() == '/') {  // Replace.
+  } else if (new_part.front() == '/' && new_part.back() == '/') {// Replace.
     new_part.pop_back();
     new_part.erase(0, 1);
     base = new_part;
-  } else if (new_part.front() == '/') {  // To beginning.
+  } else if (new_part.front() == '/') {// To beginning.
     new_part.erase(0, 1);
     base.insert(0, new_part);
-  } else if (new_part.back() == '/') {  // To end.
+  } else if (new_part.back() == '/') {// To end.
     new_part.pop_back();
     base.append(new_part);
-  } else {  // Replace too.
+  } else {// Replace too.
     base = new_part;
   }
 }
@@ -226,16 +227,16 @@ std::map<std::string, std::string> parse_args(int argc, char** argv) {
     }
   }
 
-  std::string exec_dir{GetDirectoryPath(argv[0])};
 #if __APPLE__
+  std::string exec_dir{GetDirectoryPath(argv[0])};
   exec_dir.append("/..");
   exec_dir.append("/Resources");
-  exec_dir.append("/assets");
+  exec_dir.append("/resources");
 #else
-  exec_dir.append("/assets");
+  std::string exec_dir{"resources"};
 #endif
 
-  out.insert({"assets_dir", exec_dir});
+  out.insert({ASSETS_PATH_KEY, exec_dir});
 
   return out;
 }
@@ -254,12 +255,12 @@ void SimpleTimer::stop() {
 
 int SimpleTimer::minutes() const {
   double finish_time{stopped ? end_time : GetTime()};
-  return (int)(finish_time - start_time) / 60;
+  return (int) (finish_time - start_time) / 60;
 }
 
 int SimpleTimer::seconds() const {
   double finish_time{stopped ? end_time : GetTime()};
-  return (int)(finish_time - start_time) % 60;
+  return (int) (finish_time - start_time) % 60;
 }
 
 std::string concat(const char* s, ...) {

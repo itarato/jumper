@@ -9,6 +9,7 @@ void StageMenu::update() {
   if ((IsMouseButtonPressed(0) &&
        CheckCollisionPointRec(GetMousePosition(), start_text.frame())) ||
       is_key_pressed(KEY_ENTER)) {
+    TraceLog(LOG_ERROR, "Stage change menu to game");
     is_start = true;
   }
 }

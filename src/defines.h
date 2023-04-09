@@ -36,7 +36,6 @@
 #define IMG_FORMAT_SPRITE_LADYBUG_FLY "ladybug_fly_%d.png"
 #define IMG_FORMAT_SPRITE_DOOR_CLOSE "door_close_%d.png"
 
-#define FONT_FIRA_SRC "/fonts/firacode.ttf"
 #define FONT_FIRA_BOLD_SRC "/fonts/firacode_bold.ttf"
 
 #define FONT_SMALL "font_small"

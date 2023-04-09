@@ -21,7 +21,8 @@ struct Text {
   float background_padding{0.0f};
 
   explicit Text(const char* text)
-      : text(text), font(nullptr) {}
+      : text(text),
+        font(nullptr) {}
 
   Text* with_color(Color new_color) {
     color = new_color;
@@ -54,9 +55,9 @@ struct Text {
   }
 
   Text* with_aligned_center() {
-    pos.x = (float)((float)GetScreenWidth() - bounds().x) / 2.0f;
+    pos.x = (float) ((float) GetScreenWidth() - bounds().x) / 2.0f;
     pos.y =
-        (float)((float)GetScreenHeight() - bounds().y) / 2.0f + vertical_offset;
+            (float) ((float) GetScreenHeight() - bounds().y) / 2.0f + vertical_offset;
     return this;
   }
 
@@ -72,16 +73,16 @@ struct Text {
 
   Rectangle frame() {
     return Rectangle{
-        pos.x,
-        pos.y,
-        (float)bounds().x,
-        (float)bounds().y,
+            pos.x,
+            pos.y,
+            (float) bounds().x,
+            (float) bounds().y,
     };
   }
 
   void draw() {
     if (is_background) {
-      Vector2 size = MeasureTextEx(*font, text, (float)font->baseSize, 0);
+      Vector2 size = MeasureTextEx(*font, text, (float) font->baseSize, 0);
       Rectangle background_frame{pos.x + size.x / 2.0f, pos.y + size.y / 2.0f,
                                  size.x + background_padding * 2.0f,
                                  size.y + background_padding * 2.0f};
@@ -97,10 +98,10 @@ struct Text {
       draw_color = color;
     }
 
-    DrawTextEx(*font, text, pos, (float)font->baseSize, 0, draw_color);
+    DrawTextEx(*font, text, pos, (float) font->baseSize, 0, draw_color);
   }
 
   [[nodiscard]] Vector2 bounds() const {
-    return MeasureTextEx(*font, text, (float)font->baseSize, 0);
+    return MeasureTextEx(*font, text, (float) font->baseSize, 0);
   }
 };

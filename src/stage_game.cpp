@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <iostream>
 #include <memory>
 
 #include "asset_manager.h"
@@ -19,17 +20,30 @@ void consume_killed(std::vector<T>& items) {
 }
 
 std::vector<std::string> default_map_file_list(const char* folder) {
-  FilePathList files = LoadDirectoryFiles(folder);
+  // std::cout << "!!! default_map_file_list: " << folder << std::endl;
+  // TraceLog(LOG_ERROR, "FILEIO: default_map_file_list %s", folder);
+  // FilePathList files = LoadDirectoryFiles(folder);
 
-  std::vector<std::string> out{};
+  std::vector<std::string> out{
+          "resources/maps/0_tutorial_0.jm",
+          "resources/maps/0_tutorial_1.jm",
+          "resources/maps/0_tutorial_2.jm",
+          "resources/maps/0_tutorial_3.jm",
+          "resources/maps/0_tutorial_4.jm",
+          "resources/maps/1_easy_0.jm",
+          "resources/maps/2_normal_0.jm",
+          "resources/maps/3_hard_0.jm",
+          "resources/maps/3_hard_1.jm",
+          "resources/maps/3_hard_2.jm",
+  };
 
-  for (int i = 0; i < (int) files.count; i++) {
-    if (IsFileExtension(files.paths[i], ".jm")) {
-      out.emplace_back(files.paths[i]);
-    }
-  }
+  // for (int i = 0; i < (int) files.count; i++) {
+  //   if (IsFileExtension(files.paths[i], ".jm")) {
+  //     out.emplace_back(files.paths[i]);
+  //   }
+  // }
 
-  std::sort(out.begin(), out.end());
+  // std::sort(out.begin(), out.end());
 
   return out;
 }
@@ -51,7 +65,7 @@ StageGame::StageGame(GameConfig* game_config)
     map_file_paths.push_back(pre_selected_map.value());
   } else {
     map_file_paths = default_map_file_list(
-            concat(game_config->resource_dir.c_str(), "/maps/", CONCAT_END)
+            concat(game_config->resource_dir.c_str(), "/maps", CONCAT_END)
                     .c_str());
   }
 }

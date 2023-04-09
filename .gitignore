@@ -10,3 +10,5 @@ jumper.exe
 CppProperties.json
 spooky.conf
 assets/images/spooky
+android.jumper
+jumper.apk
