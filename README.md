@@ -1,7 +1,7 @@
 Lady-bux
 --------
 
-Nonsense ladybug regex builder game.
+Nonsense ladybug regex builder game. The ladybug needs to escape the enemy swarmed land though regex locked gates which can be opened by carefully sequence-collected pattern combos.
 
 [![Watch the video](misc/thumb.png)](misc/test_run.webm)
 <small>[mp4 version](misc/test_run.mp4)</small>
